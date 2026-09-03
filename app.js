@@ -273,7 +273,7 @@
     return `<div class="classic-game"><div class="classic-scorebar"><div>${av(S.profile?.display_name||'V','avatar tiny',S.profile?.avatar_url||'')}<span>${esc(S.profile?.username||'Você')}</span><b>${mine}</b></div><div class="round-count">${progress}/7</div><div>${av(opp.username||'R','avatar tiny',opp.avatar_url||'')}<span>${esc(opp.username||'Oponente')}</span><b>${rival}</b></div></div>
       <div class="classic-side-score left" aria-label="Progresso da sua pontuação"><div class="side-score-track"><i style="height:${pctMe}%"></i></div></div><div class="classic-side-score right" aria-label="Progresso da pontuação do oponente"><div class="side-score-track"><i style="height:${pctOpp}%"></i></div></div>
       <div class="classic-question"><div class="classic-timer" id="tm">${S.seconds}</div>${q.image_url?`<img src="${esc(q.image_url)}" alt="">`:''}<p>${esc(q.question_text||'')}</p><i class="quiz-line left"></i><i class="quiz-line right"></i></div>
-      <div class="classic-answers">${(q.options||[]).map((a,i)=>{const selected=myAnswer&&Number(myAnswer.answer)===i;const isCorrect=Number(q.correct_index)===i;const cls=answeredNow&&isCorrect?'answer-correct':(selected&&!myAnswer?.correct?'answer-wrong':(selected?'selected':''));return `<button class="classic-answer ${cls}" data-a="${i}" ${S.answered?'disabled':''}><span>${'ABCD'[i]}</span>${esc(a)}${answeredNow&&isCorrect?'<b>✓</b>':(selected&&!myAnswer?.correct?'<b>✕</b>':'')}</button>`}).join('')}</div>${feedback}${S.waiting?'<div class="classic-wait">RESPOSTA ENVIADA • AGUARDANDO O OPONENTE</div>':''}</div>`;
+      <div class="classic-answers">${(q.options||[]).map((a,i)=>{const selected=myAnswer&&Number(myAnswer.answer)===i;const isCorrect=Number(q.correct_index)===i;const cls=answeredNow&&isCorrect?'answer-correct':(selected&&!myAnswer?.correct?'answer-wrong':(selected?'selected':''));return `<button class="classic-answer ${cls}" data-a="${i}" ${answeredNow?'disabled':''}><span>${'ABCD'[i]}</span>${esc(a)}${answeredNow&&isCorrect?'<b>✓</b>':(selected&&!myAnswer?.correct?'<b>✕</b>':'')}</button>`}).join('')}</div>${feedback}${S.waiting?'<div class="classic-wait">RESPOSTA ENVIADA • AGUARDANDO O OPONENTE</div>':''}</div>`;
   }
 
 
@@ -505,7 +505,19 @@
     $('#play')?.addEventListener('click',()=>{S.mode='1v1';go('categories')});
     $$('.cat,.topic-list-row').forEach(b=>b.onclick=()=>{S.topicCategory=b.dataset.cat;S.topicStats=null;S.topicRows=null;go('topic')});$('#topicPlay')?.addEventListener('click',()=>{S.category=S.topicCategory;S.mode='1v1';S.searching=false;S.searchStartedAt=Date.now();S.match=null;S.matchId=null;S.botOffer=false;go('match')});$('#topicRanking')?.addEventListener('click',()=>{S.rankCategory=S.topicCategory;S.rankRows=null;go('ranking')});$('#backTopics')?.addEventListener('click',()=>go('categories'));
     $('#cancel')?.addEventListener('click',async()=>{if(sb)await sb.rpc('cancel_match_queue');S.searching=false;S.botOffer=false;go('categories')});$('#playBot')?.addEventListener('click',startBotMatch);$('#continueReal')?.addEventListener('click',()=>{S.botOffer=false;S.searchStartedAt=Date.now();S.searching=true;findMatch()});
-    $$('.classic-answer,.answer').forEach(b=>b.onclick=()=>answer(+b.dataset.a));$$('[data-async-a]').forEach(b=>b.onclick=()=>submitAsyncAnswer(+b.dataset.asyncA));$('#asyncBackFriends')?.addEventListener('click',()=>{S.asyncMode=false;S.asyncChallengeId=null;go('friends')});
+    // Respostas: delegação de eventos para funcionar de forma confiável mesmo após re-renderizações e em touch/iOS.
+    // O clique é capturado no document, então não depende de listeners perdidos quando o HTML é recriado.
+    if(!window.__quizupAnswerDelegation){
+      window.__quizupAnswerDelegation=true;
+      document.addEventListener('click',e=>{
+        const btn=e.target.closest?.('.classic-answer,.answer,[data-async-a]');
+        if(!btn||btn.disabled)return;
+        if(btn.dataset.asyncA!==undefined){submitAsyncAnswer(Number(btn.dataset.asyncA));return;}
+        if(btn.dataset.a!==undefined){answer(Number(btn.dataset.a));return;}
+      });
+    }
+    $$('.classic-answer,.answer').forEach(b=>{b.type='button'});
+    $$('[data-async-a]').forEach(b=>{b.type='button'});$('#asyncBackFriends')?.addEventListener('click',()=>{S.asyncMode=false;S.asyncChallengeId=null;go('friends')});
     $('#plus')?.addEventListener('click',()=>{if(!S.plusUsed&&!S.answered&&!S.waiting){S.plusUsed=true;/* bônus visual apenas; o relógio oficial continua em 10s no modo clássico */}});
     $('#fifty')?.addEventListener('click',()=>{if(S.fiftyUsed||S.answered)return;S.fiftyUsed=true;const q=S.questions[S.questionIndex];if(!q)return;const correct=q.correct_index;[0,1,2,3].filter(i=>i!==correct).sort(()=>Math.random()-.5).slice(0,2).forEach(i=>document.querySelector(`[data-a="${i}"]`)?.classList.add('dim'))});
     $('#rematch')?.addEventListener('click',requestRematch);$('#findAnother')?.addEventListener('click',()=>{S.rematchMessage='';S.category=S.category;S.searching=false;S.searchStartedAt=Date.now();go('match')});$('#again')?.addEventListener('click',()=>go('categories'));$('#home')?.addEventListener('click',()=>go('home'));$('#friendsBtn')?.addEventListener('click',()=>go('friends'));$('#backRank')?.addEventListener('click',()=>go('ranking'));$('#adminBtn')?.addEventListener('click',()=>go('admin'));$('#rankCategory')?.addEventListener('change',e=>{S.rankCategory=e.target.value;S.rankRows=null;loadRanking()});$('#resultChat')?.addEventListener('click',()=>{const id=(S.match?.player_ids||[]).find(x=>x!==S.user.id);if(id)openChat(id,S.matchPlayers[id]?.username||'Oponente')});$('#publishResult')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(`QuizUp • ${S.category} • ${S.myScore||getScore(S.user.id)} pontos`);alert('Resultado copiado para compartilhar!')}catch(e){alert('Resultado pronto para compartilhar!')}});
