@@ -85,3 +85,19 @@ body{font-family:Arial,Helvetica,sans-serif}
 .classic-page{background:#f6f6f7;min-height:calc(100vh - 48px)}
 .classic-page .tabs{background:#fff;border:0}.classic-tabs button{color:#888}.classic-tabs button.on{color:var(--q-red);border-bottom:2px solid var(--q-red)}
 .podium{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 10px 10px}.podium-card{border:1px solid #ddd;background:#fff;border-radius:3px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;color:#333}.podium-card.p1{transform:translateY(-5px);border-color:#f2c94c}.podium-card span{font-size:20px}.podium-card b{font-size:10px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.podium-card small{font-size:8px;color:#999}.classic-select{margin:0 10px 8px;width:calc(100% - 20px);height:40px;border:1px solid #ddd;background:#fff;color:#333;border-radius:2px;padding:0 10px}
+
+/* v22 - criador de tópicos */
+.contribute-page{padding-bottom:28px}
+.category-question-card{margin-top:14px;padding:14px;border:1px solid #ddd;border-radius:10px;background:#fafafa}
+.category-question-card:first-of-type{margin-top:10px}
+.cq-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px;font-size:14px}
+.cq-head span{font-size:11px;color:#777}
+.cq-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.category-question-card textarea,.category-question-card input,.category-question-card select{width:100%;box-sizing:border-box}
+.category-package-admin{border-left:4px solid #f12652}
+.category-package-admin h3{margin:8px 0 4px}
+.package-review{margin-top:10px;border-top:1px solid #ddd;padding-top:8px}
+.package-review-q{padding:9px 0;border-bottom:1px solid #e5e5e5}
+.package-review-q:last-child{border-bottom:0}
+.package-review-q .badge{display:inline-block;margin:6px 4px 0 0}
+@media(max-width:520px){.cq-options{grid-template-columns:1fr}.cq-head{align-items:flex-start;flex-direction:column}.category-question-card{padding:11px}}

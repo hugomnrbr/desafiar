@@ -1,50 +1,34 @@
-# QuizUp Mobile v20 — clássico
+# QuizUp Mobile v23 — Clássico
 
-Esta versão parte do projeto **v19 (notificações)** e aproxima a experiência do QuizUp clássico mostrado no vídeo de referência enviado pelo usuário.
+Versão baseada na v22, com desafios de amigos assíncronos.
 
-## Principais mudanças
-- visual clássico: cabeçalho vermelho, áreas sociais claras e partida em tela preta;
-- navegação inferior com botão central de jogo;
-- Home inspirada no perfil/feed do QuizUp antigo;
-- tópicos com ícones, nível individual e tela própria do tópico;
-- progressão por tópico baseada nos pontos das partidas;
-- ranking por tópico + ranking global;
-- perfil com tópicos mais jogados e estatísticas;
-- partida clássica 1x1, 7 rodadas, 10 segundos e pontuação até 160;
-- respostas grandes com feedback visual;
-- tela de resultados com gráfico de evolução da pontuação;
-- bot continua disponível somente como alternativa depois da busca real;
-- 2x2 e power-ups deixam de aparecer na interface principal para manter o modo clássico;
-- amigos, desafios, chat, fotos, notificações e conquistas continuam funcionando;
-- administração de perguntas/categorias/conquistas continua funcionando.
+## Novo na v23 — Desafio assíncrono
 
-## Supabase — atualização obrigatória
-A estrutura existente não deve ser apagada.
+- Ao desafiar um amigo, a partida e as 7 perguntas são reservadas imediatamente.
+- O criador pode jogar na hora, mesmo que o amigo esteja offline.
+- O amigo recebe o desafio e pode jogar quando abrir o aplicativo.
+- Os dois respondem as mesmas 7 perguntas na mesma ordem.
+- Cada jogador tem seu próprio cronômetro de 10 segundos por pergunta.
+- O cronômetro de cada jogador é baseado no horário oficial do Supabase.
+- Se o tempo chegar a zero, a resposta é registrada como timeout e vale 0 pontos.
+- O progresso de um jogador não muda a pergunta do outro.
+- A pontuação de um jogador não é revelada como resultado final até os dois terminarem.
+- O resultado só é liberado quando ambos concluírem as 7 perguntas.
+- Depois da conclusão, cada jogador recebe sua vitória/derrota, XP e estatísticas uma única vez.
+- A tela Amigos mostra desafios recebidos e desafios enviados.
 
-Execute as migrations na ordem que ainda não tiver executado. Para quem já estava no **v19**, execute apenas:
+## Supabase
 
-`supabase/upgrade-v20.sql`
+Execute somente:
 
-A migration v20 cria a função `get_topic_ranking`, usada para o ranking de cada tópico.
+`supabase/upgrade-v23.sql`
 
-## Partida clássica
-- 7 rodadas;
-- 10 segundos por rodada;
-- rodadas 1–6: até 20 pontos;
-- rodada 7: até 40 pontos;
-- máximo: 160 pontos;
-- velocidade de resposta influencia a pontuação;
-- resultado mostra comparação e gráfico.
+Depois das migrações anteriores (v20, v21 e v22). Não execute novamente o schema inteiro em um banco já existente.
 
-## Referência visual
-O acabamento foi ajustado usando o vídeo de referência fornecido, especialmente:
-- barra superior vermelha nas áreas sociais;
-- perfil com capa, foto, números e atividade;
-- grade de tópicos;
-- tela preta durante o quiz;
-- linhas amarelas laterais na área da pergunta;
-- respostas claras em blocos;
-- resultado com placar, XP e gráfico;
-- ações de Jogar / Chat / Publicar.
+## Partida rápida
 
-Os elementos gráficos foram recriados em HTML/CSS/SVG; o projeto não depende de copiar os arquivos gráficos do aplicativo original.
+A partida rápida continua sendo o modo 1x1 online, com 7 rodadas, 10 segundos por rodada e sincronização pelo servidor.
+
+## Categorias criadas por jogadores
+
+A v22 continua exigindo pacote mínimo de 10 perguntas, cada uma com 4 alternativas e 1 correta, antes do envio para aprovação do administrador.
