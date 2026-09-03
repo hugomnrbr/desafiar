@@ -1,48 +1,69 @@
-# QuizUp Mobile v5 — Supabase
+# QuizUp Mobile v6 — Supabase + Multiplayer
 
-Versão baseada nas telas de referência, agora com estrutura para contas, administrador, perguntas com imagem, amizades, fila multiplayer, modo 2x2 e ranking.
+Esta versão continua o projeto v5 e adiciona:
 
-## Configuração
-1. Crie/abra seu projeto no Supabase.
-2. Execute `supabase/schema.sql` no SQL Editor.
-3. Edite `config.js` e coloque a URL do projeto e a publishable key.
-4. Publique no GitHub Pages ou outro host HTTPS.
+- 50 perguntas iniciais em cada categoria (300 perguntas no total).
+- 10 perguntas sorteadas aleatoriamente por partida.
+- Painel administrativo com todas as perguntas, pesquisa, filtro por categoria, editar, excluir e ativar/inativar.
+- Cadastro com nome de usuário único + e-mail + senha.
+- Login usando nome de usuário **ou** e-mail + senha.
+- Amizades por nome de usuário, com solicitação e aceite.
+- Perfil público de cada jogador: foto, rank global, nível, XP, vitórias, derrotas e categoria mais jogada.
+- Upload de foto de perfil pelo próprio jogador.
+- Matchmaking 1x1 e 2x2.
 
-## Administrador
-Crie uma conta pela tela de cadastro. Depois, no Table Editor > `profiles`, altere `role` dessa conta para `admin`. O botão do painel aparecerá no perfil.
+## Configuração do Supabase
 
-## Pontuação
-A pontuação solicitada foi aplicada: 10 segundos = 10 pontos; 9 = 9; ...; 1 = 1. Errada e pulada = 0.
+### Opção recomendada: um único SQL
+No SQL Editor do Supabase, execute o arquivo:
 
-## Recursos
-- login/cadastro com Supabase Auth;
-- perfil, XP, vitórias, derrotas e sequência;
-- categorias;
-- perguntas com 4 alternativas e imagem;
-- painel administrador;
-- busca de amigos pelo nome;
-- solicitações de amizade;
-- fila 1x1 e 2x2;
-- ranking global por XP;
-- histórico de resultados por categoria;
-- Realtime preparado nas tabelas de fila, partidas e amizades.
+`supabase/schema-v6.sql`
 
-### Multiplayer real-time
-A versão v5 já possui matchmaking transacional por RPC, fila 1x1 e 2x2, criação de partida com 10 perguntas, sincronização por Supabase Realtime e validação da pontuação no banco. Para um MVP, isso permite testar partidas reais com várias contas/navegadores.
+Ele contém o schema do v5, as alterações do v6 e as 300 perguntas iniciais.
 
-### Segurança
-Não coloque `service_role`/secret key no navegador. O projeto usa RLS e a chave pública/publicável. O Supabase recomenda RLS nas tabelas expostas e políticas por operação.
+### Se você já executou o schema v5
+Também é possível executar separadamente:
 
+1. `supabase/upgrade-v6.sql`
+2. `supabase/seed-300-questions.sql`
 
-## Multiplayer real-time (v5)
+## Configuração do navegador
 
-Esta versão implementa a partida online de verdade com Supabase: fila 1x1, fila 2x2 com 4 jogadores, criação transacional da partida, 10 perguntas vindas do banco, pontuação calculada no servidor pelo tempo restante, sincronização da pergunta/placar via Realtime e resultado salvo por jogador. O navegador não recebe a resposta correta para decidir a pontuação.
+Edite `config.js` e coloque apenas a Project URL e a **Publishable key** do Supabase. Nunca coloque a Secret/service_role key no navegador.
 
-### Para ativar
-1. No Supabase, abra **SQL Editor** e execute novamente `supabase/schema.sql` completo.
-2. Confirme que há pelo menos **10 perguntas ativas em cada categoria** que você quer disponibilizar.
-3. Em `config.js`, coloque a URL do projeto e a chave **publishable**.
-4. Crie duas ou mais contas para testar 1x1; para 2x2, use quatro contas/janelas.
-5. Publique em HTTPS/GitHub Pages.
+## Admin
 
-O Realtime usa as mudanças da tabela `matches`; o Supabase documenta Postgres Changes como a opção simples e Broadcast como a opção recomendada para maior escala. Para este MVP, Postgres Changes deixa a implantação mais simples.
+Depois de criar sua conta, no SQL Editor execute:
+
+```sql
+update public.profiles
+set role='admin'
+where username='SEU_USUARIO';
+```
+
+Depois saia e entre novamente. O botão ⚙ aparecerá no topo.
+
+## GitHub Pages
+
+Envie os arquivos para a raiz do repositório. O `index.html` deve ficar na raiz. Em GitHub → Settings → Pages, publique a branch `main` e a pasta `/ (root)`.
+
+Depois configure no Supabase Authentication → URL Configuration a URL do GitHub Pages como Site URL.
+
+## v7 — categorias, conteúdo da comunidade e conquistas
+
+Depois de instalar a versão v6, execute `supabase/upgrade-v7.sql` no SQL Editor do Supabase.
+
+### Novidades
+- Administrador pode criar categorias e subcategorias.
+- Jogadores podem pesquisar categorias/subcategorias na tela de escolha de categoria.
+- Jogadores podem enviar novas categorias e perguntas para aprovação.
+- Conteúdo enviado por jogador começa como `pending`/não publicado e só fica disponível após aprovação do administrador.
+- Administrador possui fila de aprovação para categorias e perguntas.
+- Painel do administrador tem botão para voltar à página inicial.
+- Administrador pode criar, ativar, inativar e excluir conquistas.
+- Conquistas ativas aparecem na área pública de Conquistas.
+
+### Ordem recomendada no Supabase
+1. Se o projeto já está na v6, execute somente `supabase/upgrade-v7.sql`.
+2. Se for uma instalação nova, execute `supabase/schema-v6.sql` e depois `supabase/upgrade-v7.sql`.
+3. Não coloque a `service_role`/Secret key no `config.js`.
