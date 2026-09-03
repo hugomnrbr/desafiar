@@ -2,17 +2,17 @@
   const cfg=window.SUPABASE_CONFIG||{};
   const ready=!!(window.supabase&&cfg.url&&!String(cfg.url).includes('COLE_AQUI')&&cfg.key&&!String(cfg.key).includes('COLE_AQUI'));
   const sb=ready?window.supabase.createClient(cfg.url,cfg.key):null;
-  const S={route:'home',category:'Geral',mode:'1v1',questions:[],questionIndex:0,matchId:null,match:null,myScore:0,seconds:10,timeLimit:10,timer:null,answered:false,waiting:false,user:null,profile:null,isAdmin:false,realtime:null,poll:null,fiftyUsed:false,plusUsed:false,profileTargetId:null,profileDetails:null,adminQuestions:[],adminSearch:'',adminCategory:'Todos',rankRows:null,friendRows:null,categories:[],categorySearch:'',achievementsRows:null,enterMultiplayer:false,adminCategories:[],adminAchievements:[],adminAchievementSearch:'',chatTargetId:null,chatTarget:null,chatRows:[],challengeRows:[],challengeTargetId:null,challengeModal:false,challengeSearch:'',searching:false,searchStartedAt:0,searchTimer:null,botOffer:false,botMode:false,bot:null,matchPlayers:{},matchCountdown:0,countdownTimer:null,matchSyncTimer:null,emojiOpen:false,lastAdded:0};
+  const S={clockToken:0,route:'home',category:'Geral',mode:'1v1',questions:[],questionIndex:0,matchId:null,match:null,myScore:0,seconds:10,timeLimit:10,timer:null,answered:false,waiting:false,user:null,profile:null,isAdmin:false,realtime:null,poll:null,fiftyUsed:false,plusUsed:false,profileTargetId:null,profileDetails:null,adminQuestions:[],adminSearch:'',adminCategory:'Todos',rankRows:null,friendRows:null,categories:[],categorySearch:'',achievementsRows:null,enterMultiplayer:false,adminCategories:[],adminAchievements:[],adminAchievementSearch:'',chatTargetId:null,chatTarget:null,chatRows:[],challengeRows:[],challengeTargetId:null,challengeModal:false,challengeSearch:'',searching:false,searchStartedAt:0,searchTimer:null,botOffer:false,botMode:false,bot:null,matchPlayers:{},matchCountdown:0,countdownTimer:null,matchSyncTimer:null,emojiOpen:false,lastAdded:0};
   const CATS=[['Geral','🌐','c1'],['Ciência','⚗','c2'],['Entretenimento','🎬','c3'],['Esportes','⚽','c4'],['História','🏛','c5'],['Geografia','📍','c6']];
   const catFallback=()=>CATS.map((c,i)=>({id:`default-${i}`,name:c[0],icon:c[1],parent_id:null,approved:true}));
   const catClass=i=>['c1','c2','c3','c4','c5','c6'][i%6];
   const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s), esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
   function av(v='J',c='avatar',url=''){return url?`<img class="${c} avatar-img" src="${esc(url)}" alt="Avatar">`:`<div class="${c}">${esc(v).slice(0,1).toUpperCase()}</div>`}
-  function go(r){clearInterval(S.timer);clearTimeout(S.poll);clearInterval(S.searchTimer);clearInterval(S.countdownTimer);clearInterval(S.matchSyncTimer);S.matchSyncTimer=null;if(S.realtime&&r!=='chat'){sb?.removeChannel(S.realtime);S.realtime=null}S.route=r;render()}
+  function go(r){S.clockToken++;clearInterval(S.timer);clearTimeout(S.poll);clearInterval(S.searchTimer);clearInterval(S.countdownTimer);clearInterval(S.matchSyncTimer);S.matchSyncTimer=null;if(S.realtime&&r!=='chat'){sb?.removeChannel(S.realtime);S.realtime=null}S.route=r;render()}
   function goProfile(id=S.user?.id){S.profileTargetId=id;S.profileDetails=null;go('profile')}
   function top(){return `<div class="top"><div class="logo"><span class="bolt">ϟ</span>QuizUp</div><div class="top-actions">${S.user?`${S.isAdmin?'<button class="circle" id="adminBtn">⚙</button>':''}<button class="circle" id="logout">↪</button>${av(S.profile?.display_name||'J','avatar',S.profile?.avatar_url||'')}`:''}</div></div>`}
   function bottom(){if(['game','match','result','login','signup','admin','contribute','chat'].includes(S.route))return '';return `<nav class="bottom"><button data-r="home">⌂<small>Início</small></button><button data-r="categories">▷<small>Jogar</small></button><button data-r="ranking">♜<small>Ranking</small></button><button data-r="profile">♙<small>Perfil</small></button></nav>`}
-  function render(){clearInterval(S.timer);document.getElementById('app').innerHTML=`<div class="app">${top()}${view()}</div>${bottom()}`;bind();nav()}
+  function render(){document.getElementById('app').innerHTML=`<div class="app">${top()}${view()}</div>${bottom()}`;bind();nav()}
   function nav(){$$('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.r===S.route))}
   function view(){if(!S.user&&!['login','signup'].includes(S.route))return login();if(S.route==='login')return login();if(S.route==='signup')return signup();if(S.route==='home')return home();if(S.route==='categories')return categories();if(S.route==='contribute')return contribute();if(S.route==='match')return match();if(S.route==='game')return game();if(S.route==='result')return result();if(S.route==='ranking')return rank();if(S.route==='profile')return profile();if(S.route==='friends')return friends();if(S.route==='chat')return chat();if(S.route==='admin')return admin();return achievements()}
   function login(){return `<div class="card pad auth-card"><div class="bolt auth-logo">ϟ</div><h1>Entrar no QuizUp</h1><p class="subtitle">Use seu nome de usuário ou e-mail para entrar.</p><form id="loginForm" class="form" style="text-align:left;margin-top:20px"><label>Nome de usuário ou e-mail</label><input id="identifier" required autocomplete="username" placeholder="usuario ou seu@email.com"><label>Senha</label><input id="password" type="password" required autocomplete="current-password" placeholder="••••••••"><button class="primary">ENTRAR</button></form><button class="secondary" id="signupGo">CRIAR CONTA</button>${!ready?'<div class="notice" style="margin-top:12px">Supabase não configurado. Configure <b>config.js</b> para entrar no multiplayer.</div>':''}</div>`}
@@ -108,7 +108,9 @@
     S.match=m;S.mode=m.mode;S.category=m.category;
     if(m.status==='finished'){clearInterval(S.timer);clearInterval(S.matchSyncTimer);S.matchSyncTimer=null;await finishOnline();return}
     if(serverQuestion!==localQuestion){
-      S.questionIndex=serverQuestion;S.answered=false;S.waiting=false;S.lastAdded=0;S.fiftyUsed=false;S.plusUsed=false;S.timeLimit=10;S.seconds=10;render();startClock();return;
+      S.questionIndex=serverQuestion;S.answered=false;S.waiting=false;S.lastAdded=0;S.fiftyUsed=false;S.plusUsed=false;S.timeLimit=10;S.seconds=10;render();
+      if(S.route==='game')startClock();
+      return;
     }
     const key=`${S.user.id}:${serverQuestion}`;
     S.answered=!!m.answers?.[key];S.waiting=S.answered;
@@ -120,7 +122,23 @@
   function myTeam(){return(S.match?.team_a||[]).includes(S.user.id)?S.match.team_a:S.match?.team_b||[S.user.id]}
   function opponentInfo(){const ids=(S.match?.player_ids||[]).filter(id=>id!==S.user.id);const id=ids[0];return id?(S.matchPlayers[id]||{id,username:'Oponente'}):(S.bot||{id:'bot',username:'Robô',display_name:'Robô'});}
   function game(){const q=S.questions[S.questionIndex];if(!q)return '<div class="card pad center"><h2>Pergunta indisponível</h2><p class="muted">Não foi possível carregar esta pergunta do Supabase.</p></div>';const mine=getScore(S.user.id);const opp=opponentInfo();const rival=getScore(opp.id);const progress=S.questionIndex+1;const totalRounds=Math.min(7,S.questions.length);const bonus=progress===7;const answerMap=S.match?.answers||{};const myAnswer=answerMap[`${S.user.id}:${S.questionIndex}`];return `<div class="duel"><div>${av(S.profile?.display_name||'V','avatar mini',S.profile?.avatar_url||'')}<b>${esc(S.profile?.username||S.profile?.display_name||'Você')}</b><br><strong>${mine}</strong></div><b>VS</b><div>${av(opp.username||'R','avatar mini',opp.avatar_url||'')}<b>${esc(opp.username||opp.display_name||'Oponente')}</b><br><strong>${rival}</strong></div></div><div class="qmeta"><span>${bonus?'🔥 Rodada Bônus':'Pergunta'} ${progress} / ${totalRounds}</span><div class="timer" id="tm">${S.seconds}</div></div><div class="question">${q.image_url?`<img src="${esc(q.image_url)}">`:''}${esc(q.question_text||q[0])}</div><div class="answers">${(q.options||q[1]).map((a,i)=>`<button class="answer ${myAnswer&&Number(myAnswer.answer)===i?'selected':''}" data-a="${i}" ${S.answered?'disabled':''}><b>${'ABCD'[i]}</b>${esc(a)}</button>`).join('')}</div><div class="power"><button id="fifty" ${S.fiftyUsed?'disabled':''}>◈ 50:50</button><button id="plus" ${S.plusUsed?'disabled':''}>◷ +5s</button><button id="skip" ${S.answered?'disabled':''}>⚡ Pular</button></div><div id="pts">${S.lastAdded>0?`<div class="score-pop">+${S.lastAdded} pontos</div>`:''}${S.waiting?'<div class="notice center">Resposta enviada. Aguardando o oponente…</div>':''}</div>${bonus?'<div class="bonus-note">🔥 Rodada bônus: pontos em dobro</div>':''}`}
-  function startClock(){clearInterval(S.timer);if(S.answered||S.waiting)return;const started=Number(S.match?.state?.question_started_at||Date.now()/1000);const limit=S.timeLimit||10;const tick=()=>{const elapsed=Math.floor(Date.now()/1000-started);S.seconds=Math.max(0,limit-elapsed);const el=$('#tm');if(el)el.textContent=S.seconds;if(S.seconds<=0){clearInterval(S.timer);if(!S.answered)answer(-1)}};tick();S.timer=setInterval(tick,250)}
+  function startClock(){
+    clearInterval(S.timer);
+    const token=++S.clockToken;
+    if(S.answered||S.waiting||S.route!=='game')return;
+    const started=Number(S.match?.state?.question_started_at);
+    const limit=10;
+    if(!Number.isFinite(started)||started<=0){S.seconds=10;const el=$('#tm');if(el)el.textContent='10';return;}
+    S.timeLimit=10;
+    const tick=()=>{
+      if(token!==S.clockToken||S.answered||S.waiting||S.route!=='game'){clearInterval(S.timer);return;}
+      const elapsed=Math.max(0,Date.now()/1000-started);
+      S.seconds=Math.max(0,10-Math.floor(elapsed));
+      const el=$('#tm');if(el)el.textContent=S.seconds;
+      if(S.seconds<=0){clearInterval(S.timer);if(!S.answered&&!S.waiting){answer(-1);}}
+    };
+    tick();S.timer=setInterval(tick,100);
+  }
   async function answer(i){
     if(S.answered||S.waiting)return;
     S.answered=true;clearInterval(S.timer);
@@ -148,7 +166,7 @@
       S.answered=false;alert(msg);startClock();return;
     }
     S.lastAdded=Number(data?.added||0);if(data?.resync||data?.finished){const {data:m}=await sb.from('matches').select('*').eq('id',S.matchId).single();if(m)await syncMatch(m);return}
-    S.waiting=true;S.match={...S.match,answers:{...(S.match.answers||{}),[`${S.user.id}:${S.questionIndex}`]:{answer:i,score:data?.added||0}}};render()
+    S.waiting=true;S.match={...S.match,answers:{...(S.match.answers||{}),[`${S.user.id}:${S.questionIndex}`]:{answer:i,score:data?.added||0}}};clearInterval(S.timer);render()
   }
   function botAnswer(){
     if(!S.botMode||S.route!=='game'||!S.match)return;
@@ -234,7 +252,7 @@
     $$('.cat').forEach(b=>b.onclick=()=>{S.category=b.dataset.cat;S.mode=S.mode||'1v1';S.searching=false;S.searchStartedAt=Date.now();S.match=null;S.matchId=null;S.botOffer=false;go('match')});
     $('#cancel')?.addEventListener('click',async()=>{if(sb)await sb.rpc('cancel_match_queue');S.searching=false;S.botOffer=false;go('categories')});$('#playBot')?.addEventListener('click',startBotMatch);$('#continueReal')?.addEventListener('click',()=>{S.botOffer=false;S.searchStartedAt=Date.now();S.searching=true;findMatch()});
     $$('.answer').forEach(b=>b.onclick=()=>answer(+b.dataset.a));
-    $('#plus')?.addEventListener('click',()=>{if(!S.plusUsed&&!S.answered){S.plusUsed=true;S.timeLimit=Math.min(15,(S.timeLimit||10)+5);S.seconds=Math.max(0,S.timeLimit-Math.floor(Date.now()/1000-Number(S.match?.state?.question_started_at||Date.now()/1000)));$('#tm').textContent=S.seconds}});
+    $('#plus')?.addEventListener('click',()=>{if(!S.plusUsed&&!S.answered&&!S.waiting){S.plusUsed=true;/* bônus visual apenas; o relógio oficial continua em 10s no modo clássico */}});
     $('#fifty')?.addEventListener('click',()=>{if(S.fiftyUsed||S.answered)return;S.fiftyUsed=true;const q=S.questions[S.questionIndex];if(!q)return;const correct=q.correct_index;[0,1,2,3].filter(i=>i!==correct).sort(()=>Math.random()-.5).slice(0,2).forEach(i=>document.querySelector(`[data-a="${i}"]`)?.classList.add('dim'))});
     $('#skip')?.addEventListener('click',()=>answer(-1));$('#again')?.addEventListener('click',()=>go('categories'));$('#home')?.addEventListener('click',()=>go('home'));$('#friendsBtn')?.addEventListener('click',()=>go('friends'));$('#backRank')?.addEventListener('click',()=>go('ranking'));$('#adminBtn')?.addEventListener('click',()=>go('admin'));
     $('#friendSearch')?.addEventListener('submit',e=>{e.preventDefault();sendFriend($('#friendName').value)});$('#closeChallenge')?.addEventListener('click',()=>{S.challengeModal=false;render()});$('#challengeSearch')?.addEventListener('input',e=>{S.challengeSearch=e.target.value;render();setTimeout(()=>$('#challengeSearch')?.focus(),0)});$$('[data-challenge-cat]').forEach(b=>b.onclick=()=>chooseChallengeCategory(b.dataset.challengeCat));$$('.acceptFriend').forEach(b=>b.onclick=()=>acceptFriend(b.dataset.id));$$('.chatFriend').forEach(b=>b.onclick=()=>openChat(b.dataset.id,b.dataset.name));$$('.challengeFriend').forEach(b=>b.onclick=()=>challengeFriend(b.dataset.id,b.dataset.name));$$('.acceptChallenge').forEach(b=>b.onclick=()=>acceptChallenge(b.dataset.id));$('#friendsHome')?.addEventListener('click',()=>go('home'));$('#backFriends')?.addEventListener('click',()=>{if(S.realtime){sb.removeChannel(S.realtime);S.realtime=null}S.friendRows=null;go('friends')});$('#chatForm')?.addEventListener('submit',e=>{e.preventDefault();sendChat()});$('#emojiBtn')?.addEventListener('click',()=>{S.emojiOpen=!S.emojiOpen;render()});$$('.emoji-btn').forEach(b=>b.onclick=()=>{const input=$('#chatInput');if(input){input.value+=(b.dataset.emoji||'');input.focus()}S.emojiOpen=false;render();setTimeout(()=>$('#chatInput')?.focus(),0)});$('#chatPhoto')?.addEventListener('change',e=>sendChatPhoto(e.target.files?.[0]));
