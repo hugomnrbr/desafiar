@@ -264,8 +264,16 @@
 
   function game(){
     if(S.transitionUntil>Date.now()){const n=Math.max(1,Math.ceil((S.transitionUntil-Date.now())/1000));return `<div class="classic-round-transition"><div class="loading-bolt">ϟ</div><b>RODADA ${S.questionIndex+1}</b><strong>${n}</strong></div>`}
-    const q=S.questions[S.questionIndex];if(!q)return '<div class="card pad center"><h2>Pergunta indisponível</h2></div>';const mine=getScore(S.user.id),opp=opponentInfo(),rival=getScore(opp.id),progress=S.questionIndex+1;const answerMap=S.match?.answers||{},myAnswer=answerMap[`${S.user.id}:${S.questionIndex}`]||S.answerVisual[`${S.user.id}:${S.questionIndex}`];
-    return `<div class="classic-game"><div class="classic-scorebar"><div>${av(S.profile?.display_name||'V','avatar tiny',S.profile?.avatar_url||'')}<span>${esc(S.profile?.username||'Você')}</span><b>${mine}</b></div><div class="round-count">${progress}/7</div><div>${av(opp.username||'R','avatar tiny',opp.avatar_url||'')}<span>${esc(opp.username||'Oponente')}</span><b>${rival}</b></div></div><div class="classic-question"><div class="classic-timer" id="tm">${S.seconds}</div>${q.image_url?`<img src="${esc(q.image_url)}" alt="">`:''}<p>${esc(q.question_text||'')}</p><i class="quiz-line left"></i><i class="quiz-line right"></i></div><div class="classic-answers">${(q.options||[]).map((a,i)=>`<button class="classic-answer ${myAnswer&&Number(myAnswer.answer)===i?'selected':''} ${myAnswer&&Number(myAnswer.answer)===i?(myAnswer.correct?'answer-correct':'answer-wrong'):''}" data-a="${i}" ${S.answered?'disabled':''}><span>${'ABCD'[i]}</span>${esc(a)}${myAnswer&&Number(myAnswer.answer)===i?`<b>${myAnswer.correct?'✓':'✕'}</b>`:''}</button>`).join('')}</div>${S.waiting?'<div class="classic-wait">RESPOSTA ENVIADA • AGUARDANDO O OPONENTE</div>':''}</div>`;
+    const q=S.questions[S.questionIndex];if(!q)return '<div class="card pad center"><h2>Pergunta indisponível</h2></div>';
+    const mine=getScore(S.user.id),opp=opponentInfo(),rival=getScore(opp.id),progress=S.questionIndex+1;
+    const answerMap=S.match?.answers||{},myAnswer=answerMap[`${S.user.id}:${S.questionIndex}`]||S.answerVisual[`${S.user.id}:${S.questionIndex}`];
+    const pctMe=Math.min(100,Math.max(0,(mine/160)*100)),pctOpp=Math.min(100,Math.max(0,(rival/160)*100));
+    const answeredNow=!!myAnswer||S.answered||S.waiting;
+    const feedback=myAnswer ? `<div class="answer-feedback ${myAnswer.correct?'correct':'wrong'}"><strong>${myAnswer.correct?'✓ CORRETO':'✕ ERRADO'}</strong><span>${myAnswer.correct?`+${Number(myAnswer.score||0)} pontos`:'0 pontos'}</span></div>` : '';
+    return `<div class="classic-game"><div class="classic-scorebar"><div>${av(S.profile?.display_name||'V','avatar tiny',S.profile?.avatar_url||'')}<span>${esc(S.profile?.username||'Você')}</span><b>${mine}</b></div><div class="round-count">${progress}/7</div><div>${av(opp.username||'R','avatar tiny',opp.avatar_url||'')}<span>${esc(opp.username||'Oponente')}</span><b>${rival}</b></div></div>
+      <div class="classic-side-score left" aria-label="Progresso da sua pontuação"><div class="side-score-track"><i style="height:${pctMe}%"></i></div></div><div class="classic-side-score right" aria-label="Progresso da pontuação do oponente"><div class="side-score-track"><i style="height:${pctOpp}%"></i></div></div>
+      <div class="classic-question"><div class="classic-timer" id="tm">${S.seconds}</div>${q.image_url?`<img src="${esc(q.image_url)}" alt="">`:''}<p>${esc(q.question_text||'')}</p><i class="quiz-line left"></i><i class="quiz-line right"></i></div>
+      <div class="classic-answers">${(q.options||[]).map((a,i)=>{const selected=myAnswer&&Number(myAnswer.answer)===i;const isCorrect=Number(q.correct_index)===i;const cls=answeredNow&&isCorrect?'answer-correct':(selected&&!myAnswer?.correct?'answer-wrong':(selected?'selected':''));return `<button class="classic-answer ${cls}" data-a="${i}" ${S.answered?'disabled':''}><span>${'ABCD'[i]}</span>${esc(a)}${answeredNow&&isCorrect?'<b>✓</b>':(selected&&!myAnswer?.correct?'<b>✕</b>':'')}</button>`}).join('')}</div>${feedback}${S.waiting?'<div class="classic-wait">RESPOSTA ENVIADA • AGUARDANDO O OPONENTE</div>':''}</div>`;
   }
 
 
@@ -320,9 +328,16 @@
     S.timeoutInFlight=true;S.answered=true;S.seconds=0;clearInterval(S.timer);sound('timeout');
     const qi=S.questionIndex;
     const key=`${S.user.id}:${qi}`;
-    // Visual state immediately, but the authoritative timeout is recorded by Supabase.
+    // Visual state immediately, including a zero-point result.
     S.answerVisual[key]={answer:-1,correct:false,score:0,remaining:0};S.match={...S.match,answers:{...(S.match?.answers||{}),[key]:{answer:-1,correct:false,score:0,remaining:0}}};
     render();
+    // Contra o robô não existe RPC/partida no Supabase. O timeout precisa apenas
+    // registrar a resposta localmente e liberar a vez do robô para a rodada avançar.
+    if(S.botMode){
+      S.timeoutInFlight=false;
+      setTimeout(()=>{if(S.botMode&&S.route==='game'&&S.match?.answers?.[`${S.bot.id}:${qi}`])maybeAdvanceBotRound();else if(S.botMode&&S.route==='game')botAnswer()},350);
+      return;
+    }
     if(!sb||!S.matchId){S.timeoutInFlight=false;return;}
     const {data,error}=await sb.rpc('submit_match_answer',{p_match_id:S.matchId,p_question_index:qi,p_answer_index:-1,p_seconds:0});
     S.timeoutInFlight=false;
@@ -490,7 +505,7 @@
     $('#play')?.addEventListener('click',()=>{S.mode='1v1';go('categories')});
     $$('.cat,.topic-list-row').forEach(b=>b.onclick=()=>{S.topicCategory=b.dataset.cat;S.topicStats=null;S.topicRows=null;go('topic')});$('#topicPlay')?.addEventListener('click',()=>{S.category=S.topicCategory;S.mode='1v1';S.searching=false;S.searchStartedAt=Date.now();S.match=null;S.matchId=null;S.botOffer=false;go('match')});$('#topicRanking')?.addEventListener('click',()=>{S.rankCategory=S.topicCategory;S.rankRows=null;go('ranking')});$('#backTopics')?.addEventListener('click',()=>go('categories'));
     $('#cancel')?.addEventListener('click',async()=>{if(sb)await sb.rpc('cancel_match_queue');S.searching=false;S.botOffer=false;go('categories')});$('#playBot')?.addEventListener('click',startBotMatch);$('#continueReal')?.addEventListener('click',()=>{S.botOffer=false;S.searchStartedAt=Date.now();S.searching=true;findMatch()});
-    $$('.answer').forEach(b=>b.onclick=()=>answer(+b.dataset.a));$$('[data-async-a]').forEach(b=>b.onclick=()=>submitAsyncAnswer(+b.dataset.asyncA));$('#asyncBackFriends')?.addEventListener('click',()=>{S.asyncMode=false;S.asyncChallengeId=null;go('friends')});
+    $$('.classic-answer,.answer').forEach(b=>b.onclick=()=>answer(+b.dataset.a));$$('[data-async-a]').forEach(b=>b.onclick=()=>submitAsyncAnswer(+b.dataset.asyncA));$('#asyncBackFriends')?.addEventListener('click',()=>{S.asyncMode=false;S.asyncChallengeId=null;go('friends')});
     $('#plus')?.addEventListener('click',()=>{if(!S.plusUsed&&!S.answered&&!S.waiting){S.plusUsed=true;/* bônus visual apenas; o relógio oficial continua em 10s no modo clássico */}});
     $('#fifty')?.addEventListener('click',()=>{if(S.fiftyUsed||S.answered)return;S.fiftyUsed=true;const q=S.questions[S.questionIndex];if(!q)return;const correct=q.correct_index;[0,1,2,3].filter(i=>i!==correct).sort(()=>Math.random()-.5).slice(0,2).forEach(i=>document.querySelector(`[data-a="${i}"]`)?.classList.add('dim'))});
     $('#rematch')?.addEventListener('click',requestRematch);$('#findAnother')?.addEventListener('click',()=>{S.rematchMessage='';S.category=S.category;S.searching=false;S.searchStartedAt=Date.now();go('match')});$('#again')?.addEventListener('click',()=>go('categories'));$('#home')?.addEventListener('click',()=>go('home'));$('#friendsBtn')?.addEventListener('click',()=>go('friends'));$('#backRank')?.addEventListener('click',()=>go('ranking'));$('#adminBtn')?.addEventListener('click',()=>go('admin'));$('#rankCategory')?.addEventListener('change',e=>{S.rankCategory=e.target.value;S.rankRows=null;loadRanking()});$('#resultChat')?.addEventListener('click',()=>{const id=(S.match?.player_ids||[]).find(x=>x!==S.user.id);if(id)openChat(id,S.matchPlayers[id]?.username||'Oponente')});$('#publishResult')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(`QuizUp • ${S.category} • ${S.myScore||getScore(S.user.id)} pontos`);alert('Resultado copiado para compartilhar!')}catch(e){alert('Resultado pronto para compartilhar!')}});
