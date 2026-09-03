@@ -74,3 +74,18 @@ Depois de instalar a versão v6, execute `supabase/upgrade-v7.sql` no SQL Editor
 - Após um login real com Supabase, o usuário é enviado automaticamente para o matchmaking 1x1.
 - A primeira categoria aprovada disponível é usada automaticamente (normalmente Geral).
 - Ao recarregar a página depois de já estar autenticado, o app volta para a tela inicial normalmente; a entrada automática no multiplayer ocorre somente após um login bem-sucedido.
+
+## v10 — melhorias de multiplayer, chat e desafios
+
+Depois de executar as versões anteriores, execute também `supabase/upgrade-v10.sql` no SQL Editor do Supabase.
+
+Incluído nesta versão:
+- correção do fluxo de matchmaking para evitar chamadas duplicadas e erros `question out of sync` / `match is not playing`;
+- busca de oponente real com contador de 15 segundos;
+- após 15 segundos, opção de jogar contra o QuizBot ou continuar procurando jogadores reais;
+- tela profissional de `MATCH ENCONTRADO` com avatar, nome e contagem 3-2-1;
+- nome e avatar reais do oponente durante a partida e no resultado;
+- seletor visual de categoria para desafios entre amigos, com categorias principais e pesquisa;
+- chat estilo WhatsApp, com balões separados para cada pessoa;
+- emojis pelo seletor do chat;
+- envio de fotos pelo chat usando o bucket `chat-media` do Supabase Storage.
