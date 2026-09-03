@@ -1,27 +1,50 @@
-# QuizUp v18
+# QuizUp Mobile v20 — clássico
 
-Atualização do multiplayer:
-- matchmaking serializado por usuário para impedir partidas duplicadas;
-- fila mostra somente avatares, sem nomes, com no máximo 5 avatares + `...`;
-- rematch direto na tela final se o adversário ainda estiver presente;
-- se o adversário saiu da sala final, aparece opção para procurar outro;
-- próxima pergunta agora tem uma transição de 3 segundos antes dos 10 segundos de resposta;
-- pontuação perfeita ao atingir 160 pontos;
-- partidas contra robô não geram XP, vitória ou derrota no ranking;
-- robô espera um tempo variável antes de responder e só avança quando a resposta humana e a do robô estiverem concluídas;
-- sons continuam incluídos.
+Esta versão parte do projeto **v19 (notificações)** e aproxima a experiência do QuizUp clássico mostrado no vídeo de referência enviado pelo usuário.
 
-## Supabase
-Execute `supabase/upgrade-v18.sql` depois do `upgrade-v17.sql`.
-Não apague as tabelas existentes.
+## Principais mudanças
+- visual clássico: cabeçalho vermelho, áreas sociais claras e partida em tela preta;
+- navegação inferior com botão central de jogo;
+- Home inspirada no perfil/feed do QuizUp antigo;
+- tópicos com ícones, nível individual e tela própria do tópico;
+- progressão por tópico baseada nos pontos das partidas;
+- ranking por tópico + ranking global;
+- perfil com tópicos mais jogados e estatísticas;
+- partida clássica 1x1, 7 rodadas, 10 segundos e pontuação até 160;
+- respostas grandes com feedback visual;
+- tela de resultados com gráfico de evolução da pontuação;
+- bot continua disponível somente como alternativa depois da busca real;
+- 2x2 e power-ups deixam de aparecer na interface principal para manter o modo clássico;
+- amigos, desafios, chat, fotos, notificações e conquistas continuam funcionando;
+- administração de perguntas/categorias/conquistas continua funcionando.
 
-## v19 - Notificações
+## Supabase — atualização obrigatória
+A estrutura existente não deve ser apagada.
 
-A v19 adiciona notificações em tempo real para:
-- pedido de amizade;
-- desafio recebido;
-- nova mensagem de amigo.
+Execute as migrations na ordem que ainda não tiver executado. Para quem já estava no **v19**, execute apenas:
 
-O sino no topo mostra a quantidade não lida e a página inicial também possui um atalho de notificações.
+`supabase/upgrade-v20.sql`
 
-No Supabase, execute `supabase/upgrade-v19.sql` depois das migrations anteriores.
+A migration v20 cria a função `get_topic_ranking`, usada para o ranking de cada tópico.
+
+## Partida clássica
+- 7 rodadas;
+- 10 segundos por rodada;
+- rodadas 1–6: até 20 pontos;
+- rodada 7: até 40 pontos;
+- máximo: 160 pontos;
+- velocidade de resposta influencia a pontuação;
+- resultado mostra comparação e gráfico.
+
+## Referência visual
+O acabamento foi ajustado usando o vídeo de referência fornecido, especialmente:
+- barra superior vermelha nas áreas sociais;
+- perfil com capa, foto, números e atividade;
+- grade de tópicos;
+- tela preta durante o quiz;
+- linhas amarelas laterais na área da pergunta;
+- respostas claras em blocos;
+- resultado com placar, XP e gráfico;
+- ações de Jogar / Chat / Publicar.
+
+Os elementos gráficos foram recriados em HTML/CSS/SVG; o projeto não depende de copiar os arquivos gráficos do aplicativo original.
