@@ -1,20 +1,15 @@
-# QuizUp Mobile v16
+# QuizUp v17
 
-Versão baseada na v15 com:
-- Login real via Supabase.
-- Multiplayer 1x1 e 2x2.
-- 7 rodadas, 10 segundos e pontuação estilo QuizUp clássico.
-- Sons e controle de áudio.
-- Matchmaking com presença real.
-- Chat entre amigos com emoji e foto.
-- Desafios entre amigos com seleção de categoria.
-- **Abandono de partida:** se um jogador sair da aba/app durante match ou countdown, a partida é encerrada e os demais vencem.
-- **Presença por heartbeat:** se beforeunload/pagehide não forem executados pelo navegador, o adversário detecta ausência após alguns segundos e encerra a partida.
-- **Desafios sincronizados:** quando o amigo aceita, o desafiante recebe a partida em tempo real e ambos entram no countdown 3-2-1.
+Correções principais:
+- cronômetro multiplayer oficial de 10 segundos por rodada, usando timestamp do servidor;
+- uma pergunta só avança quando todos os jogadores respondem ou o tempo acaba;
+- feedback visual da resposta: verde para acerto e vermelho para erro;
+- sincronização mais robusta entre Realtime, polling e estado do servidor;
+- correção do abandono prematuro logo após criar um match, com janela de preparação;
+- desafio entre amigos continua sincronizado para os dois jogadores;
+- sons da versão anterior continuam incluídos;
+- rodada clássica: 7 perguntas, sendo a 7ª bônus, máximo de 160 pontos.
 
 ## Supabase
-Execute, na ordem, somente as migrations que ainda não estiverem aplicadas. Para esta atualização, execute:
-
-`supabase/upgrade-v16.sql`
-
-A v16 pressupõe as estruturas das versões anteriores, incluindo v13/v15.
+Execute `supabase/upgrade-v17.sql` depois do `upgrade-v16.sql`.
+Não é necessário apagar as tabelas existentes.

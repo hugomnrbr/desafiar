@@ -2,7 +2,7 @@
   const cfg=window.SUPABASE_CONFIG||{};
   const ready=!!(window.supabase&&cfg.url&&!String(cfg.url).includes('COLE_AQUI')&&cfg.key&&!String(cfg.key).includes('COLE_AQUI'));
   const sb=ready?window.supabase.createClient(cfg.url,cfg.key):null;
-  const S={clockToken:0,route:'home',category:'Geral',mode:'1v1',questions:[],questionIndex:0,matchId:null,match:null,myScore:0,seconds:10,timeLimit:10,timer:null,answered:false,waiting:false,user:null,profile:null,isAdmin:false,realtime:null,poll:null,fiftyUsed:false,plusUsed:false,profileTargetId:null,profileDetails:null,adminQuestions:[],adminSearch:'',adminCategory:'Todos',rankRows:null,friendRows:null,categories:[],categorySearch:'',achievementsRows:null,enterMultiplayer:false,adminCategories:[],adminAchievements:[],adminAchievementSearch:'',chatTargetId:null,chatTarget:null,chatRows:[],challengeRows:[],challengeTargetId:null,challengeModal:false,challengeSearch:'',searching:false,searchStartedAt:0,searchTimer:null,botOffer:false,challengeRealtime:null,accessToken:null,forfeitSent:false,botMode:false,bot:null,matchPlayers:{},matchCountdown:0,countdownTimer:null,matchSyncTimer:null,presenceTimer:null,emojiOpen:false,lastAdded:0,soundOn:localStorage.getItem('quizup_sound')!=='off',audio:null};
+  const S={resultSoundPlayed:false,clockToken:0,route:'home',category:'Geral',mode:'1v1',questions:[],questionIndex:0,matchId:null,match:null,myScore:0,seconds:10,timeLimit:10,timer:null,answered:false,waiting:false,user:null,profile:null,isAdmin:false,realtime:null,poll:null,fiftyUsed:false,plusUsed:false,profileTargetId:null,profileDetails:null,adminQuestions:[],adminSearch:'',adminCategory:'Todos',rankRows:null,friendRows:null,categories:[],categorySearch:'',achievementsRows:null,enterMultiplayer:false,adminCategories:[],adminAchievements:[],adminAchievementSearch:'',chatTargetId:null,chatTarget:null,chatRows:[],challengeRows:[],challengeTargetId:null,challengeModal:false,challengeSearch:'',searching:false,searchStartedAt:0,searchTimer:null,botOffer:false,challengeRealtime:null,accessToken:null,forfeitSent:false,botMode:false,bot:null,matchPlayers:{},matchCountdown:0,countdownTimer:null,matchSyncTimer:null,presenceTimer:null,roundStartedAt:0,emojiOpen:false,lastAdded:0,soundOn:localStorage.getItem('quizup_sound')!=='off',audio:null};
   const CATS=[['Geral','🌐','c1'],['Ciência','⚗','c2'],['Entretenimento','🎬','c3'],['Esportes','⚽','c4'],['História','🏛','c5'],['Geografia','📍','c6']];
   const catFallback=()=>CATS.map((c,i)=>({id:`default-${i}`,name:c[0],icon:c[1],parent_id:null,approved:true}));
   const catClass=i=>['c1','c2','c3','c4','c5','c6'][i%6];
@@ -65,22 +65,24 @@
     const map={};(rows||[]).forEach(x=>map[x.id]=x);S.matchPlayers=map;
   }
   function startMatchCountdown(){
-    clearInterval(S.countdownTimer);clearInterval(S.matchSyncTimer);S.matchSyncTimer=null;S.matchCountdown=3;sound('match');setTimeout(()=>sound('count'),120);render();
+    clearInterval(S.countdownTimer);clearInterval(S.matchSyncTimer);S.matchSyncTimer=null;
+    S.matchCountdown=3;sound('match');render();
+    let last=3;
     S.countdownTimer=setInterval(async()=>{
       S.matchCountdown--;
-      if(S.matchCountdown>0)sound('count');
-      if(S.matchCountdown<=0){
-        clearInterval(S.countdownTimer);clearInterval(S.matchSyncTimer);S.matchSyncTimer=null;S.countdownTimer=null;
-        if(S.botMode){
-          S.match.state={...(S.match.state||{}),question_started_at:Date.now()/1000};
-          S.route='game';sound('go');render();startClock();
-        }else if(sb&&S.matchId){
-          const {data,error}=await sb.rpc('start_match_round',{p_match_id:S.matchId});
-          if(error){alert(error.message);return go('categories')}
-          if(data){S.match={...S.match,...data};S.questionIndex=Number(data.current_question||0);S.seconds=10;S.timeLimit=10;S.answered=false;S.waiting=false;}
-          S.route='game';sound('go');render();startClock();
-        }
-      }else render()
+      if(S.matchCountdown>0){sound('count');render();return;}
+      clearInterval(S.countdownTimer);S.countdownTimer=null;
+      if(S.botMode){
+        const started=Date.now();
+        S.roundStartedAt=started;S.match.state={...(S.match.state||{}),question_started_at:started/1000};
+        S.route='game';sound('go');render();startClock();return;
+      }
+      if(sb&&S.matchId){
+        const {data,error}=await sb.rpc('start_match_round',{p_match_id:S.matchId});
+        if(error){console.error(error);return go('categories')}
+        if(data){S.match=data;S.questionIndex=Number(data.current_question||0);S.roundStartedAt=Number(data.state?.question_started_at||0)*1000;S.seconds=10;S.answered=false;S.waiting=false;}
+      }
+      S.route='game';sound('go');render();startClock();
     },1000);
   }
   async function matchPresenceBeat(){if(!sb||!S.matchId||S.botMode||!S.user||!['match','game'].includes(S.route))return;const {data,error}=await sb.rpc('check_match_presence',{p_match_id:S.matchId});if(error){console.warn('presence',error.message);return}if(data?.finished){clearInterval(S.presenceTimer);S.presenceTimer=null;const {data:m}=await sb.from('matches').select('*').eq('id',S.matchId).single();if(m)await syncMatch(m)}}
@@ -89,7 +91,7 @@
     clearTimeout(S.poll);clearInterval(S.searchTimer);S.poll=null;S.searching=false;S.matchId=id;
     const {data,error}=await sb.from('matches').select('*').eq('id',id).single();
     if(error||!data){alert(error?.message||'Não foi possível abrir a partida.');return go('categories')}
-    S.match=data;S.botMode=false;S.bot=null;S.mode=data.mode;S.category=data.category;S.questionIndex=data.current_question||0;S.answered=false;S.waiting=false;S.fiftyUsed=false;S.plusUsed=false;await loadMatchPlayers(data);await loadMatchQuestions();subscribeMatch();S.route='match';startMatchPresence();startMatchCountdown();
+    S.match=data;S.resultSoundPlayed=false;S.botMode=false;S.bot=null;S.mode=data.mode;S.category=data.category;S.questionIndex=data.current_question||0;S.answered=false;S.waiting=false;S.fiftyUsed=false;S.plusUsed=false;await loadMatchPlayers(data);await loadMatchQuestions();subscribeMatch();S.route='match';startMatchPresence();startMatchCountdown();
   }
   async function loadMatchQuestions(){
     if(!sb||!S.match?.question_ids?.length){alert('A partida não possui perguntas do Supabase. Execute o seed-300-questions.sql.');return go('categories');}
@@ -114,37 +116,48 @@
     if(!m||S.botMode)return;
     const serverQuestion=Number(m.current_question||0);
     const localQuestion=Number(S.questionIndex||0);
-    // Nunca regredir por causa de um evento Realtime atrasado.
     if(S.match&&serverQuestion<localQuestion)return;
+    const oldStarted=Number(S.match?.state?.question_started_at||0);
+    const newStarted=Number(m.state?.question_started_at||0);
     S.match=m;S.mode=m.mode;S.category=m.category;
-    if(m.status==='finished'){clearInterval(S.timer);clearInterval(S.matchSyncTimer);S.matchSyncTimer=null;await finishOnline();return}
+    if(m.status==='finished'){
+      clearInterval(S.timer);clearInterval(S.matchSyncTimer);S.matchSyncTimer=null;
+      await finishOnline();return;
+    }
     if(serverQuestion!==localQuestion){
-      S.questionIndex=serverQuestion;S.answered=false;S.waiting=false;S.lastAdded=0;S.fiftyUsed=false;S.plusUsed=false;S.timeLimit=10;S.seconds=10;render();
-      if(S.route==='game')startClock();
+      S.questionIndex=serverQuestion;S.answered=false;S.waiting=false;S.lastAdded=0;S.fiftyUsed=false;S.plusUsed=false;S.timeLimit=10;S.seconds=10;S.roundStartedAt=newStarted*1000;render();
+      if(S.route==='game'&&newStarted>0)startClock();
       return;
     }
+    if(newStarted<=0 && S.route==='game' && sb && S.matchId){
+      const {data:startedData}=await sb.rpc('start_match_round',{p_match_id:S.matchId});
+      const startedAgain=Number(startedData?.state?.question_started_at||0);
+      if(startedAgain>0){S.match=startedData;S.roundStartedAt=startedAgain*1000;render();startClock();return;}
+    }
+    S.roundStartedAt=newStarted*1000;
     const key=`${S.user.id}:${serverQuestion}`;
     S.answered=!!m.answers?.[key];S.waiting=S.answered;
-    if(S.answered)clearInterval(S.timer);else startClock();
+    if(S.answered)clearInterval(S.timer);else if(newStarted>0)startClock();
     render();
   }
   function getScore(id){return Number(S.match?.scores?.[id]||0)}
   function totalTeam(team){return(team||[]).reduce((n,id)=>n+getScore(id),0)}
   function myTeam(){return(S.match?.team_a||[]).includes(S.user.id)?S.match.team_a:S.match?.team_b||[S.user.id]}
   function opponentInfo(){const ids=(S.match?.player_ids||[]).filter(id=>id!==S.user.id);const id=ids[0];return id?(S.matchPlayers[id]||{id,username:'Oponente'}):(S.bot||{id:'bot',username:'Robô',display_name:'Robô'});}
-  function game(){const q=S.questions[S.questionIndex];if(!q)return '<div class="card pad center"><h2>Pergunta indisponível</h2><p class="muted">Não foi possível carregar esta pergunta do Supabase.</p></div>';const mine=getScore(S.user.id);const opp=opponentInfo();const rival=getScore(opp.id);const progress=S.questionIndex+1;const totalRounds=Math.min(7,S.questions.length);const bonus=progress===7;const answerMap=S.match?.answers||{};const myAnswer=answerMap[`${S.user.id}:${S.questionIndex}`];return `<div class="duel"><div>${av(S.profile?.display_name||'V','avatar mini',S.profile?.avatar_url||'')}<b>${esc(S.profile?.username||S.profile?.display_name||'Você')}</b><br><strong>${mine}</strong></div><b>VS</b><div>${av(opp.username||'R','avatar mini',opp.avatar_url||'')}<b>${esc(opp.username||opp.display_name||'Oponente')}</b><br><strong>${rival}</strong></div></div><div class="qmeta"><span>${bonus?'🔥 Rodada Bônus':'Pergunta'} ${progress} / ${totalRounds}</span><div class="timer" id="tm">${S.seconds}</div></div><div class="question">${q.image_url?`<img src="${esc(q.image_url)}">`:''}${esc(q.question_text||q[0])}</div><div class="answers">${(q.options||q[1]).map((a,i)=>`<button class="answer ${myAnswer&&Number(myAnswer.answer)===i?'selected':''}" data-a="${i}" ${S.answered?'disabled':''}><b>${'ABCD'[i]}</b>${esc(a)}</button>`).join('')}</div><div class="power"><button id="fifty" ${S.fiftyUsed?'disabled':''}>◈ 50:50</button><button id="plus" ${S.plusUsed?'disabled':''}>◷ +5s</button><button id="skip" ${S.answered?'disabled':''}>⚡ Pular</button></div><div id="pts">${S.lastAdded>0?`<div class="score-pop">+${S.lastAdded} pontos</div>`:''}${S.waiting?'<div class="notice center">Resposta enviada. Aguardando o oponente…</div>':''}</div>${bonus?'<div class="bonus-note">🔥 Rodada bônus: pontos em dobro</div>':''}`}
+  function game(){const q=S.questions[S.questionIndex];if(!q)return '<div class="card pad center"><h2>Pergunta indisponível</h2><p class="muted">Não foi possível carregar esta pergunta do Supabase.</p></div>';const mine=getScore(S.user.id);const opp=opponentInfo();const rival=getScore(opp.id);const progress=S.questionIndex+1;const totalRounds=Math.min(7,S.questions.length);const bonus=progress===7;const answerMap=S.match?.answers||{};const myAnswer=answerMap[`${S.user.id}:${S.questionIndex}`];return `<div class="duel"><div>${av(S.profile?.display_name||'V','avatar mini',S.profile?.avatar_url||'')}<b>${esc(S.profile?.username||S.profile?.display_name||'Você')}</b><br><strong>${mine}</strong></div><b>VS</b><div>${av(opp.username||'R','avatar mini',opp.avatar_url||'')}<b>${esc(opp.username||opp.display_name||'Oponente')}</b><br><strong>${rival}</strong></div></div><div class="qmeta"><span>${bonus?'🔥 Rodada Bônus':'Pergunta'} ${progress} / ${totalRounds}</span><div class="timer" id="tm">${S.seconds}</div></div><div class="question">${q.image_url?`<img src="${esc(q.image_url)}">`:''}${esc(q.question_text||q[0])}</div><div class="answers">${(q.options||q[1]).map((a,i)=>`<button class="answer ${myAnswer&&Number(myAnswer.answer)===i?'selected':''} ${myAnswer&&Number(myAnswer.answer)===i?(myAnswer.correct?'answer-correct':'answer-wrong'):''}" data-a="${i}" ${S.answered?'disabled':''}><b>${'ABCD'[i]}</b>${esc(a)}${myAnswer&&Number(myAnswer.answer)===i?`<span class="answer-mark">${myAnswer.correct?'✓':'✕'}</span>`:''}</button>`).join('')}</div><div class="power"><button id="fifty" ${S.fiftyUsed?'disabled':''}>◈ 50:50</button><button id="plus" ${S.plusUsed?'disabled':''}>◷ +5s</button><button id="skip" ${S.answered?'disabled':''}>⚡ Pular</button></div><div id="pts">${S.lastAdded>0?`<div class="score-pop">+${S.lastAdded} pontos</div>`:''}${S.waiting?'<div class="notice center">Resposta enviada. Aguardando o oponente…</div>':''}</div>${bonus?'<div class="bonus-note">🔥 Rodada bônus: pontos em dobro</div>':''}`}
   function startClock(){
     clearInterval(S.timer);
     const token=++S.clockToken;
     if(S.answered||S.waiting||S.route!=='game')return;
-    const started=Number(S.match?.state?.question_started_at);
-    const limit=10;
-    if(!Number.isFinite(started)||started<=0){S.seconds=10;const el=$('#tm');if(el)el.textContent='10';return;}
-    S.timeLimit=10;
+    const started=Number(S.roundStartedAt||Number(S.match?.state?.question_started_at||0)*1000);
+    if(!Number.isFinite(started)||started<=0){
+      S.seconds=10;const el=$('#tm');if(el)el.textContent='10';return;
+    }
+    S.roundStartedAt=started;S.timeLimit=10;
     const tick=()=>{
       if(token!==S.clockToken||S.answered||S.waiting||S.route!=='game'){clearInterval(S.timer);return;}
-      const elapsed=Math.max(0,Date.now()/1000-started);
-      S.seconds=Math.max(0,10-Math.floor(elapsed));
+      const elapsed=Math.max(0,Date.now()-started);
+      S.seconds=Math.max(0,10-Math.floor(elapsed/1000));
       const el=$('#tm');if(el)el.textContent=S.seconds;
       if(S.seconds<=0){clearInterval(S.timer);if(!S.answered&&!S.waiting){sound('timeout');answer(-1);}}
     };
@@ -155,15 +168,15 @@
     S.answered=true;clearInterval(S.timer);
     const seconds=Math.max(0,S.seconds);
     const currentQ=S.questions[S.questionIndex];
-    if(i>=0 && currentQ){sound(i===Number(currentQ.correct_index)?'correct':'wrong')}
+    if(i>=0 && currentQ){sound(i===Number(currentQ.correct_index)?'correct':'wrong');S.match={...S.match,answers:{...(S.match.answers||{}),[`${S.user.id}:${S.questionIndex}`]:{answer:i,correct:i===Number(currentQ.correct_index),score:0}}};render()}
     if(S.botMode){
       const q=S.questions[S.questionIndex];const correct=i===Number(q.correct_index);const remaining=Math.min(Math.max(seconds,0),10);const added=correct?(S.questionIndex===6?20+remaining*2:10+remaining):0;const myKey=`${S.user.id}:${S.questionIndex}`;S.match.scores[S.user.id]=getScore(S.user.id)+added;S.match.answers[myKey]={answer:i,correct,score:added};S.lastAdded=added;render();
       setTimeout(()=>botAnswer(),650+Math.random()*650);return;
     }
-    if(!sb){alert('Supabase não está configurado. Configure o config.js.');return go('login')}
+    if(!sb){delete (S.match?.answers||{})[`${S.user.id}:${S.questionIndex}`];S.answered=false;alert('Supabase não está configurado. Configure o config.js.');return go('login')}
     // Confirma o estado atual no servidor antes de enviar a resposta.
     const {data:latest,error:latestError}=await sb.from('matches').select('*').eq('id',S.matchId).single();
-    if(latestError||!latest){S.answered=false;startClock();return alert(latestError?.message||'Não foi possível sincronizar a partida.')}
+    if(latestError||!latest){delete (S.match?.answers||{})[`${S.user.id}:${S.questionIndex}`];S.answered=false;render();startClock();return alert(latestError?.message||'Não foi possível sincronizar a partida.')}
     if(latest.status==='finished'||Number(latest.current_question||0)!==Number(S.questionIndex||0)){
       await syncMatch(latest);return;
     }
@@ -173,10 +186,11 @@
       // se uma versão antiga da função RPC estiver instalada, sincronizamos silenciosamente.
       const msg=String(error.message||'');
       if(/question out of sync|match is not playing/i.test(msg)){
+        delete (S.match?.answers||{})[`${S.user.id}:${S.questionIndex}`];
         const {data:m}=await sb.from('matches').select('*').eq('id',S.matchId).single();
-        if(m){await syncMatch(m);return}
+        if(m){S.answered=false;await syncMatch(m);return}
       }
-      S.answered=false;alert(msg);startClock();return;
+      delete (S.match?.answers||{})[`${S.user.id}:${S.questionIndex}`];S.answered=false;render();alert(msg);startClock();return;
     }
     S.lastAdded=Number(data?.added||0);if(data?.resync||data?.finished){const {data:m}=await sb.from('matches').select('*').eq('id',S.matchId).single();if(m)await syncMatch(m);return}
     S.waiting=true;S.match={...S.match,answers:{...(S.match.answers||{}),[`${S.user.id}:${S.questionIndex}`]:{answer:i,score:data?.added||0}}};clearInterval(S.timer);render()
@@ -192,7 +206,7 @@
     clearTimeout(S.poll);S.poll=null;clearInterval(S.searchTimer);if(sb)await sb.rpc('cancel_match_queue');
     const {data,error}=await sb.from('questions').select('id,question_text,options,correct_index,image_url').eq('active',true).eq('approval_status','approved').eq('category_name',S.category).limit(50);
     if(error||!data||data.length<7){return alert('Esta categoria ainda não possui 7 perguntas ativas.')}
-    const questions=[...data].sort(()=>Math.random()-.5).slice(0,7);const botId='00000000-0000-0000-0000-000000000001';S.bot={id:botId,username:'QuizBot',display_name:'QuizBot',avatar_url:''};S.botMode=true;S.mode='1v1';S.searching=false;S.botOffer=false;S.questions=questions;S.match={id:null,mode:'1v1',category:S.category,player_ids:[S.user.id,botId],team_a:[S.user.id],team_b:[botId],scores:{[S.user.id]:0,[botId]:0},answers:{},state:{question_started_at:null},status:'playing',current_question:0,question_ids:questions.map(q=>q.id)};S.matchPlayers={[botId]:S.bot};S.questionIndex=0;S.answered=false;S.waiting=false;startMatchCountdown();
+    const questions=[...data].sort(()=>Math.random()-.5).slice(0,7);const botId='00000000-0000-0000-0000-000000000001';S.bot={id:botId,username:'QuizBot',display_name:'QuizBot',avatar_url:''};S.botMode=true;S.mode='1v1';S.searching=false;S.botOffer=false;S.questions=questions;S.resultSoundPlayed=false;S.match={id:null,mode:'1v1',category:S.category,player_ids:[S.user.id,botId],team_a:[S.user.id],team_b:[botId],scores:{[S.user.id]:0,[botId]:0},answers:{},state:{question_started_at:null},status:'playing',current_question:0,question_ids:questions.map(q=>q.id)};S.matchPlayers={[botId]:S.bot};S.questionIndex=0;S.answered=false;S.waiting=false;startMatchCountdown();
   }
   async function finishBot(){
     clearInterval(S.timer);const mine=getScore(S.user.id),botScore=getScore(S.bot.id),win=mine>botScore;S.myScore=mine;S.match.status='finished';
@@ -200,7 +214,7 @@
     S.route='result';render();
   }
   async function finishOnline(){if(S.route==='result')return;const mine=getScore(S.user.id);const teamA=totalTeam(S.match.team_a),teamB=totalTeam(S.match.team_b);const win=S.mode==='2v2'?(S.match.team_a.includes(S.user.id)?teamA>teamB:teamB>teamA):mine>Math.max(...S.match.player_ids.filter(x=>x!==S.user.id).map(getScore),0);if(sb){const {data:existing}=await sb.from('game_results').select('id').eq('match_id',S.matchId).eq('user_id',S.user.id).maybeSingle();if(!existing){await sb.from('game_results').insert({user_id:S.user.id,category:S.category,mode:S.mode,score:mine,won:win,match_id:S.matchId});await sb.rpc('apply_game_result',{p_user_id:S.user.id,p_category:S.category,p_score:mine,p_won:win});await loadProfile();}}S.myScore=mine;S.rankRows=null;S.profileDetails=null;S.route='result';render()}
-  function result(){const mine=getScore(S.user.id)||S.myScore;const opponents=(S.match?.player_ids||[]).filter(x=>x!==S.user.id);const opp0=opponents[0]?S.matchPlayers[opponents[0]]:(S.bot||{});const oppScore0=S.mode==='2v2'?((S.match?.team_a||[]).includes(S.user.id)?totalTeam(S.match.team_b):totalTeam(S.match.team_a)):(opponents[0]?getScore(opponents[0]):getScore(S.bot?.id));sound(mine>oppScore0?'win':'lose');const opp=opponents[0]?S.matchPlayers[opponents[0]]:(S.bot||{});const oppScore=oppScore0;const win=mine>oppScore;return `<div class="result"><div class="trophy">${win?'🏆':'💥'}</div><div class="winner">${win?'VOCÊ VENCEU!':'QUASE!'}</div><div class="card board"><div>${av(S.profile?.display_name||'J','avatar big',S.profile?.avatar_url||'')}<div>${esc(S.profile?.username||S.profile?.display_name||'Você')}${S.mode==='2v2'?' • sua equipe':''}</div><b class="green">${mine}</b></div><b>VS</b><div>${av(opp?.username||'R','avatar big',opp?.avatar_url||'')}<div>${esc(opp?.username||opp?.display_name||'Oponente')}</div><b class="red">${oppScore}</b></div></div><h2 class="green">+${mine} XP</h2><div class="muted">${win?'+1 vitória':'Continue jogando para subir no ranking'}</div><button class="primary" id="again">JOGAR NOVAMENTE</button><button class="secondary" id="home">VOLTAR AO INÍCIO</button></div>`}
+  function result(){const mine=getScore(S.user.id)||S.myScore;const opponents=(S.match?.player_ids||[]).filter(x=>x!==S.user.id);const opp0=opponents[0]?S.matchPlayers[opponents[0]]:(S.bot||{});const oppScore0=S.mode==='2v2'?((S.match?.team_a||[]).includes(S.user.id)?totalTeam(S.match.team_b):totalTeam(S.match.team_a)):(opponents[0]?getScore(opponents[0]):getScore(S.bot?.id));if(!S.resultSoundPlayed){sound(mine>oppScore0?'win':'lose');S.resultSoundPlayed=true;}const opp=opponents[0]?S.matchPlayers[opponents[0]]:(S.bot||{});const oppScore=oppScore0;const win=mine>oppScore;return `<div class="result"><div class="trophy">${win?'🏆':'💥'}</div><div class="winner">${win?'VOCÊ VENCEU!':'QUASE!'}</div><div class="card board"><div>${av(S.profile?.display_name||'J','avatar big',S.profile?.avatar_url||'')}<div>${esc(S.profile?.username||S.profile?.display_name||'Você')}${S.mode==='2v2'?' • sua equipe':''}</div><b class="green">${mine}</b></div><b>VS</b><div>${av(opp?.username||'R','avatar big',opp?.avatar_url||'')}<div>${esc(opp?.username||opp?.display_name||'Oponente')}</div><b class="red">${oppScore}</b></div></div><h2 class="green">+${mine} XP</h2><div class="muted">${win?'+1 vitória':'Continue jogando para subir no ranking'}</div><button class="primary" id="again">JOGAR NOVAMENTE</button><button class="secondary" id="home">VOLTAR AO INÍCIO</button></div>`}
   function rank(){if(!S.rankRows){setTimeout(loadRanking,0);return `<div class="title">Ranking Global</div><div class="card pad center"><div class="muted">Carregando ranking...</div></div>`}const rows=S.rankRows;return `<div class="title">Ranking Global</div><div class="tabs"><button class="on">Global</button><button>Semanal</button><button>Amigos</button></div><div class="list">${rows.map((r,i)=>`<button class="row player-row ${r.id===S.user.id?'me':''}" data-profile="${r.id}"><b>#${i+1}</b>${av(r.username||r.display_name||'J','avatar mini',r.avatar_url||'')}<div><b>${esc(r.username||r.display_name)}</b><div class="muted">Nível ${r.level||1} • ${r.wins||0} vitórias</div></div><strong>${r.xp||0} XP</strong></button>`).join('')}</div>`}
   async function loadRanking(){if(!sb)return;const {data,error}=await sb.from('profiles').select('id,username,display_name,avatar_url,xp,wins,level').order('xp',{ascending:false}).limit(100);if(error)return alert(error.message);S.rankRows=data||[];render()}
   function profile(){const id=S.profileTargetId||S.user.id;if(!S.profileDetails||S.profileDetails.id!==id){setTimeout(()=>loadProfileDetails(id),0);return `<div class="title">Perfil</div><div class="card pad center"><div class="rings small-rings"><div class="big">ϟ</div></div><div class="muted">Carregando perfil...</div></div>`}const p=S.profileDetails;const mine=id===S.user.id;return `<div class="title">${mine?'Meu Perfil':'Perfil do jogador'}</div><div class="card pad center"><div class="profile-photo-wrap">${av(p.username||p.display_name||'J','avatar huge',p.avatar_url||'')} ${mine?'<label class="photo-btn" for="avatarFile">📷 Alterar foto</label><input id="avatarFile" type="file" accept="image/*" class="hidden">':''}</div><h2>${esc(p.username||p.display_name)}</h2><div class="muted">Nível ${p.level||1} • ${p.xp||0} XP</div><div class="xp"><i style="width:${Math.min(100,((p.xp||0)%1000)/10)}%"></i></div><div class="stats"><div class="stat"><b>#${p.rank||'-'}</b><small>RANK</small></div><div class="stat"><b>${p.level||1}</b><small>NÍVEL</small></div><div class="stat"><b>${esc(p.mostPlayed||'Ainda não')}</b><small>MAIS JOGADA</small></div></div><div class="profile-grid"><div><span>Partidas</span><b>${p.games||0}</b></div><div><span>Vitórias</span><b>${p.wins||0}</b></div><div><span>Derrotas</span><b>${p.losses||0}</b></div><div><span>Taxa de acerto</span><b>${p.accuracy||0}%</b></div></div></div>${mine?'<button class="secondary" id="friendsBtn">👥 MEUS AMIGOS</button>':'<button class="secondary" id="backRank">VOLTAR AO RANKING</button>'}`}
