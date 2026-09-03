@@ -1,0 +1,5 @@
+-- QuizUp v24 - correção do cronômetro
+-- Não há alteração de banco nesta versão.
+-- Este arquivo existe apenas para registrar a versão; NÃO é necessário executá-lo.
+-- O cronômetro agora sincroniza uma única vez por rodada e usa um relógio monotônico local,
+-- evitando que o polling/realtime recalibre o relógio e faça o contador saltar.

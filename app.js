@@ -2,7 +2,7 @@
   const cfg=window.SUPABASE_CONFIG||{};
   const ready=!!(window.supabase&&cfg.url&&!String(cfg.url).includes('COLE_AQUI')&&cfg.key&&!String(cfg.key).includes('COLE_AQUI'));
   const sb=ready?window.supabase.createClient(cfg.url,cfg.key):null;
-  const S={resultSoundPlayed:false,clockToken:0,route:'home',category:'Geral',mode:'1v1',questions:[],questionIndex:0,matchId:null,match:null,myScore:0,seconds:10,timeLimit:10,timer:null,answered:false,waiting:false,user:null,profile:null,isAdmin:false,realtime:null,poll:null,fiftyUsed:false,plusUsed:false,profileTargetId:null,profileDetails:null,adminQuestions:[],adminSearch:'',adminCategory:'Todos',rankRows:null,rankCategory:'__global__',topicCategory:'',topicRows:null,topicStats:null,recentRows:null,friendRows:null,categories:[],categorySearch:'',achievementsRows:null,notifications:[],notificationUnread:0,notificationActors:{},notificationsLoaded:false,notificationRealtime:null,enterMultiplayer:false,adminCategories:[],adminCategorySubmissions:[],adminAchievements:[],adminAchievementSearch:'',chatTargetId:null,chatTarget:null,chatRows:[],challengeRows:[],challengeTargetId:null,challengeModal:false,challengeSearch:'',searching:false,searchStartedAt:0,searchTimer:null,botOffer:false,challengeRealtime:null,accessToken:null,forfeitSent:false,botMode:false,bot:null,asyncMode:false,asyncChallengeId:null,asyncProgress:0,asyncStartedAt:0,asyncAnswered:false,matchPlayers:{},matchCountdown:0,countdownTimer:null,matchSyncTimer:null,presenceTimer:null,resultPresenceTimer:null,rematchMessage:'',transitionUntil:0,transitionQuestion:-1,queueAvatars:[],queueAvatarsTimer:null,emojiOpen:false,lastAdded:0,timeoutInFlight:false,lastClockSecond:null,clockOffsetMs:0,clockSyncToken:0,soundOn:localStorage.getItem('quizup_sound')!=='off',audio:null};
+  const S={resultSoundPlayed:false,clockToken:0,route:'home',category:'Geral',mode:'1v1',questions:[],questionIndex:0,matchId:null,match:null,myScore:0,seconds:10,timeLimit:10,timer:null,answered:false,waiting:false,user:null,profile:null,isAdmin:false,realtime:null,poll:null,fiftyUsed:false,plusUsed:false,profileTargetId:null,profileDetails:null,adminQuestions:[],adminSearch:'',adminCategory:'Todos',rankRows:null,rankCategory:'__global__',topicCategory:'',topicRows:null,topicStats:null,recentRows:null,friendRows:null,categories:[],categorySearch:'',achievementsRows:null,notifications:[],notificationUnread:0,notificationActors:{},notificationsLoaded:false,notificationRealtime:null,enterMultiplayer:false,adminCategories:[],adminCategorySubmissions:[],adminAchievements:[],adminAchievementSearch:'',chatTargetId:null,chatTarget:null,chatRows:[],challengeRows:[],challengeTargetId:null,challengeModal:false,challengeSearch:'',searching:false,searchStartedAt:0,searchTimer:null,botOffer:false,challengeRealtime:null,accessToken:null,forfeitSent:false,botMode:false,bot:null,asyncMode:false,asyncChallengeId:null,asyncProgress:0,asyncStartedAt:0,asyncAnswered:false,matchPlayers:{},matchCountdown:0,countdownTimer:null,matchSyncTimer:null,presenceTimer:null,resultPresenceTimer:null,rematchMessage:'',transitionUntil:0,transitionQuestion:-1,queueAvatars:[],queueAvatarsTimer:null,emojiOpen:false,lastAdded:0,timeoutInFlight:false,lastClockSecond:null,clockOffsetMs:0,clockSyncToken:0,clockSyncKey:'',clockBaseLocalMs:0,clockBaseServerMs:0,soundOn:localStorage.getItem('quizup_sound')!=='off',audio:null};
   const CATS=[['Geral','🌐','c1'],['Ciência','⚗','c2'],['Entretenimento','🎬','c3'],['Esportes','⚽','c4'],['História','🏛','c5'],['Geografia','📍','c6']];
   const catFallback=()=>CATS.map((c,i)=>({id:`default-${i}`,name:c[0],icon:c[1],parent_id:null,approved:true}));
   const catClass=i=>['c1','c2','c3','c4','c5','c6'][i%6];
@@ -132,7 +132,7 @@
     clearTimeout(S.poll);clearInterval(S.searchTimer);S.poll=null;S.searching=false;S.matchId=id;
     const {data,error}=await sb.from('matches').select('*').eq('id',id).single();
     if(error||!data){alert(error?.message||'Não foi possível abrir a partida.');return go('categories')}
-    S.match=data;S.asyncMode=false;S.asyncChallengeId=null;S.resultSoundPlayed=false;S.rematchMessage='';S.transitionUntil=0;S.transitionQuestion=-1;S.botMode=false;S.bot=null;S.mode=data.mode;S.category=data.category;S.questionIndex=data.current_question||0;S.answered=false;S.waiting=false;S.timeoutInFlight=false;S.lastClockSecond=null;S.clockOffsetMs=0;S.fiftyUsed=false;S.plusUsed=false;await loadMatchPlayers(data);await loadMatchQuestions();subscribeMatch();S.route='match';startMatchPresence();startMatchCountdown();
+    S.match=data;S.asyncMode=false;S.asyncChallengeId=null;S.resultSoundPlayed=false;S.rematchMessage='';S.transitionUntil=0;S.transitionQuestion=-1;S.botMode=false;S.bot=null;S.mode=data.mode;S.category=data.category;S.questionIndex=data.current_question||0;S.answered=false;S.waiting=false;S.timeoutInFlight=false;S.lastClockSecond=null;S.clockOffsetMs=0;S.clockSyncKey='';S.clockBaseLocalMs=0;S.clockBaseServerMs=0;S.fiftyUsed=false;S.plusUsed=false;await loadMatchPlayers(data);await loadMatchQuestions();subscribeMatch();S.route='match';startMatchPresence();startMatchCountdown();
   }
   async function loadMatchQuestions(){
     if(!sb||!S.match?.question_ids?.length){alert('A partida não possui perguntas do Supabase. Execute o seed-300-questions.sql.');return go('categories');}
@@ -199,14 +199,49 @@
     return `<div class="classic-game async-game"><div class="classic-scorebar"><div>${av(S.profile?.display_name||'V','avatar tiny',S.profile?.avatar_url||'')}<span>${esc(S.profile?.username||'Você')}</span><b>${mine}</b></div><div class="round-count">${myProgress+1}/7</div><div>${av(opp.username||'R','avatar tiny',opp.avatar_url||'')}<span>${esc(opp.username||'Amigo')}</span><b>${rival}</b></div></div><div class="classic-question"><div class="classic-timer" id="tm">${S.seconds}</div>${q.image_url?`<img src="${esc(q.image_url)}" alt="">`:''}<p>${esc(q.question_text||'')}</p><i class="quiz-line left"></i><i class="quiz-line right"></i></div><div class="classic-answers">${(q.options||[]).map((a,i)=>`<button class="classic-answer ${myAnswer&&Number(myAnswer.answer)===i?'selected':''} ${myAnswer&&Number(myAnswer.answer)===i?(myAnswer.correct?'answer-correct':'answer-wrong'):''}" data-async-a="${i}" ${S.asyncAnswered?'disabled':''}><span>${'ABCD'[i]}</span>${esc(a)}${myAnswer&&Number(myAnswer.answer)===i?`<b>${myAnswer.correct?'✓':'✕'}</b>`:''}</button>`).join('')}</div>${S.asyncAnswered?'<div class="classic-wait">RESPOSTA ENVIADA</div>':''}<div class="async-note">Desafio assíncrono • responda no seu ritmo</div></div>`;
   }
   function startAsyncClock(){
-    clearInterval(S.timer);const token=++S.clockToken;S.lastClockSecond=null;
+    clearInterval(S.timer);
+    const token=++S.clockToken;
+    S.lastClockSecond=null;
     if(S.asyncAnswered||S.route!=='async-game')return;
     const started=Number(S.asyncStartedAt||0)*1000;
-    if(!started){S.seconds=10;const el=$('#tm');if(el)el.textContent='10';return;}
-    const tick=()=>{if(token!==S.clockToken||S.asyncAnswered||S.route!=='async-game'){clearInterval(S.timer);return;}const now=Date.now()+Number(S.clockOffsetMs||0);const remaining=Math.max(0,10-Math.floor(Math.max(0,now-started)/1000));S.seconds=remaining;const el=$('#tm');if(el)el.textContent=String(remaining);if(S.lastClockSecond!==remaining){S.lastClockSecond=remaining;if(remaining>0&&remaining<=3)sound('count')}if(remaining===0){clearInterval(S.timer);if(!S.asyncAnswered&&!S.timeoutInFlight)submitAsyncAnswer(-1)}};
-    tick();S.timer=setInterval(tick,100);
-    if(sb&&S.matchId){const before=Date.now();sb.rpc('get_match_clock',{p_match_id:S.matchId}).then(({data,error})=>{const after=Date.now();if(error||token!==S.clockToken)return;const serverNow=Number(data?.server_now||0)*1000;if(serverNow){S.clockOffsetMs=serverNow-(before+(after-before)/2);tick()}}).catch(()=>{})}
+    if(!Number.isFinite(started)||started<=0){S.seconds=10;const el=$('#tm');if(el)el.textContent='10';return;}
+    S.timeLimit=10;
+    const key=`async:${S.matchId}:${started}`;
+    const tick=()=>{
+      if(token!==S.clockToken||S.asyncAnswered||S.route!=='async-game'){clearInterval(S.timer);return;}
+      const now=S.clockBaseLocalMs>0 && S.clockBaseServerMs>0
+        ? S.clockBaseServerMs+(performance.now()-S.clockBaseLocalMs)
+        : Date.now()+Number(S.clockOffsetMs||0);
+      const remaining=Math.max(0,10-Math.floor(Math.max(0,now-started)/1000));
+      S.seconds=remaining;
+      const el=$('#tm');if(el)el.textContent=String(remaining);
+      if(S.lastClockSecond!==remaining){S.lastClockSecond=remaining;if(remaining>0&&remaining<=3)sound('count');}
+      if(remaining===0){clearInterval(S.timer);if(!S.asyncAnswered&&!S.timeoutInFlight)submitAsyncAnswer(-1);}
+    };
+    tick();
+    S.timer=setInterval(tick,100);
+    if(sb&&S.matchId&&S.clockSyncKey!==key){
+      S.clockSyncKey=key;
+      const before=performance.now();
+      sb.rpc('get_match_clock',{p_match_id:S.matchId}).then(({data,error})=>{
+        if(error||token!==S.clockToken)return;
+        const after=performance.now();
+        const serverNow=Number(data?.server_now||0)*1000;
+        const serverStarted=Number(data?.question_started_at||0)*1000;
+        if(serverNow>0){
+          const midpoint=before+(after-before)/2;
+          S.clockBaseLocalMs=midpoint;
+          S.clockBaseServerMs=serverNow;
+          S.clockOffsetMs=serverNow-(performance.timeOrigin+midpoint);
+          if(serverStarted>0&&Math.abs(serverStarted-started)>50){
+            S.asyncStartedAt=serverStarted/1000;
+          }
+          tick();
+        }
+      }).catch(()=>{});
+    }
   }
+
   async function openAsyncChallenge(challengeId){
     if(!sb)return alert('Supabase não está configurado.');
     clearInterval(S.searchTimer);clearTimeout(S.poll);S.searching=false;S.asyncMode=true;S.asyncChallengeId=challengeId;
@@ -215,13 +250,13 @@
     S.matchId=c.match_id;const {data:m,error:me}=await sb.from('matches').select('*').eq('id',c.match_id).single();
     if(me||!m)return alert(me?.message||'Partida do desafio não encontrada.');
     S.match=m;S.mode='1v1';S.category=m.category;S.botMode=false;S.bot=null;S.resultSoundPlayed=false;S.rematchMessage='';S.transitionUntil=0;S.transitionQuestion=-1;S.matchPlayers={};
-    S.questionIndex=asyncProgressOf();S.asyncProgress=S.questionIndex;S.asyncAnswered=!!m.answers?.[`${S.user.id}:${S.questionIndex}`];S.answered=S.asyncAnswered;S.waiting=false;S.timeoutInFlight=false;S.clockOffsetMs=0;S.asyncStartedAt=Number(m.player_started_at?.[S.user.id]||0);await loadMatchPlayers(m);await loadMatchQuestions();
+    S.questionIndex=asyncProgressOf();S.asyncProgress=S.questionIndex;S.asyncAnswered=!!m.answers?.[`${S.user.id}:${S.questionIndex}`];S.answered=S.asyncAnswered;S.waiting=false;S.timeoutInFlight=false;S.clockOffsetMs=0;S.clockSyncKey='';S.clockBaseLocalMs=0;S.clockBaseServerMs=0;S.asyncStartedAt=Number(m.player_started_at?.[S.user.id]||0);await loadMatchPlayers(m);await loadMatchQuestions();
     await startAsyncRound();subscribeAsyncMatch();S.route='async-game';render();if(!S.asyncAnswered&&S.asyncStartedAt)startAsyncClock();
   }
   async function startAsyncRound(){if(!sb||!S.matchId)return;const {data,error}=await sb.rpc('start_async_challenge',{p_match_id:S.matchId});if(error)return alert(error.message);if(data){S.match=data;S.asyncProgress=asyncProgressOf();S.questionIndex=S.asyncProgress;S.asyncStartedAt=Number(data.player_started_at?.[S.user.id]||0);S.asyncAnswered=!!data.answers?.[`${S.user.id}:${S.asyncProgress}`];S.answered=S.asyncAnswered;}}
   function subscribeAsyncMatch(){if(!sb||!S.matchId)return;if(S.realtime)sb.removeChannel(S.realtime);S.realtime=sb.channel(`async-match-${S.matchId}`).on('postgres_changes',{event:'UPDATE',schema:'public',table:'matches',filter:`id=eq.${S.matchId}`},async payload=>syncAsyncMatch(payload.new)).subscribe();clearInterval(S.matchSyncTimer);S.matchSyncTimer=setInterval(async()=>{if(S.route!=='async-game'||!S.matchId)return;const {data}=await sb.from('matches').select('*').eq('id',S.matchId).single();if(data)await syncAsyncMatch(data)},1000)}
-  async function syncAsyncMatch(m){if(!m||!S.asyncMode)return;S.match=m;S.category=m.category;S.mode=m.mode;if(m.status==='finished'){clearInterval(S.timer);clearInterval(S.matchSyncTimer);S.matchSyncTimer=null;await finishAsyncOnline();return}const progress=asyncProgressOf();if(progress!==S.asyncProgress){S.asyncProgress=progress;S.questionIndex=progress;S.asyncAnswered=!!m.answers?.[`${S.user.id}:${progress}`];S.answered=S.asyncAnswered;S.asyncStartedAt=Number(m.player_started_at?.[S.user.id]||0);S.seconds=10;S.lastClockSecond=null;render();if(!S.asyncAnswered&&S.asyncStartedAt)startAsyncClock();return}if(progress<7&&!S.asyncAnswered){const started=Number(m.player_started_at?.[S.user.id]||0);if(started){S.asyncStartedAt=started;startAsyncClock()}else{await startAsyncRound();render();if(S.asyncStartedAt)startAsyncClock()}}}
-  async function submitAsyncAnswer(i){if(S.asyncAnswered||S.timeoutInFlight||S.route!=='async-game')return;const qi=S.asyncProgress;const q=S.questions[qi];if(!q)return;S.asyncAnswered=true;clearInterval(S.timer);S.seconds=i===-1?0:S.seconds;if(i===-1)sound('timeout');else sound(i===Number(q.correct_index)?'correct':'wrong');render();const {data,error}=await sb.rpc('submit_async_challenge_answer',{p_match_id:S.matchId,p_question_index:qi,p_answer_index:i});if(error){S.asyncAnswered=false;render();alert(error.message);return}if(data?.finished){const {data:m}=await sb.from('matches').select('*').eq('id',S.matchId).single();if(m)await syncAsyncMatch(m);return}const {data:m}=await sb.from('matches').select('*').eq('id',S.matchId).single();if(m){S.match=m;S.asyncProgress=Number(m.player_progress?.[S.user.id]||qi+1);S.questionIndex=S.asyncProgress;S.asyncAnswered=false;S.asyncStartedAt=0;S.seconds=10;render();await startAsyncRound();render();if(S.asyncStartedAt)startAsyncClock()}}
+  async function syncAsyncMatch(m){if(!m||!S.asyncMode)return;S.match=m;S.category=m.category;S.mode=m.mode;if(m.status==='finished'){clearInterval(S.timer);clearInterval(S.matchSyncTimer);S.matchSyncTimer=null;await finishAsyncOnline();return}const progress=asyncProgressOf();if(progress!==S.asyncProgress){S.asyncProgress=progress;S.questionIndex=progress;S.asyncAnswered=!!m.answers?.[`${S.user.id}:${progress}`];S.answered=S.asyncAnswered;S.asyncStartedAt=Number(m.player_started_at?.[S.user.id]||0);S.seconds=10;S.lastClockSecond=null;S.clockSyncKey='';S.clockBaseLocalMs=0;S.clockBaseServerMs=0;render();if(!S.asyncAnswered&&S.asyncStartedAt)startAsyncClock();return}if(progress<7&&!S.asyncAnswered){const started=Number(m.player_started_at?.[S.user.id]||0);if(started){S.asyncStartedAt=started;startAsyncClock()}else{await startAsyncRound();render();if(S.asyncStartedAt)startAsyncClock()}}}
+  async function submitAsyncAnswer(i){if(S.asyncAnswered||S.timeoutInFlight||S.route!=='async-game')return;const qi=S.asyncProgress;const q=S.questions[qi];if(!q)return;S.asyncAnswered=true;clearInterval(S.timer);S.seconds=i===-1?0:S.seconds;if(i===-1)sound('timeout');else sound(i===Number(q.correct_index)?'correct':'wrong');render();const {data,error}=await sb.rpc('submit_async_challenge_answer',{p_match_id:S.matchId,p_question_index:qi,p_answer_index:i});if(error){S.asyncAnswered=false;render();alert(error.message);return}if(data?.finished){const {data:m}=await sb.from('matches').select('*').eq('id',S.matchId).single();if(m)await syncAsyncMatch(m);return}const {data:m}=await sb.from('matches').select('*').eq('id',S.matchId).single();if(m){S.match=m;S.asyncProgress=Number(m.player_progress?.[S.user.id]||qi+1);S.questionIndex=S.asyncProgress;S.asyncAnswered=false;S.asyncStartedAt=0;S.seconds=10;S.clockSyncKey='';S.clockBaseLocalMs=0;S.clockBaseServerMs=0;render();await startAsyncRound();render();if(S.asyncStartedAt)startAsyncClock()}}
   async function finishAsyncOnline(){if(S.route==='result')return;const mine=getScore(S.user.id);const opp=(S.match?.player_ids||[]).find(x=>x!==S.user.id);const oppScore=getScore(opp);const win=mine>oppScore;if(sb){const {data:existing}=await sb.from('game_results').select('id').eq('match_id',S.matchId).eq('user_id',S.user.id).maybeSingle();if(!existing){await sb.from('game_results').insert({user_id:S.user.id,category:S.category,mode:'1v1',score:mine,won:win,match_id:S.matchId});await sb.rpc('apply_game_result',{p_user_id:S.user.id,p_category:S.category,p_score:mine,p_won:win});await loadProfile()}}S.myScore=mine;S.rankRows=null;S.profileDetails=null;S.route='result';render()}
 
   function game(){
@@ -234,17 +269,17 @@
   function startClock(){
     clearInterval(S.timer);
     const token=++S.clockToken;
-    const syncToken=++S.clockSyncToken;
     S.lastClockSecond=null;
     if(S.answered||S.waiting||S.route!=='game')return;
     const started=Number(S.roundStartedAt||Number(S.match?.state?.question_started_at||0)*1000);
-    if(!Number.isFinite(started)||started<=0){
-      S.seconds=10;const el=$('#tm');if(el)el.textContent='10';return;
-    }
+    if(!Number.isFinite(started)||started<=0){S.seconds=10;const el=$('#tm');if(el)el.textContent='10';return;}
     S.roundStartedAt=started;S.timeLimit=10;
+    const key=`live:${S.matchId||'local'}:${started}`;
     const tick=()=>{
       if(token!==S.clockToken||S.answered||S.waiting||S.route!=='game'){clearInterval(S.timer);return;}
-      const now=Date.now()+Number(S.clockOffsetMs||0);
+      const now=S.clockBaseLocalMs>0 && S.clockBaseServerMs>0
+        ? S.clockBaseServerMs+(performance.now()-S.clockBaseLocalMs)
+        : Date.now()+Number(S.clockOffsetMs||0);
       const elapsed=Math.max(0,now-started);
       const remaining=Math.max(0,10-Math.floor(elapsed/1000));
       S.seconds=remaining;
@@ -253,29 +288,30 @@
         S.lastClockSecond=remaining;
         if(remaining>0&&remaining<=3)sound('count');
       }
-      if(remaining===0){
-        clearInterval(S.timer);
-        if(!S.answered&&!S.waiting&&!S.timeoutInFlight)timeoutRound();
-      }
+      if(remaining===0){clearInterval(S.timer);if(!S.answered&&!S.waiting&&!S.timeoutInFlight)timeoutRound();}
     };
     tick();
     S.timer=setInterval(tick,100);
-    // Calibra o relógio local contra o relógio oficial do Supabase.
-    // O timestamp da pergunta continua sendo o timestamp oficial da partida.
-    if(sb&&S.matchId){
-      const before=Date.now();
+    if(sb&&S.matchId&&S.clockSyncKey!==key){
+      S.clockSyncKey=key;
+      const before=performance.now();
       sb.rpc('get_match_clock',{p_match_id:S.matchId}).then(({data,error})=>{
-        if(error||syncToken!==S.clockSyncToken||token!==S.clockToken)return;
-        const after=Date.now();
+        if(error||token!==S.clockToken)return;
+        const after=performance.now();
         const serverNow=Number(data?.server_now||0)*1000;
+        const serverStarted=Number(data?.question_started_at||0)*1000;
         if(serverNow>0){
           const midpoint=before+(after-before)/2;
-          S.clockOffsetMs=serverNow-midpoint;
+          S.clockBaseLocalMs=midpoint;
+          S.clockBaseServerMs=serverNow;
+          S.clockOffsetMs=serverNow-(performance.timeOrigin+midpoint);
+          if(serverStarted>0&&Math.abs(serverStarted-started)>50){S.roundStartedAt=serverStarted;}
           tick();
         }
       }).catch(()=>{});
     }
   }
+
   async function timeoutRound(){
     if(S.answered||S.waiting||S.timeoutInFlight||S.route!=='game')return;
     S.timeoutInFlight=true;S.answered=true;S.seconds=0;clearInterval(S.timer);sound('timeout');
