@@ -138,7 +138,32 @@
     if(!sb||!S.match?.question_ids?.length){alert('A partida não possui perguntas do Supabase. Execute o seed-300-questions.sql.');return go('categories');}
     const {data,error}=await sb.from('questions').select('id,question_text,options,correct_index,image_url').in('id',S.match.question_ids);
     if(error||!data||data.length<7){alert('Esta partida não possui 7 perguntas válidas. Execute o seed-300-questions.sql no Supabase.');return go('categories')}
-    const map=new Map(data.map(q=>[q.id,q]));S.questions=S.match.question_ids.map(id=>map.get(id)).filter(Boolean);
+    const map=new Map(data.map(q=>[q.id,q]));
+    // Embaralha as alternativas de forma determinística por pergunta.
+    // Assim a correta não fica sempre na letra A, mas os dois jogadores
+    // continuam vendo exatamente a mesma ordem de alternativas.
+    function shuffleQuestionOptions(q){
+      const opts=Array.isArray(q.options)?q.options.slice():[];
+      const originalCorrect=Number(q.correct_index);
+      if(opts.length<2||!Number.isInteger(originalCorrect)||originalCorrect<0||originalCorrect>=opts.length)return q;
+      let seed=0;
+      const key=String(q.id||q.question_text||'');
+      for(let i=0;i<key.length;i++)seed=(Math.imul(seed,31)+key.charCodeAt(i))|0;
+      const order=opts.map((_,i)=>i);
+      for(let i=order.length-1;i>0;i--){
+        seed=Math.imul(seed^seed>>>16,0x45d9f3b)|0;
+        seed=Math.imul(seed^seed>>>16,0x45d9f3b)|0;
+        const j=(Math.abs(seed^seed>>>16))%(i+1);
+        [order[i],order[j]]=[order[j],order[i]];
+      }
+      // Evita que, por acaso, a correta continue na posição A.
+      if(order.length>1&&order[0]===originalCorrect){
+        const j=1+((Math.abs(seed)||1)%(order.length-1));
+        [order[0],order[j]]=[order[j],order[0]];
+      }
+      return {...q,options:order.map(i=>opts[i]),correct_index:order.indexOf(originalCorrect)};
+    }
+    S.questions=S.match.question_ids.map(id=>map.get(id)).filter(Boolean).map(shuffleQuestionOptions);
   }
   function subscribeMatch(){
     if(!sb||!S.matchId)return;
@@ -198,7 +223,7 @@
     const mine=getScore(S.user.id),opp=asyncOpponent(),rival=getScore(opp.id),myAnswer=asyncAnswerFor(myProgress)||S.answerVisual[`${S.user.id}:${myProgress}`];
     const myPct=Math.min(100,Math.max(0,(mine/160)*100)),oppPct=Math.min(100,Math.max(0,(rival/160)*100));
     const feedback=myAnswer?`<div class="answer-feedback ${myAnswer.correct?'correct':'wrong'}"><strong>${myAnswer.correct?'✓ CORRETO':'✕ ERRADO'}</strong><span>${myAnswer.correct?`+${Number(myAnswer.score||0)} pontos`:'0 pontos'}</span></div>`:'';
-    return `<div class="classic-game async-game"><div class="classic-scorebar"><div>${av(S.profile?.display_name||'V','avatar tiny',S.profile?.avatar_url||'')}<span>${esc(S.profile?.username||'Você')}</span><b>${mine}</b></div><div class="round-count">${myProgress+1}/7</div><div>${av(opp.username||'R','avatar tiny',opp.avatar_url||'')}<span>${esc(opp.username||'Amigo')}</span><b>${rival}</b></div></div><div class="classic-side-score left"><div class="side-score-track"><i style="height:${myPct}%"></i></div></div><div class="classic-side-score right"><div class="side-score-track"><i style="height:${oppPct}%"></i></div></div><div class="classic-question"><div class="classic-timer" id="tm">${S.seconds}</div>${q.image_url?`<img src="${esc(q.image_url)}" alt="">`:''}<p>${esc(q.question_text||'')}</p><i class="quiz-line left"></i><i class="quiz-line right"></i></div><div class="classic-answers">${(q.options||[]).map((a,i)=>{const selected=myAnswer&&Number(myAnswer.answer)===i;const correct=Number(q.correct_index)===i;const cls=myAnswer&&(correct||selected)?(correct?'answer-correct':selected?'answer-wrong':''):'';return `<button class="classic-answer ${cls}" data-async-a="${i}" ${S.asyncAnswered?'disabled':''}><span>${'ABCD'[i]}</span>${esc(a)}${myAnswer&&correct?'<b>✓</b>':(myAnswer&&selected&&!myAnswer.correct?'<b>✕</b>':'')}</button>`}).join('')}</div>${feedback}${S.asyncAnswered?'<div class="classic-wait">RESPOSTA ENVIADA</div>':''}<div class="async-note">Desafio assíncrono • responda no seu ritmo</div></div>`;
+    return `<div class="neon-game async-game"><div class="neon-duel-head"><div class="neon-player"><div class="neon-avatar-wrap">${av(S.profile?.display_name||'V','avatar neon-avatar',S.profile?.avatar_url||'')}</div><div class="neon-player-copy"><span>VOCÊ</span><b>${esc(S.profile?.username||'Você')}</b><strong>${mine}<small> pts</small></strong></div></div><div class="neon-vs">VS</div><div class="neon-player rival"><div class="neon-player-copy"><span>AMIGO</span><b>${esc(opp.username||'Amigo')}</b><strong>${rival}<small> pts</small></strong></div><div class="neon-avatar-wrap">${av(opp.username||'R','avatar neon-avatar',opp.avatar_url||'')}</div></div></div><div class="neon-progress"><div><i style="width:${myPct}%"></i></div><em></em><div><i style="width:${oppPct}%"></i></div></div><div class="neon-rounds">${Array.from({length:7},(_,i)=>`<span class="${i<myProgress?'done':i===myProgress?'current':''}">${i<myProgress?'✓':i+1}</span>`).join('')}</div><div class="neon-question-card"><div class="neon-question-meta"><span>PERGUNTA ${myProgress+1} DE 7</span><div class="neon-timer" id="tm">${S.seconds}</div></div>${q.image_url?`<img class="neon-question-image" src="${esc(q.image_url)}" alt="">`:''}<p>${esc(q.question_text||'')}</p></div><div class="neon-answers">${(q.options||[]).map((a,i)=>{const selected=myAnswer&&Number(myAnswer.answer)===i;const correct=Number(q.correct_index)===i;const cls=myAnswer&&(correct||selected)?(correct?'answer-correct':selected?'answer-wrong':''):'';return `<button type="button" class="neon-answer ${cls}" data-async-a="${i}" ${S.asyncAnswered?'disabled':''}><span>${'ABCD'[i]}</span><label>${esc(a)}</label>${myAnswer&&correct?'<b>✓</b>':(myAnswer&&selected&&!myAnswer.correct?'<b>✕</b>':'')}</button>`}).join('')}</div>${feedback}${S.asyncAnswered?'<div class="neon-wait">✓ RESPOSTA ENVIADA • AGUARDANDO</div>':''}<div class="async-note">Desafio assíncrono • cada jogador responde no seu ritmo</div></div>`;
   }
   function startAsyncClock(){
     if(S.asyncAnswered||S.route!=='async-game')return;
@@ -332,10 +357,7 @@
     const pctMe=Math.min(100,Math.max(0,(mine/160)*100)),pctOpp=Math.min(100,Math.max(0,(rival/160)*100));
     const answeredNow=!!myAnswer||S.answered||S.waiting;
     const feedback=myAnswer ? `<div class="answer-feedback ${myAnswer.correct?'correct':'wrong'}"><strong>${myAnswer.correct?'✓ CORRETO':'✕ ERRADO'}</strong><span>${myAnswer.correct?`+${Number(myAnswer.score||0)} pontos`:'0 pontos'}</span></div>` : '';
-    return `<div class="classic-game"><div class="classic-scorebar"><div>${av(S.profile?.display_name||'V','avatar tiny',S.profile?.avatar_url||'')}<span>${esc(S.profile?.username||'Você')}</span><b>${mine}</b></div><div class="round-count">${progress}/7</div><div>${av(opp.username||'R','avatar tiny',opp.avatar_url||'')}<span>${esc(opp.username||'Oponente')}</span><b>${rival}</b></div></div>
-      <div class="classic-side-score left" aria-label="Progresso da sua pontuação"><div class="side-score-track"><i style="height:${pctMe}%"></i></div></div><div class="classic-side-score right" aria-label="Progresso da pontuação do oponente"><div class="side-score-track"><i style="height:${pctOpp}%"></i></div></div>
-      <div class="classic-question"><div class="classic-timer" id="tm">${S.seconds}</div>${q.image_url?`<img src="${esc(q.image_url)}" alt="">`:''}<p>${esc(q.question_text||'')}</p><i class="quiz-line left"></i><i class="quiz-line right"></i></div>
-      <div class="classic-answers">${(q.options||[]).map((a,i)=>{const selected=myAnswer&&Number(myAnswer.answer)===i;const isCorrect=Number(q.correct_index)===i;const cls=answeredNow&&isCorrect?'answer-correct':(selected&&!myAnswer?.correct?'answer-wrong':(selected?'selected':''));return `<button class="classic-answer ${cls}" data-a="${i}" ${answeredNow?'disabled':''}><span>${'ABCD'[i]}</span>${esc(a)}${answeredNow&&isCorrect?'<b>✓</b>':(selected&&!myAnswer?.correct?'<b>✕</b>':'')}</button>`}).join('')}</div>${feedback}${S.waiting?'<div class="classic-wait">RESPOSTA ENVIADA • AGUARDANDO O OPONENTE</div>':''}</div>`;
+    return `<div class="neon-game"><div class="neon-duel-head"><div class="neon-player"><div class="neon-avatar-wrap">${av(S.profile?.display_name||'V','avatar neon-avatar',S.profile?.avatar_url||'')}</div><div class="neon-player-copy"><span>VOCÊ</span><b>${esc(S.profile?.username||'Você')}</b><strong>${mine}<small> pts</small></strong></div></div><div class="neon-vs">VS</div><div class="neon-player rival"><div class="neon-player-copy"><span>OPONENTE</span><b>${esc(opp.username||'Oponente')}</b><strong>${rival}<small> pts</small></strong></div><div class="neon-avatar-wrap">${av(opp.username||'R','avatar neon-avatar',opp.avatar_url||'')}</div></div></div><div class="neon-progress"><div><i style="width:${pctMe}%"></i></div><em></em><div><i style="width:${pctOpp}%"></i></div></div><div class="neon-rounds">${Array.from({length:7},(_,i)=>`<span class="${i< S.questionIndex?'done':i===S.questionIndex?'current':''}">${i<S.questionIndex?'✓':i+1}</span>`).join('')}</div><div class="neon-question-card"><div class="neon-question-meta"><span>PERGUNTA ${progress} DE 7</span><div class="neon-timer" id="tm">${S.seconds}</div></div>${q.image_url?`<img class="neon-question-image" src="${esc(q.image_url)}" alt="">`:''}<p>${esc(q.question_text||'')}</p></div><div class="neon-answers">${(q.options||[]).map((a,i)=>{const selected=myAnswer&&Number(myAnswer.answer)===i;const isCorrect=Number(q.correct_index)===i;const cls=answeredNow&&isCorrect?'answer-correct':(selected&&!myAnswer?.correct?'answer-wrong':(selected?'selected':''));return `<button type="button" class="neon-answer ${cls}" data-a="${i}" ${answeredNow?'disabled':''}><span>${'ABCD'[i]}</span><label>${esc(a)}</label>${answeredNow&&isCorrect?'<b>✓</b>':(selected&&!myAnswer?.correct?'<b>✕</b>':'')}</button>`}).join('')}</div>${feedback}${S.waiting?'<div class="neon-wait">✓ RESPOSTA ENVIADA • AGUARDANDO O OPONENTE</div>':''}</div>`;
   }
 
 
