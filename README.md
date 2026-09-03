@@ -1,15 +1,26 @@
-# QuizUp Mobile v26
+# QuizUp Mobile v35 — GitHub Pages
 
-Correção definitiva do cronômetro e feedback das respostas.
+Versão limpa para hospedagem estática no GitHub Pages.
 
-## O que foi corrigido
-- Partida online: cronômetro oficial 10→9→...→0 sem reinicialização pelo polling/realtime.
-- Partida online: a próxima pergunta começa imediatamente depois que os dois jogadores respondem ou atingem 0.
-- Partida assíncrona: cada jogador usa seu próprio `player_started_at`; o relógio do outro jogador nunca interfere.
-- Não há mais substituição do relógio assíncrono pelo `question_started_at` da partida online.
-- Resposta correta fica verde e errada fica vermelha, com proteção contra eventos Realtime que poderiam apagar o feedback.
-- O countdown 3→2→1 permanece apenas na entrada da partida; não é usado entre rodadas.
+## Estrutura
+
+- `index.html` — entrada do aplicativo
+- `app.js` — lógica do jogo
+- `style.css` — layout/tema neon
+- `config.js` — configuração do Supabase
+- `assets/icon.svg` — ícone
+- `.nojekyll` — evita processamento Jekyll no GitHub Pages
+
+## Publicação no GitHub Pages
+
+1. Coloque **o conteúdo desta pasta na raiz do repositório**. Não coloque a pasta `quizup-mobile-v35-github-pages` dentro de outra pasta do repositório.
+2. Vá em **Settings → Pages**.
+3. Em **Build and deployment**, selecione **Deploy from a branch**.
+4. Escolha a branch que contém estes arquivos e a pasta `/ (root)`.
+5. Salve e aguarde o GitHub Pages publicar.
+
+Esta versão não contém workflows do GitHub Actions nem scripts de build. É um site estático e não precisa de processo de build.
 
 ## Supabase
-Execute `supabase/upgrade-v26.sql` depois das migrações anteriores.
-Não execute `schema.sql` novamente.
+
+Mantenha seu `config.js` atual se ele já estiver funcionando. As migrações SQL não são necessárias para publicar o frontend.
