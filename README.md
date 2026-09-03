@@ -67,3 +67,10 @@ Depois de instalar a versão v6, execute `supabase/upgrade-v7.sql` no SQL Editor
 1. Se o projeto já está na v6, execute somente `supabase/upgrade-v7.sql`.
 2. Se for uma instalação nova, execute `supabase/schema-v6.sql` e depois `supabase/upgrade-v7.sql`.
 3. Não coloque a `service_role`/Secret key no `config.js`.
+
+### v9 — login real + entrada automática no multiplayer
+- Removido o modo demonstração.
+- Sem Supabase configurado, o app não cria usuário fictício e não inicia partida local.
+- Após um login real com Supabase, o usuário é enviado automaticamente para o matchmaking 1x1.
+- A primeira categoria aprovada disponível é usada automaticamente (normalmente Geral).
+- Ao recarregar a página depois de já estar autenticado, o app volta para a tela inicial normalmente; a entrada automática no multiplayer ocorre somente após um login bem-sucedido.
