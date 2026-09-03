@@ -89,3 +89,8 @@ Incluído nesta versão:
 - chat estilo WhatsApp, com balões separados para cada pessoa;
 - emojis pelo seletor do chat;
 - envio de fotos pelo chat usando o bucket `chat-media` do Supabase Storage.
+## v11 — sincronização multiplayer
+
+Depois do `upgrade-v10.sql`, execute também `supabase/upgrade-v11.sql`.
+
+Esta atualização torna `current_question` do servidor a fonte de verdade, sincroniza a partida por Realtime + verificação periódica e elimina os alertas `question out of sync`/`match is not playing` quando um navegador perde um evento ou fica alguns instantes atrasado.
