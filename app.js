@@ -589,18 +589,27 @@
     $('#play')?.addEventListener('click',()=>{S.mode='1v1';go('categories')});
     $$('.cat,.topic-list-row').forEach(b=>b.onclick=()=>{S.topicCategory=b.dataset.cat;S.topicStats=null;S.topicRows=null;go('topic')});$('#topicPlay')?.addEventListener('click',()=>{S.category=S.topicCategory;S.mode='1v1';S.searching=false;S.searchStartedAt=Date.now();S.match=null;S.matchId=null;S.botOffer=false;go('match')});$('#topicRanking')?.addEventListener('click',()=>{S.rankCategory=S.topicCategory;S.rankRows=null;go('ranking')});$('#backTopics')?.addEventListener('click',()=>go('categories'));
     $('#cancel')?.addEventListener('click',async()=>{if(sb)await sb.rpc('cancel_match_queue');S.searching=false;S.botOffer=false;go('categories')});$('#playBot')?.addEventListener('click',startBotMatch);$('#continueReal')?.addEventListener('click',()=>{S.botOffer=false;S.searchStartedAt=Date.now();S.searching=true;findMatch()});
-    // Respostas: delegação de eventos para funcionar de forma confiável mesmo após re-renderizações e em touch/iOS.
-    // O clique é capturado no document, então não depende de listeners perdidos quando o HTML é recriado.
-    if(!window.__quizupAnswerDelegation){
-      window.__quizupAnswerDelegation=true;
-      document.addEventListener('click',e=>{
-        const btn=e.target.closest?.('.classic-answer,.answer,[data-async-a]');
-        if(!btn||btn.disabled)return;
-        if(btn.dataset.asyncA!==undefined){submitAsyncAnswer(Number(btn.dataset.asyncA));return;}
-        if(btn.dataset.a!==undefined){answer(Number(btn.dataset.a));return;}
-      });
-    }
-    $$('.classic-answer,.answer').forEach(b=>{b.type='button'});
+    // RESPOSTAS — bind direto + pointer/click para iOS/Safari.
+    // Não dependemos de um listener global criado apenas uma vez: cada renderização
+    // recebe novamente seus próprios handlers. Um pequeno lock evita que pointerup
+    // e click disparem a mesma resposta duas vezes.
+    $$('.neon-answer,.classic-answer,.answer').forEach(b=>{
+      b.type='button';
+      b.style.touchAction='manipulation';
+      b.onclick=null;
+      b.onpointerup=null;
+      let handledAt=0;
+      const fire=ev=>{
+        if(ev){ev.preventDefault();ev.stopPropagation();}
+        const now=Date.now();
+        if(now-handledAt<450||b.disabled)return;
+        handledAt=now;
+        if(b.dataset.a!==undefined){answer(Number(b.dataset.a));return;}
+        if(b.dataset.asyncA!==undefined){submitAsyncAnswer(Number(b.dataset.asyncA));return;}
+      };
+      b.onpointerup=fire;
+      b.onclick=fire;
+    });
     $$('[data-async-a]').forEach(b=>{b.type='button'});$('#asyncBackFriends')?.addEventListener('click',()=>{S.asyncMode=false;S.asyncChallengeId=null;go('friends')});
     $('#plus')?.addEventListener('click',()=>{if(!S.plusUsed&&!S.answered&&!S.waiting){S.plusUsed=true;/* bônus visual apenas; o relógio oficial continua em 10s no modo clássico */}});
     $('#fifty')?.addEventListener('click',()=>{if(S.fiftyUsed||S.answered)return;S.fiftyUsed=true;const q=S.questions[S.questionIndex];if(!q)return;const correct=q.correct_index;[0,1,2,3].filter(i=>i!==correct).sort(()=>Math.random()-.5).slice(0,2).forEach(i=>document.querySelector(`[data-a="${i}"]`)?.classList.add('dim'))});
