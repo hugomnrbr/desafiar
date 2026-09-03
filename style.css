@@ -226,3 +226,94 @@ body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",san
 .contribute-page .card,.contribute-page .category-question-card{background:linear-gradient(145deg,#101923,#0a1119)!important;border:1px solid #263544!important;color:#fff!important;border-radius:16px!important}.contribute-page .title{color:#fff!important}
 .notice{background:#15130a!important;border-color:#5d4c14!important;color:#ffe98b!important}
 @media(max-width:430px){.home-hero{margin-left:-8px!important;margin-right:-8px!important}.classic-home,.classic-page,.classic-profile,.topic-detail,.friends,.chat-page,.notifications-page,.achievements-page,.contribute-page{padding-left:8px!important;padding-right:8px!important}}
+
+
+/* v35.1 — correção do tema escuro na tela Categorias
+   Remove os blocos brancos da busca e da lista "Todos os tópicos"
+   e mantém o visual escuro/neon do restante do aplicativo. */
+.classic-page{
+  background:transparent;
+  color:#f7f9ff;
+}
+.classic-search{
+  margin:0 10px 8px;
+  display:grid;
+  grid-template-columns:1fr 42px;
+  gap:0;
+  background:#101827 !important;
+  border:1px solid #334055 !important;
+  border-radius:13px !important;
+  overflow:hidden;
+  box-shadow:0 8px 24px #0005;
+}
+.classic-search input{
+  border:0 !important;
+  background:#101827 !important;
+  color:#f7f9ff !important;
+  border-radius:0 !important;
+}
+.classic-search input::placeholder{
+  color:#8994a8 !important;
+}
+.classic-search button{
+  border:0 !important;
+  background:#101827 !important;
+  color:#8994a8 !important;
+}
+.topic-list{
+  margin:0 10px;
+  background:transparent !important;
+  border:0 !important;
+  display:grid;
+  gap:7px;
+}
+.topic-list-row{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  text-align:left;
+  border:1px solid #ffffff12 !important;
+  border-radius:16px !important;
+  background:linear-gradient(145deg,#121a2b,#0b111c) !important;
+  padding:12px !important;
+  color:#f7f9ff !important;
+  box-shadow:0 8px 22px #0005;
+}
+.topic-list-row:active{
+  transform:scale(.99);
+  background:#151f31 !important;
+}
+.topic-list-row b{
+  color:#f7f9ff !important;
+  font-size:14px !important;
+}
+.topic-list-row small{
+  color:#8f9aae !important;
+  font-size:10px !important;
+  margin-top:3px;
+}
+.topic-list-row>strong{
+  font-size:28px !important;
+  color:#b9c2d0 !important;
+}
+.topic-icon{
+  width:54px !important;
+  height:54px !important;
+  border-radius:12px !important;
+  border:1px solid #ffffff16;
+  font-size:27px !important;
+  flex:0 0 auto;
+}
+.c1 .topic-icon{background:linear-gradient(145deg,#126fd0,#0a4380) !important}
+.c2 .topic-icon{background:linear-gradient(145deg,#0a9660,#075438) !important}
+.c3 .topic-icon{background:linear-gradient(145deg,#7d42cf,#421a73) !important}
+.c4 .topic-icon{background:linear-gradient(145deg,#e48600,#884600) !important}
+.c5 .topic-icon{background:linear-gradient(145deg,#c89400,#735300) !important}
+.c6 .topic-icon{background:linear-gradient(145deg,#079b99,#075d69) !important}
+.classic-section-head{
+  color:#f7f9ff;
+}
+.classic-section-head b{
+  color:#f7f9ff;
+}
