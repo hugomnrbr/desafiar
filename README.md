@@ -94,3 +94,7 @@ Incluído nesta versão:
 Depois do `upgrade-v10.sql`, execute também `supabase/upgrade-v11.sql`.
 
 Esta atualização torna `current_question` do servidor a fonte de verdade, sincroniza a partida por Realtime + verificação periódica e elimina os alertas `question out of sync`/`match is not playing` quando um navegador perde um evento ou fica alguns instantes atrasado.
+
+
+## v15 - Matchmaking com presença real
+Execute `supabase/upgrade-v15.sql` depois das migrações anteriores. A fila usa heartbeat de 5 segundos e entradas antigas expiram automaticamente, evitando match com jogador offline.
