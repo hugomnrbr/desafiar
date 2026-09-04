@@ -99,3 +99,11 @@ Execute `quizup_v37_MIGRATION_COMPLETA.sql` no Supabase SQL Editor depois de apl
 - Conquistas podem ter meta e entregar automaticamente um título associado.
 - Corrigida compatibilidade da RPC `purchase_premium_item` com bancos antigos e colunas promocionais ausentes.
 - Sessão atualizada para não reinicializar o app em `TOKEN_REFRESHED`; partida recente pode ser restaurada por até 60 segundos após retorno/reload.
+
+## v38.4 — Artes personalizadas e avatares
+- Títulos, emblemas e conquistas aceitam PNG/JPG/WebP/SVG/GIF enviados pelo administrador.
+- GIFs são exibidos como imagens animadas no perfil/listas quando o navegador suporta.
+- O jogador não possui mais upload de foto própria: o avatar vem exclusivamente dos itens do inventário.
+- O jogador pode ativar ou desativar um avatar/item do inventário.
+- O painel de contas usa uma RPC administrativa mais robusta para listar contas registradas.
+- Execute `quizup_v38_4_MIGRATION_AVATARES_ARTES.sql` após a migration v38.

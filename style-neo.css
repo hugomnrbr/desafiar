@@ -639,3 +639,12 @@ html,body,#app{background:#03050a!important;color:#f7f9fc!important}
   .quizup-admin-topbar{height:68px!important}
   .admin-top-title b{font-size:15px!important}
 }
+
+/* v38.4 - artes personalizadas e avatar somente do inventário */
+.avatar-inventory-note{max-width:520px;margin:10px auto;padding:10px 12px;border:1px solid #d9d2c9;border-radius:12px;background:#fff;color:#666;font-size:12px;text-align:center}
+.title-art,.title-art-inline,.title-art-chip,.badge-art,.badge-art-inline,.effect-art-inline{object-fit:contain;display:inline-block;vertical-align:middle;max-width:100%;}
+.title-art-inline{width:24px;height:24px}.title-art-chip{width:24px;height:24px}.badge-art-inline{width:22px;height:22px}.effect-art-inline{width:22px;height:22px}
+.profile-title-chip{display:inline-flex!important;align-items:center;gap:6px!important}.profile-title-chip img{border-radius:6px}
+.achievement-icon img{width:48px;height:48px;object-fit:contain;border-radius:10px;display:block}
+.admin-media-row{display:flex;align-items:center;gap:10px;min-width:0}.admin-asset-thumb{width:52px;height:52px;object-fit:contain;border-radius:10px;background:#f3f3f3;border:1px solid #e0ddd8;flex:0 0 52px}
+.admin-media-row>div{min-width:0}.admin-media-row .muted{overflow-wrap:anywhere}
