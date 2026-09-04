@@ -1,28 +1,37 @@
-# QuizUp v36.2.5
+# QuizUp v36.2.7.1 — Mercado Pago
 
-## Publicação
-Envie o conteúdo desta pasta para o repositório do QuizUp. O `index.html` usa `style-neo.css?v=36.2.5` para evitar cache antigo.
+Esta versão parte da base funcional v36.2.4 e adiciona pagamento real preparado via Mercado Pago + Supabase Edge Functions.
 
-## Supabase
-Execute **somente** `quizup_v36_2_5_MIGRATION.sql` depois de ter aplicado a migration v36.2.4. Esta migration é idempotente para as novas estruturas e adiciona:
-- recusa de desafios com aviso único ao desafiante;
-- histórico finalizado de vitórias/derrotas/empates contra cada amigo;
-- pacotes de QuizCoins editáveis pelo administrador;
-- lista de contas no painel;
-- RPC segura para o administrador conceder/remover títulos.
+## O que foi adicionado
+- Compra de QuizCoins com pacotes definidos pelo administrador.
+- Pedido criado no servidor com preço/quantidade vindos do banco.
+- Checkout Pro do Mercado Pago.
+- Webhook assinado e validado.
+- Consulta server-side do pagamento.
+- Conferência do valor pago contra o pedido.
+- Crédito atômico das Coins.
+- Ledger idempotente contra crédito duplicado.
+- Histórico de compras do jogador.
+- Painel administrativo com pacotes, vendas e controle Mercado Pago.
+- Proteção de cadastro: senha mínima 6, somente letras/números; username único.
 
-## Retorno ao aplicativo
-A rota atual fica salva em `sessionStorage`, inclusive loja, amigos, perfil e partida. Ao recarregar/voltar de outro aplicativo, o cliente tenta restaurar a tela anterior; se houver partida, consulta o estado atual no Supabase.
+## Supabase — ordem
+1. Execute `quizup_v36_2_7_MIGRATION_COMPLETA.sql`.
+2. Publique `supabase/functions/create-coin-payment/index.ts` como função `create-coin-payment`.
+3. Publique `supabase/functions/mercadopago-webhook/index.ts` como função `mercadopago-webhook`. O `supabase/config.toml` deste ZIP deixa o webhook sem JWT porque ele é chamado pelo Mercado Pago; a função valida a assinatura HMAC.
+4. Configure os Secrets: `MERCADOPAGO_ACCESS_TOKEN`, `MERCADOPAGO_WEBHOOK_SECRET`, `QUIZUP_APP_URL`. As variáveis `SUPABASE_URL`, `SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY` são fornecidas pelo ambiente das Edge Functions; não copie a service role para o frontend.
+5. No Mercado Pago, abra Sua aplicação > Webhooks > Configurar notificações. Informe a URL HTTPS `https://SEU-PROJETO.supabase.co/functions/v1/mercadopago-webhook` e ative o evento de Pagamentos.
+6. Salve a configuração e use a opção Simular para verificar a entrega do webhook.
+7. No QuizUp, entre como administrador e ative `Mercado Pago` em Controle de compras.
 
-## Contas
-O painel mostra nome/e-mail das contas por meio da RPC `admin_list_accounts`. O botão de redefinição usa o fluxo de recuperação de senha do Supabase.
+## Teste
+Comece com as credenciais de teste do Mercado Pago. Crie/obtenha uma conta compradora de teste. O Checkout Pro redireciona o jogador para o Mercado Pago. As credenciais de teste não movimentam dinheiro real. Para testar a recepção do webhook, use a simulação do painel do Mercado Pago; a documentação oficial informa que pagamentos de teste não enviam notificações reais.
 
-### Alteração de e-mail pelo administrador
-A pasta `supabase/functions/admin-account-action/index.ts` é uma Edge Function. Para ativar o botão **ALTERAR E-MAIL**, publique essa função no seu projeto Supabase e mantenha `SUPABASE_SERVICE_ROLE_KEY` somente como secret da função. Nunca coloque essa chave no `app.js`, `config.js` ou GitHub.
+## Produção
+Depois de validar, troque o `MERCADOPAGO_ACCESS_TOKEN` para o token de produção e configure a aplicação/webhook de produção. Nunca publique o Access Token ou a chave secreta do webhook no GitHub.
 
 
-## v36.2.6 - segurança de cadastro
-- Senha: mínimo de 6 caracteres, somente letras e números.
-- Nome de usuário: 3 a 20 caracteres, letras/números/underscore, único sem diferenciar maiúsculas/minúsculas.
-- E-mail: normalizado para minúsculas; a unicidade é garantida pelo Supabase Auth.
-- Execute `quizup_v36_2_6_SECURITY_MIGRATION.sql` depois da migration v36.2.5.
+## Correção da migration v36.2.7.1
+
+A migration foi corrigida para criar `public.premium_store_settings` antes de qualquer referência a ela.
+Use somente `quizup_v36_2_7_MIGRATION_COMPLETA.sql` desta versão.

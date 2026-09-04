@@ -1,0 +1,5 @@
+[functions.create-coin-payment]
+verify_jwt = true
+
+[functions.mercadopago-webhook]
+verify_jwt = false
