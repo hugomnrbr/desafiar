@@ -715,3 +715,12 @@ html,body,#app{background:#03050a!important;color:#f7f9fc!important}
 .inventory-card .inventory-art:has(img[src*=".gif"]){overflow:hidden}
 @media(max-width:520px){.profile-cover{min-height:300px}.premium-background-card .premium-art{height:92px}.admin-premium-thumb{width:64px;height:44px}}
 .check-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #263544;border-radius:10px;background:#0d141d;font-size:11px;font-weight:800;color:#dbe4ef}.check-row input{accent-color:#ff7a00;width:16px;height:16px}.admin-premium-thumb{width:92px;height:58px;object-fit:cover;border-radius:8px;border:1px solid #263544;background:#0a1017}.admin-media-row{display:flex;gap:12px;align-items:center}.background-type-wrap{padding:10px;border:1px solid #263544;border-radius:10px;background:#0d141d}
+
+/* v38.9.1 — correção de moldura duplicada e título de administrador */
+.avatar-frame-shell.premium-frame:after{display:none!important;content:none!important}
+.avatar-frame-overlay{z-index:3!important;pointer-events:none!important}
+.admin-title-locked{align-items:center}
+.admin-title-fixed{font-weight:1000;font-size:15px;padding:8px 12px;border:1px solid rgba(255,210,26,.55);border-radius:10px;background:rgba(255,210,26,.08)}
+
+/* v39.0 — personalização dos títulos: cor e fonte escolhidas pelo administrador */
+.title-color-row{display:grid;grid-template-columns:64px 1fr;gap:8px;align-items:center}.title-color-row input[type=color]{height:46px;padding:4px}.title-live-preview{padding:14px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff12;font-weight:800}.title-live-preview span{color:var(--title-color,#ffd21a);font-family:var(--title-font,Inter),sans-serif;font-weight:950}.premium-mini-title,.profile-main-title-display,.profile-title-chip .title-effect-fire,.profile-title-chip .title-effect-water,.profile-title-chip .title-effect-earth,.profile-title-chip .title-effect-air,.profile-title-chip .title-effect-lightning,.profile-title-chip .title-effect-darkness,.profile-title-chip .title-effect-light,.profile-title-chip .title-effect-gold,.profile-title-chip .title-effect-silver,.profile-title-chip .title-effect-bronze,.profile-title-chip .title-effect-vip,.profile-title-chip .title-effect-diamond,.profile-title-chip .title-effect-ruby,.profile-title-chip .title-effect-emerald{color:var(--title-color,#ffd21a)!important;font-family:var(--title-font,Inter),sans-serif!important}.profile-main-title-display{font-weight:950}

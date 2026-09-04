@@ -134,3 +134,10 @@ Não é necessário repetir as migrations antigas.
 
 ### v38.9 — Vendas de Títulos, Emblemas e Fundos
 Execute `quizup_v38_9_MIGRATION_VENDAS_TITULOS_EMBLEMAS_FUNDOS.sql` após a v38.8. Títulos vendidos agora entregam `user_titles` e ativam o título real com nome + efeito; emblemas e fundos possuem fluxo próprio de venda/ativação no painel administrativo.
+
+## v38.9.1 — Correções de títulos e molduras
+- Administradores usam sempre o título principal de sistema `👑 Administrador`.
+- Títulos comprados continuam individuais por usuário; listas de títulos de um jogador nunca são reutilizadas para outro perfil.
+- IDs internos como `custom-...` não são exibidos como título público.
+- Molduras PNG transparentes são renderizadas como uma única camada sobre o avatar, sem segunda borda CSS.
+- Execute `quizup_v38_9_1_MIGRATION_CORRECOES_TITULO_ADMIN_MOLDURA.sql` após a v38.9.
