@@ -107,3 +107,11 @@ Execute `quizup_v37_MIGRATION_COMPLETA.sql` no Supabase SQL Editor depois de apl
 - O jogador pode ativar ou desativar um avatar/item do inventário.
 - O painel de contas usa uma RPC administrativa mais robusta para listar contas registradas.
 - Execute `quizup_v38_4_MIGRATION_AVATARES_ARTES.sql` após a migration v38.
+
+
+## v38.5 — Contas e molduras
+- A RPC `admin_list_accounts` foi corrigida para não depender de uma coluna `created_at` inexistente em `profiles`.
+- O painel atualiza automaticamente depois de carregar as contas.
+- Molduras usam canvas oficial 256×256 px e são renderizadas como camada sobre o avatar.
+- Para criar uma moldura, envie PNG/WebP/GIF quadrado com centro transparente; o avatar fica por baixo.
+- O jogador continua sem upload de foto própria: o avatar vem exclusivamente do inventário.
