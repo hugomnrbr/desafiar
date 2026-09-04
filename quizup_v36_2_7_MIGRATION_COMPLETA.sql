@@ -6,117 +6,8 @@ create unique index if not exists profiles_username_lower_unique on public.profi
 create or replace function public.is_username_available(p_username text) returns boolean language sql security definer set search_path=public as $$ select not exists(select 1 from public.profiles where lower(username)=lower(trim(p_username))); $$;
 revoke all on function public.is_username_available(text) from public; grant execute on function public.is_username_available(text) to anon,authenticated;
 
--- 2. Controle da loja/pagamentos
--- Corrigido: a tabela precisa existir ANTES de qualquer ALTER ou função que a referencie.
-create table if not exists public.premium_store_settings (
-  id integer primary key check (id = 1),
-  enabled boolean not null default true,
-  cosmetics_enabled boolean not null default true,
-  vip_enabled boolean not null default true,
-  coins_enabled boolean not null default true,
-  pass_enabled boolean not null default true,
-  payments_enabled boolean not null default false,
-  updated_at timestamptz not null default now()
-);
-
-alter table public.premium_store_settings
-  add column if not exists enabled boolean not null default true,
-  add column if not exists cosmetics_enabled boolean not null default true,
-  add column if not exists vip_enabled boolean not null default true,
-  add column if not exists coins_enabled boolean not null default true,
-  add column if not exists pass_enabled boolean not null default true,
-  add column if not exists payments_enabled boolean not null default false,
-  add column if not exists updated_at timestamptz not null default now();
-
-insert into public.premium_store_settings
-  (id, enabled, cosmetics_enabled, vip_enabled, coins_enabled, pass_enabled, payments_enabled)
-values
-  (1, true, true, true, true, true, false)
-on conflict (id) do nothing;
-
--- 2.1. Compatibilidade: cria as tabelas premium somente se uma instalação anterior ainda não as tiver.
--- Se elas já existirem, nada é alterado aqui.
-create table if not exists public.premium_items (
-  id text primary key,
-  name text not null,
-  category text not null,
-  description text,
-  price_cents integer not null default 0,
-  price_coins bigint not null default 0,
-  promo_price_cents integer,
-  promo_price_coins bigint,
-  promo_active boolean not null default false,
-  promo_expires_at timestamptz,
-  icon text,
-  asset_url text,
-  kind text,
-  active boolean not null default true,
-  created_by uuid references public.profiles(id) on delete set null,
-  created_at timestamptz not null default now()
-);
-
-create table if not exists public.user_premium_items (
-  user_id uuid not null references public.profiles(id) on delete cascade,
-  item_id text not null references public.premium_items(id) on delete cascade,
-  active boolean not null default false,
-  purchased_at timestamptz not null default now(),
-  primary key (user_id, item_id)
-);
-
-alter table public.premium_items enable row level security;
-drop policy if exists "premium items read active" on public.premium_items;
-create policy "premium items read active"
-  on public.premium_items for select
-  to anon, authenticated
-  using (active = true or exists (
-    select 1 from public.profiles p
-    where p.id = auth.uid() and p.role = 'admin'
-  ));
-
-drop policy if exists "premium items admin insert" on public.premium_items;
-create policy "premium items admin insert"
-  on public.premium_items for insert
-  to authenticated
-  with check (exists (
-    select 1 from public.profiles p
-    where p.id = auth.uid() and p.role = 'admin'
-  ));
-
-drop policy if exists "premium items admin update" on public.premium_items;
-create policy "premium items admin update"
-  on public.premium_items for update
-  to authenticated
-  using (exists (
-    select 1 from public.profiles p
-    where p.id = auth.uid() and p.role = 'admin'
-  ))
-  with check (exists (
-    select 1 from public.profiles p
-    where p.id = auth.uid() and p.role = 'admin'
-  ));
-
-alter table public.user_premium_items enable row level security;
-drop policy if exists "user premium own read" on public.user_premium_items;
-create policy "user premium own read"
-  on public.user_premium_items for select
-  to authenticated
-  using (user_id = auth.uid());
-
-drop policy if exists "user premium own insert" on public.user_premium_items;
-create policy "user premium own insert"
-  on public.user_premium_items for insert
-  to authenticated
-  with check (user_id = auth.uid());
-
-drop policy if exists "user premium own update" on public.user_premium_items;
-create policy "user premium own update"
-  on public.user_premium_items for update
-  to authenticated
-  using (user_id = auth.uid())
-  with check (user_id = auth.uid());
-
--- Garante que a coluna de Coins exista em instalações que ainda não receberam essa parte.
-alter table public.profiles add column if not exists coins bigint not null default 0;
+-- 2. Controle de pagamentos
+alter table public.premium_store_settings add column if not exists payments_enabled boolean not null default false;
 
 -- 3. Pacotes de Coins
 create table if not exists public.coin_packages(id uuid primary key default gen_random_uuid(),name text not null,coins bigint not null check(coins>0),price_cents integer not null check(price_cents>0),active boolean not null default true,sort_order integer not null default 0,created_at timestamptz not null default now(),created_by uuid references public.profiles(id) on delete set null);
@@ -204,3 +95,116 @@ grant execute on function public.admin_set_player_title(uuid,text) to authentica
 
 -- 10. Índices úteis
 create index if not exists coin_orders_external_ref_idx on public.coin_orders(external_reference);
+
+
+-- 11. MERCADO PAGO DESATIVADO POR PADRÃO (estrutura permanece pronta)
+update public.premium_store_settings set payments_enabled=false where id=1;
+
+-- 12. Coins: crédito manual seguro pelo administrador
+create or replace function public.admin_grant_coins(p_username text,p_amount bigint,p_reason text default 'Crédito manual do administrador')
+returns jsonb language plpgsql security definer set search_path=public as $$
+declare target public.profiles; bal bigint; src text;
+begin
+  if not exists(select 1 from public.profiles where id=auth.uid() and role='admin') then raise exception 'Acesso negado'; end if;
+  if p_amount is null or p_amount <= 0 then raise exception 'Quantidade de Coins inválida'; end if;
+  select * into target from public.profiles where lower(username)=lower(trim(p_username)) limit 1;
+  if target.id is null then raise exception 'Jogador não encontrado'; end if;
+  src:='admin_grant_'||gen_random_uuid()::text;
+  update public.profiles set coins=coalesce(coins,0)+p_amount where id=target.id returning coins into bal;
+  insert into public.coin_ledger(user_id,amount,source_type,source_id,description)
+    values(target.id,p_amount,'admin_grant',src,coalesce(nullif(trim(p_reason),''),'Crédito manual do administrador'));
+  return jsonb_build_object('ok',true,'user_id',target.id,'username',target.username,'coins',p_amount,'balance',bal);
+end $$;
+revoke all on function public.admin_grant_coins(text,bigint,text) from public;
+grant execute on function public.admin_grant_coins(text,bigint,text) to authenticated;
+
+-- 13. Suporte / conversa com a equipe
+create table if not exists public.support_threads(
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  status text not null default 'open' check(status in ('open','closed')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create unique index if not exists support_threads_one_per_user on public.support_threads(user_id);
+create index if not exists support_threads_updated_idx on public.support_threads(updated_at desc);
+
+create table if not exists public.support_messages(
+  id uuid primary key default gen_random_uuid(),
+  thread_id uuid not null references public.support_threads(id) on delete cascade,
+  sender_id uuid not null references public.profiles(id) on delete cascade,
+  message text not null check(length(trim(message)) between 1 and 1000),
+  created_at timestamptz not null default now()
+);
+create index if not exists support_messages_thread_idx on public.support_messages(thread_id,created_at);
+
+alter table public.support_threads enable row level security;
+alter table public.support_messages enable row level security;
+
+drop policy if exists "support threads own read" on public.support_threads;
+create policy "support threads own read" on public.support_threads for select to authenticated
+using(user_id=auth.uid() or exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin'));
+drop policy if exists "support threads own insert" on public.support_threads;
+create policy "support threads own insert" on public.support_threads for insert to authenticated
+with check(user_id=auth.uid());
+drop policy if exists "support threads admin update" on public.support_threads;
+create policy "support threads admin update" on public.support_threads for update to authenticated
+using(exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin'))
+with check(exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin'));
+
+drop policy if exists "support messages participants read" on public.support_messages;
+create policy "support messages participants read" on public.support_messages for select to authenticated
+using(
+  exists(select 1 from public.support_threads t where t.id=thread_id and
+    (t.user_id=auth.uid() or exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin')))
+);
+drop policy if exists "support messages participant insert" on public.support_messages;
+create policy "support messages participant insert" on public.support_messages for insert to authenticated
+with check(
+  sender_id=auth.uid() and
+  exists(select 1 from public.support_threads t where t.id=thread_id and
+    (t.user_id=auth.uid() or exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin')))
+);
+
+-- 14. Sessão única por conta: o último aparelho conectado derruba o anterior
+create table if not exists public.quizup_active_sessions(
+  user_id uuid primary key references public.profiles(id) on delete cascade,
+  session_id text not null,
+  last_seen_at timestamptz not null default now()
+);
+create index if not exists quizup_active_sessions_seen_idx on public.quizup_active_sessions(last_seen_at);
+
+alter table public.quizup_active_sessions enable row level security;
+drop policy if exists "quizup sessions own read" on public.quizup_active_sessions;
+create policy "quizup sessions own read" on public.quizup_active_sessions for select to authenticated using(user_id=auth.uid());
+
+create or replace function public.claim_quizup_session(p_session_id text)
+returns boolean language plpgsql security definer set search_path=public as $$
+begin
+  if auth.uid() is null or nullif(trim(p_session_id),'') is null then return false; end if;
+  insert into public.quizup_active_sessions(user_id,session_id,last_seen_at)
+    values(auth.uid(),trim(p_session_id),now())
+  on conflict(user_id) do update set session_id=excluded.session_id,last_seen_at=now();
+  return true;
+end $$;
+create or replace function public.touch_quizup_session(p_session_id text)
+returns boolean language sql security definer set search_path=public as $$
+  update public.quizup_active_sessions
+    set last_seen_at=now()
+  where user_id=auth.uid() and session_id=trim(p_session_id)
+  returning true;
+$$;
+create or replace function public.release_quizup_session(p_session_id text)
+returns boolean language sql security definer set search_path=public as $$
+  delete from public.quizup_active_sessions where user_id=auth.uid() and session_id=trim(p_session_id)
+  returning true;
+$$;
+revoke all on function public.claim_quizup_session(text) from public;
+revoke all on function public.touch_quizup_session(text) from public;
+revoke all on function public.release_quizup_session(text) from public;
+grant execute on function public.claim_quizup_session(text) to authenticated;
+grant execute on function public.touch_quizup_session(text) to authenticated;
+grant execute on function public.release_quizup_session(text) to authenticated;
+
+-- 15. Reações: índice e proteção contra spam/duplicação
+create index if not exists match_reactions_match_created_idx on public.match_reactions(match_id,created_at desc);

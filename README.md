@@ -1,4 +1,4 @@
-# QuizUp v36.2.7.1 — Mercado Pago
+# QuizUp v36.2.7 — Mercado Pago
 
 Esta versão parte da base funcional v36.2.4 e adiciona pagamento real preparado via Mercado Pago + Supabase Edge Functions.
 
@@ -31,7 +31,16 @@ Comece com as credenciais de teste do Mercado Pago. Crie/obtenha uma conta compr
 Depois de validar, troque o `MERCADOPAGO_ACCESS_TOKEN` para o token de produção e configure a aplicação/webhook de produção. Nunca publique o Access Token ou a chave secreta do webhook no GitHub.
 
 
-## Correção da migration v36.2.7.1
+## Recursos desta versão
+- Mercado Pago fica **OFF** por padrão e não pode ser ativado pelo painel enquanto esta versão estiver desativada. A estrutura de Checkout/Webhook permanece no projeto para ativação futura.
+- QuizCoins são concedidas automaticamente ao finalizar partidas online por `award_match_coins`.
+- Administrador pode enviar Coins manualmente pelo painel; o crédito passa por `admin_grant_coins` e entra no ledger.
+- Loja usa QuizCoins para cosméticos, VIP e outros itens; compra com dinheiro fica bloqueada enquanto Mercado Pago estiver OFF.
+- Área de Suporte com conversa jogador ↔ administrador.
+- Reações de partida passaram a usar o INSERT do banco como fonte de sincronização, evitando duplicação entre Broadcast e Postgres.
+- Sessão única por conta: o último aparelho conectado assume a conta e o aparelho anterior é desconectado pela verificação de sessão.
+- Ao trocar de aplicativo/janela, a tela da partida não é abandonada; ao retornar, o estado autoritativo é sincronizado novamente.
+- Indicador `+18` aparece logo abaixo dos avatares durante a partida e possui animação de desaparecimento.
 
-A migration foi corrigida para criar `public.premium_store_settings` antes de qualquer referência a ela.
-Use somente `quizup_v36_2_7_MIGRATION_COMPLETA.sql` desta versão.
+## SQL adicional
+Execute o arquivo `quizup_v36_2_7_MIGRATION_COMPLETA.sql` completo. A parte final cria as tabelas/RPCs de Coins administrativas, suporte e sessão única. 

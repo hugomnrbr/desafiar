@@ -356,3 +356,16 @@ html,body,#app{background:#03050a!important;color:#f7f9fc!important}
 
 /* v36.2.7 Mercado Pago */
 .payment-return{margin:12px 0;border-color:#6b5712!important;color:#ffe68a!important;background:#15130a!important}.payment-return.payment-ok{border-color:#1f7a4f!important;color:#8affc5!important;background:#071b12!important}.coin-order-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #ffffff10}.coin-order-row:last-child{border-bottom:0}.coin-order-row span{font-weight:900;color:#ffd21a}.coin-order-row small{color:#aab3c3}
+
+/* v36.2.7 — melhorias Coins, suporte, sessão e +18 */
+.mp-disabled{opacity:.65;display:flex;align-items:center;gap:8px}
+.mp-disabled b{font-size:10px;padding:3px 7px;border-radius:999px;background:#3a1520;border:1px solid #ff526b55;color:#ff91a3}
+.coin-shop-card .coin-package{transition:transform .15s ease}
+.coin-shop-card .coin-package:active{transform:scale(.98)}
+.support-page{padding-bottom:20px}
+.support-messages{min-height:280px;max-height:55vh;overflow:auto;display:flex;flex-direction:column;gap:9px;padding:4px}
+.support-msg{max-width:84%;align-self:flex-start;background:#111a29;border:1px solid #ffffff10;border-radius:14px 14px 14px 4px;padding:10px 12px}
+.support-msg.mine{align-self:flex-end;background:#4b1730;border-radius:14px 14px 4px 14px}
+.support-msg small{display:block;color:#8f9aad;font-size:9px;margin-top:4px}
+.age18-badge{display:block;margin:5px auto 0;width:max-content;min-width:34px;text-align:center;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:950;letter-spacing:.4px;color:#fff;border:1px solid #ff4d6d88;background:#35101d;animation:age18Fade 4.5s ease forwards}
+@keyframes age18Fade{0%,65%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-3px);visibility:hidden}}
