@@ -293,3 +293,50 @@ html,body,#app{background:#03050a!important;color:#f7f9fc!important}
 
 /* qualquer card/lista dentro das páginas clássicas */
 .classic-page .card,.classic-page .list,.topic-detail .list,.friends .card,.chat-page .card,.notifications-page .card,.achievements-page .card,.contribute-page .card{background:linear-gradient(145deg,#101923,#0a1119)!important;color:#f7f9fc!important;border-color:#263544!important}
+
+/* v36.1.3 — duelo: reações, empate e home */
+.top-gear{font-size:22px!important;color:#ffd21a!important}
+.profile-numbers{grid-template-columns:repeat(4,1fr)!important}
+.classic-profile-grid{grid-template-columns:repeat(5,1fr)!important}
+.match-reaction-bar{position:relative;z-index:30;display:flex;justify-content:center;align-items:center;gap:8px;margin:10px 4px 0}
+.match-emoji-open{border:1px solid #394654!important;background:#121923!important;color:#ffd21a!important;border-radius:999px!important;padding:8px 14px!important;font-weight:900!important}
+.match-emoji-picker{position:relative;z-index:40;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:8px 12px;padding:9px;background:#0e151e;border:1px solid #293746;border-radius:14px;box-shadow:0 12px 28px rgba(0,0,0,.45)}
+.match-emoji{width:34px;height:34px;border-radius:10px;border:1px solid #293746!important;background:#151e28!important;font-size:19px!important}
+.neon-vs-wrap{position:relative;display:grid;place-items:center}
+.match-reactions{position:absolute;top:-27px;display:flex;gap:2px;pointer-events:none}
+.match-reaction{font-size:17px;filter:drop-shadow(0 0 7px rgba(255,210,26,.35));animation:reactionFloat 1.7s ease-out forwards}
+.match-reaction.mine{transform:translateY(2px)}
+.last-reaction{font-size:22px;animation:reactionPop .35s ease-out}
+@keyframes reactionPop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes reactionFloat{0%{transform:translateY(8px) scale(.7);opacity:0}20%{opacity:1}100%{transform:translateY(-10px) scale(1);opacity:0}}
+@media(max-width:520px){.profile-numbers{grid-template-columns:repeat(4,1fr)!important}.classic-profile-grid{grid-template-columns:repeat(2,1fr)!important}}
+/* =========================================================
+   v36.2 — QUIZUP PREMIUM / COSMÉTICOS
+   ========================================================= */
+.premium-store{min-height:calc(100vh - 70px);padding:14px 2px 30px;background:radial-gradient(circle at 50% 0%,rgba(255,210,26,.08),transparent 28%),#05080d;color:#f7f9fc}
+.premium-store-hero{display:flex;justify-content:space-between;gap:14px;align-items:stretch;padding:20px;border:1px solid #293746;border-radius:22px;background:linear-gradient(145deg,#111a25,#090f16);box-shadow:0 18px 45px rgba(0,0,0,.3)}
+.premium-store-hero>div:first-child{flex:1}.premium-store-hero span,.premium-section-head b,.premium-tag{color:#ffd21a;font-weight:900;letter-spacing:.12em;font-size:11px}.premium-store-hero h1{font-size:28px;margin:7px 0}.premium-store-hero p,.premium-card p,.vip-card p,.premium-pass p{color:#8995a5;font-size:12px;line-height:1.45;margin:5px 0}
+.coin-balance{min-width:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;border:1px solid rgba(255,210,26,.35);border-radius:16px;background:rgba(255,210,26,.05)}.coin-balance b{font-size:20px;color:#ffd21a}.coin-balance small{color:#8995a5;margin-bottom:8px}.premium-buy-coins{background:#121923;border:1px solid #384755;color:#ffd21a;border-radius:9px;padding:8px;font-size:9px;font-weight:900}
+.vip-card,.premium-pass{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:14px;padding:18px;border-radius:20px;border:1px solid rgba(255,210,26,.35);background:radial-gradient(circle at 90% 20%,rgba(255,210,26,.16),transparent 30%),linear-gradient(145deg,#17140a,#0b1119)}.vip-card b,.premium-pass span{color:#ffd21a;letter-spacing:.1em;font-size:11px}.vip-card h2,.premium-pass h2{margin:5px 0;font-size:20px}.premium-cta{background:linear-gradient(135deg,#ffd21a,#f0a900);color:#111;border:0;border-radius:12px;padding:12px 15px;font-weight:950;white-space:nowrap}
+.premium-section-head{display:flex;justify-content:space-between;align-items:center;margin:22px 3px 9px}.premium-section-head span{color:#687586;font-size:10px}.premium-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.premium-card{display:flex;flex-direction:column;gap:9px;min-width:0;padding:11px;border:1px solid #263544;border-radius:16px;background:linear-gradient(145deg,#101923,#0a1119)}.premium-card.owned{border-color:rgba(255,210,26,.5);box-shadow:0 0 18px rgba(255,210,26,.07)}.premium-art{height:88px;display:grid;place-items:center;border-radius:13px;background:radial-gradient(circle,#263342,#101923);font-size:45px;border:1px solid #2c3b4a}.premium-art.frame{box-shadow:inset 0 0 30px rgba(255,210,26,.12)}.premium-art.effect{background:radial-gradient(circle,rgba(255,210,26,.16),#101923)}.premium-card h3{font-size:13px;margin:3px 0}.premium-item-btn{width:100%;background:#121b25;border:1px solid #344454;color:#ffd21a;border-radius:9px;padding:8px 5px;font-size:10px;font-weight:950}.premium-card.owned .premium-item-btn{background:rgba(53,238,131,.08);border-color:#2d8051;color:#35ee83}
+.premium-tabs{display:flex;gap:6px;overflow:auto;padding-bottom:5px}.premium-tabs button{background:#101923;color:#8e9aa8;border:1px solid #263544;border-radius:999px;padding:8px 11px;font-size:10px;font-weight:900;white-space:nowrap}.premium-tabs button:focus,.premium-tabs button:active{background:#ffd21a;color:#111}.premium-pass{margin-bottom:15px}.premium-pass h2{color:#fff}.premium-profile-strip{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 12px;padding:11px 12px;border:1px solid rgba(255,210,26,.28);border-radius:14px;background:linear-gradient(145deg,#15140c,#0d141d)}.premium-profile-strip>div{display:flex;align-items:center;gap:8px}.premium-profile-strip>div span{font-size:22px}.premium-profile-strip b{font-size:12px;color:#fff}.premium-profile-strip small{display:block;color:#8995a5;font-size:9px}.premium-mini-btn{background:#ffd21a;color:#111;border:0;border-radius:9px;padding:8px 10px;font-weight:950;font-size:9px}.premium-badge{display:inline-block;margin-left:4px;padding:2px 5px;border-radius:5px;background:#ffd21a;color:#111;font-style:normal;font-size:8px;font-weight:950}.premium-game-title{display:block!important;color:#ffd21a!important;font-size:8px!important;font-weight:800}.premium-store .secondary{margin-top:12px}
+@media(max-width:520px){.premium-store-hero{flex-direction:column}.coin-balance{min-width:0}.premium-grid{grid-template-columns:repeat(2,1fr)}.vip-card,.premium-pass{flex-direction:column;align-items:stretch}.premium-cta{width:100%}}
+/* molduras premium aplicadas ao avatar do próprio jogador */
+.premium-frame{position:relative!important;isolation:isolate}.premium-frame:after{content:'';position:absolute;inset:-5px;border-radius:50%;pointer-events:none}.premium-frame.frame-vip:after{border:3px solid #ffd21a;box-shadow:0 0 18px rgba(255,210,26,.7),inset 0 0 8px rgba(255,210,26,.35)}.premium-frame.frame-diamond:after{border:3px solid #9de7ff;box-shadow:0 0 18px rgba(120,220,255,.65),inset 0 0 8px rgba(170,240,255,.3)}.premium-frame.frame-galaxy:after{border:3px solid #b67cff;box-shadow:0 0 20px rgba(182,124,255,.7),inset 0 0 10px rgba(100,70,255,.3)}
+
+/* QuizUp v36.2.1 — persistência de cosméticos, reações e loja admin */
+.premium-name-glow{color:#ffd21a!important;text-shadow:0 0 7px rgba(255,210,26,.65),0 0 16px rgba(255,210,26,.28)}
+.premium-badge{display:inline-block!important;margin-left:4px;padding:2px 5px;border:1px solid #ffd21a;border-radius:5px;color:#ffd21a!important;background:rgba(255,210,26,.08);font-size:7px!important;font-weight:1000!important;letter-spacing:.8px;vertical-align:middle}
+.premium-art img{max-width:82%;max-height:82%;width:auto;height:auto;object-fit:contain;border-radius:10px;filter:drop-shadow(0 0 9px rgba(255,210,26,.18))}
+.avatar-reaction-bubble{position:absolute;z-index:20;top:-19px;right:-12px;min-width:25px;height:25px;padding:2px 4px;border-radius:999px;background:#101722;border:2px solid #ffd21a;display:grid;place-items:center;font-size:16px;box-shadow:0 0 12px rgba(255,210,26,.45);animation:avatarReactionPop .28s ease-out}
+.avatar-reaction-bubble.opponent{right:auto;left:-12px}
+@keyframes avatarReactionPop{from{transform:scale(.3) translateY(8px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.match-reaction-bar{margin-top:12px!important}
+.match-emoji-open{border:1px solid #ffd21a!important;background:#151b24!important;color:#ffd21a!important;border-radius:999px!important;padding:8px 14px!important;font-weight:900!important}
+.match-emoji-picker{position:relative;z-index:50;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:8px auto;padding:8px;border:1px solid #303b4a;border-radius:14px;background:#0b1119;box-shadow:0 10px 28px rgba(0,0,0,.4)}
+.match-emoji{width:39px;height:39px;border:1px solid #263544;border-radius:10px;background:#121b25;color:#fff;font-size:20px;cursor:pointer}
+.match-emoji:active{transform:scale(.9);border-color:#ffd21a}
+.premium-store .form input,.premium-store .form textarea,.premium-store .form select,.form input,.form textarea,.form select{background:#0b121a;color:#f7f9fc;border-color:#293747}
+.home-name.premium-name-glow h1{color:#ffd21a!important}
+.premium-theme-theme-gold{background:radial-gradient(circle at 50% 0%,rgba(255,210,26,.14),transparent 45%),#070b11!important}
+.premium-theme-theme-galaxy{background:radial-gradient(circle at 50% 0%,rgba(150,80,255,.18),transparent 45%),#070b11!important}
