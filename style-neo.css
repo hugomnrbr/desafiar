@@ -724,3 +724,31 @@ html,body,#app{background:#03050a!important;color:#f7f9fc!important}
 
 /* v39.0 — personalização dos títulos: cor e fonte escolhidas pelo administrador */
 .title-color-row{display:grid;grid-template-columns:64px 1fr;gap:8px;align-items:center}.title-color-row input[type=color]{height:46px;padding:4px}.title-live-preview{padding:14px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff12;font-weight:800}.title-live-preview span{color:var(--title-color,#ffd21a);font-family:var(--title-font,Inter),sans-serif;font-weight:950}.premium-mini-title,.profile-main-title-display,.profile-title-chip .title-effect-fire,.profile-title-chip .title-effect-water,.profile-title-chip .title-effect-earth,.profile-title-chip .title-effect-air,.profile-title-chip .title-effect-lightning,.profile-title-chip .title-effect-darkness,.profile-title-chip .title-effect-light,.profile-title-chip .title-effect-gold,.profile-title-chip .title-effect-silver,.profile-title-chip .title-effect-bronze,.profile-title-chip .title-effect-vip,.profile-title-chip .title-effect-diamond,.profile-title-chip .title-effect-ruby,.profile-title-chip .title-effect-emerald{color:var(--title-color,#ffd21a)!important;font-family:var(--title-font,Inter),sans-serif!important}.profile-main-title-display{font-weight:950}
+
+/* v39.0.3 - emblemas animados e correções visuais */
+.avatar-frame-shell{isolation:isolate!important;overflow:visible!important}
+.avatar-badge-overlay{position:absolute!important;inset:-12%!important;width:124%!important;height:124%!important;object-fit:contain!important;z-index:4!important;pointer-events:none!important;border:0!important;background:transparent!important;max-width:none!important;max-height:none!important}
+.avatar-badge-generated{position:absolute!important;inset:-10%!important;border:3px solid currentColor;border-radius:50%;z-index:4!important;pointer-events:none!important;animation:quizupBadgeSpin 2.8s linear infinite;filter:drop-shadow(0 0 6px currentColor);opacity:.95}
+.avatar-frame-shell.badge-effect-fire .avatar-badge-generated{color:#ff6d00}
+.avatar-frame-shell.badge-effect-water .avatar-badge-generated{color:#20cfff}
+.avatar-frame-shell.badge-effect-earth .avatar-badge-generated{color:#8bd450}
+.avatar-frame-shell.badge-effect-air .avatar-badge-generated{color:#dffaff}
+.avatar-frame-shell.badge-effect-darkness .avatar-badge-generated{color:#a56cff}
+.avatar-frame-shell.badge-effect-light .avatar-badge-generated{color:#ffe66d}
+@keyframes quizupBadgeSpin{to{transform:rotate(360deg)}}
+.profile-cover .profile-main-title-display,.profile-cover .profile-owned-titles,.profile-cover h1,.profile-cover p,.profile-cover .profile-avatar-stage{position:relative!important;z-index:20!important;isolation:isolate}
+.profile-cover .profile-main-title-display{opacity:1!important;filter:none!important;text-shadow:inherit!important;background:rgba(5,10,18,.24);padding:5px 10px;border-radius:999px;width:max-content;max-width:95%;margin:5px auto 4px!important}
+.profile-cover .profile-owned-titles{z-index:21!important}
+.profile-cover .profile-avatar-stage{z-index:22!important}
+.profile-cover .profile-background-media{z-index:0!important}
+.profile-cover:before,.profile-cover:after{z-index:1!important}
+.store-title-art{display:inline-block;min-height:28px;font-size:19px;font-weight:950;line-height:1.15;color:var(--title-color,#ffd21a);font-family:var(--title-font,Inter),sans-serif!important;text-align:center}
+.premium-card .premium-art.title{display:grid;place-items:center;padding:12px}
+.quick-play-fab{position:fixed;right:18px;bottom:76px;width:62px;height:62px;border-radius:50%;border:3px solid #35ee83;background:radial-gradient(circle,#ff3159 0 48%,#a91539 49% 100%);color:#fff;font-size:28px;font-weight:950;z-index:1000;box-shadow:0 0 0 8px rgba(53,238,131,.12),0 8px 28px rgba(0,0,0,.45);animation:quickPlayPulse 1.8s infinite}
+@keyframes quickPlayPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.inventory-category{margin-top:12px}.inventory-category-head{display:flex;align-items:center;justify-content:space-between;margin:8px 2px;color:#ffd21a;text-transform:uppercase;font-size:10px;letter-spacing:.7px}.inventory-category-head span{color:#8793a2}
+.support-admin-messages{height:min(52vh,430px);overflow:auto;padding:12px;background:#070c14;border:1px solid #263544;border-radius:12px;display:flex;flex-direction:column;gap:8px;margin:10px 0}.admin-support-chat{width:min(680px,94vw)!important}.support-admin-messages .support-msg{align-self:flex-start;max-width:82%;background:#101923;border:1px solid #263544;border-radius:14px 14px 14px 4px;padding:9px 11px;color:#fff}.support-admin-messages .support-msg.mine{align-self:flex-end;background:#7e1642;border-color:#b42b62;border-radius:14px 14px 4px 14px}.support-admin-messages .support-msg small{display:block;opacity:.6;margin-top:4px;font-size:8px}
+.news-delete-own{color:#ff6a7f!important}
+.title-font-help{font-size:9px;color:#8793a2}
+@media(max-width:520px){.quick-play-fab{right:14px;bottom:72px;width:56px;height:56px}.avatar-badge-overlay{inset:-14%!important;width:128%!important;height:128%!important}.support-admin-messages{height:48vh}}
+.admin-download-link{display:inline-flex!important;align-items:center;justify-content:center;text-decoration:none!important}

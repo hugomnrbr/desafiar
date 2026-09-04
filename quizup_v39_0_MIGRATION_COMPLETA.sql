@@ -1843,6 +1843,15 @@ values ('admin-assets','admin-assets',true)
 on conflict (id) do update set public=true;
 
 -- Regras de efeitos permitidos nos títulos.
+-- Normaliza valores antigos/desconhecidos antes de recriar a constraint,
+-- evitando o erro 23514 quando a base já possui títulos legados.
+update public.titles
+set effect_style = lower(trim(coalesce(effect_style,'none')))
+where effect_style is distinct from lower(trim(coalesce(effect_style,'none')));
+update public.titles
+set effect_style = 'none'
+where effect_style not in ('none','lightning','fire','gold','silver','goldmetal');
+
 alter table public.titles drop constraint if exists titles_effect_style_check;
 alter table public.titles add constraint titles_effect_style_check
 check (effect_style in ('none','lightning','fire','gold','silver','goldmetal'));
@@ -1860,6 +1869,19 @@ update public.premium_items set effect_style='none' where effect_style is null;
 
 alter table if exists public.titles add column if not exists effect_style text not null default 'none';
 update public.titles set effect_style='none' where effect_style is null;
+
+-- Normaliza valores legados antes de aplicar as constraints ampliadas.
+update public.titles
+set effect_style = lower(trim(coalesce(effect_style,'none')));
+update public.titles
+set effect_style = 'none'
+where effect_style not in ('none','fire','water','earth','air','lightning','darkness','light','gold','silver','bronze','vip','diamond','ruby','emerald');
+
+update public.premium_items
+set effect_style = lower(trim(coalesce(effect_style,'none')));
+update public.premium_items
+set effect_style = 'none'
+where effect_style not in ('none','fire','water','earth','air','lightning','darkness','light','gold','silver','bronze','vip','diamond','ruby','emerald');
 
 alter table if exists public.titles drop constraint if exists titles_effect_style_check;
 alter table if exists public.titles add constraint titles_effect_style_check check (effect_style in ('none','fire','water','earth','air','lightning','darkness','light','gold','silver','bronze','vip','diamond','ruby','emerald'));
@@ -2428,3 +2450,210 @@ $$;
 revoke all on function public.active_premium_item(text) from public;
 grant execute on function public.active_premium_item(text) to authenticated;
 
+
+-- ================================================================
+-- v39.0.3 - CORREÇÕES FINAIS: emblemas, inventário, conquistas, suporte,
+-- exclusão de cosméticos e RPC sem sobrecarga ambígua.
+-- ================================================================
+
+-- O PostgREST não deve encontrar duas assinaturas para esta RPC.
+drop function if exists public.activate_premium_item(integer);
+
+-- Campos para fonte personalizada dos títulos.
+alter table if exists public.titles add column if not exists title_font_url text;
+alter table if exists public.titles add column if not exists title_font_asset_url text;
+alter table if exists public.premium_items add column if not exists title_font_url text;
+alter table if exists public.premium_items add column if not exists title_font_asset_url text;
+
+-- Recompensas de conquistas.
+alter table if exists public.achievements add column if not exists reward_type text;
+alter table if exists public.achievements add column if not exists reward_item_id text;
+
+-- Permite que o próprio jogador apague sua publicação.
+drop policy if exists "social posts owner delete" on public.social_posts;
+create policy "social posts owner delete" on public.social_posts
+  for update to authenticated
+  using(user_id=auth.uid() or public.is_admin())
+  with check(user_id=auth.uid() or public.is_admin());
+
+-- Remoção administrativa completa de um item cosmético.
+drop function if exists public.admin_remove_premium_item(text,text);
+drop function if exists public.admin_remove_premium_item(text);
+create or replace function public.admin_remove_premium_item(
+  p_item_id text default null,
+  p_source_type text default null,
+  p_source_id text default null
+)
+returns jsonb
+language plpgsql security definer set search_path=public
+as $$
+declare
+  it public.premium_items;
+  removed_count bigint := 0;
+  source_uuid uuid;
+begin
+  if not exists(select 1 from public.profiles where id=auth.uid() and role='admin') then
+    raise exception 'Acesso negado';
+  end if;
+
+  if coalesce(trim(p_item_id),'')<>'' then
+    select * into it from public.premium_items where id::text=trim(p_item_id) limit 1;
+  else
+    select * into it from public.premium_items
+    where coalesce(source_type,'')=coalesce(p_source_type,'')
+      and coalesce(source_id,'')=coalesce(p_source_id,'')
+    limit 1;
+  end if;
+
+  if it.id is null then
+    raise exception 'Item não encontrado';
+  end if;
+
+  -- Retira a posse dos jogadores.
+  delete from public.user_premium_items where item_id=it.id;
+  get diagnostics removed_count = row_count;
+
+  -- Limpa o slot ativo do perfil de todos os jogadores.
+  if it.kind='frame' then
+    update public.profiles set premium_frame=null where premium_frame=it.id::text;
+  elsif it.kind='avatar' then
+    update public.profiles set premium_avatar=null where premium_avatar=it.id::text;
+  elsif it.kind='effect' then
+    update public.profiles set premium_effect=null where premium_effect=it.id::text;
+  elsif it.kind='theme' then
+    update public.profiles set premium_theme=null where premium_theme=it.id::text;
+  elsif it.kind='background' then
+    update public.profiles set premium_background=null where premium_background=it.id::text;
+  elsif it.kind='badge' then
+    update public.profiles set premium_badge=null where premium_badge=it.id::text;
+  elsif it.kind='title' then
+    update public.profiles set premium_title=null
+      where premium_title=it.id::text;
+  end if;
+
+  -- Títulos reais também deixam de pertencer aos jogadores.
+  if coalesce(it.source_type,'')='title' and coalesce(it.source_id,'')<>'' then
+    begin
+      source_uuid:=it.source_id::uuid;
+      delete from public.user_titles where title_id=source_uuid;
+      update public.profiles set main_title_id=null where main_title_id=source_uuid;
+      update public.titles set active=false where id=source_uuid;
+    exception when others then null;
+    end;
+  elsif coalesce(it.source_type,'')='badge' and coalesce(it.source_id,'')<>'' then
+    begin
+      source_uuid:=it.source_id::uuid;
+      update public.badges set active=false where id=source_uuid;
+    exception when others then null;
+    end;
+  end if;
+
+  update public.premium_items set active=false where id=it.id;
+  return jsonb_build_object('ok',true,'item_id',it.id,'removed_from_inventory',removed_count);
+end $$;
+revoke all on function public.admin_remove_premium_item(text,text,text) from public;
+revoke all on function public.admin_remove_premium_item(text) from public;
+grant execute on function public.admin_remove_premium_item(text,text,text) to authenticated;
+
+-- Conquistas: recompensa é entregue ao inventário no momento do desbloqueio.
+create or replace function public.quizup_notify_achievement()
+returns trigger language plpgsql security definer set search_path=public as $$
+declare
+  a record;
+  it public.premium_items;
+  title_uuid uuid;
+begin
+  select title,description,icon,title_id,reward_type,reward_item_id
+    into a from public.achievements where id=new.achievement_id;
+
+  if a.title_id is not null then
+    insert into public.user_titles(user_id,title_id,is_main)
+    values(new.user_id,a.title_id,false)
+    on conflict(user_id,title_id) do nothing;
+  end if;
+
+  if coalesce(a.reward_item_id,'')<>'' then
+    select * into it from public.premium_items
+    where id::text=a.reward_item_id and active=true limit 1;
+    if it.id is not null then
+      insert into public.user_premium_items(user_id,item_id,active,purchased_at)
+      values(new.user_id,it.id,false,now())
+      on conflict(user_id,item_id) do nothing;
+
+      if it.kind='title' and coalesce(it.source_type,'')='title' and coalesce(it.source_id,'')<>'' then
+        begin
+          title_uuid:=it.source_id::uuid;
+          insert into public.user_titles(user_id,title_id,is_main)
+          values(new.user_id,title_uuid,false)
+          on conflict(user_id,title_id) do nothing;
+        exception when others then null;
+        end;
+      end if;
+    end if;
+  end if;
+
+  insert into public.notifications(recipient_id,actor_id,type,title,body,data)
+  values(new.user_id,null,'achievement',coalesce(a.icon,'🏆')||' Conquista desbloqueada',
+    coalesce(a.description,a.title),
+    jsonb_build_object('achievement_id',new.achievement_id,'title_id',a.title_id,
+      'reward_type',a.reward_type,'reward_item_id',a.reward_item_id));
+  return new;
+end $$;
+
+drop trigger if exists trg_quizup_notify_achievement on public.user_achievements;
+create trigger trg_quizup_notify_achievement after insert on public.user_achievements
+for each row execute function public.quizup_notify_achievement();
+
+-- Reavalia conquistas também quando estatísticas/Coins são atualizados diretamente.
+create or replace function public.quizup_profile_achievements()
+returns trigger language plpgsql security definer set search_path=public as $$
+begin
+  if (new.coins is distinct from old.coins)
+     or (new.wins is distinct from old.wins)
+     or (new.streak is distinct from old.streak) then
+    perform public.quizup_check_achievements(new.id);
+  end if;
+  return new;
+end $$;
+drop trigger if exists trg_quizup_profile_achievements on public.profiles;
+create trigger trg_quizup_profile_achievements after update on public.profiles
+for each row execute function public.quizup_profile_achievements();
+
+-- ================================================================
+-- 6 emblemas de exemplo animados. Os SVGs acompanham o projeto e também
+-- podem ser baixados pelo administrador como modelos para novos emblemas.
+-- ================================================================
+insert into public.store_categories(name,description,icon,sort_order,created_by)
+values ('Emblemas','Emblemas animados que envolvem o avatar do jogador.','🏅',6,null)
+on conflict(name) do update set description=excluded.description,icon=excluded.icon,sort_order=excluded.sort_order;
+
+do $$
+declare
+  r record;
+  b_id uuid;
+  p_id text;
+begin
+  for r in select * from (values
+    ('Fogo','Roda de fogo animada ao redor do avatar.','🔥','fire','assets/emblems/fire.svg'),
+    ('Água','Anel de água animado ao redor do avatar.','💧','water','assets/emblems/water.svg'),
+    ('Terra','Anel de energia terrestre animado ao redor do avatar.','🌍','earth','assets/emblems/earth.svg'),
+    ('Ar','Anel de vento animado ao redor do avatar.','🌪️','air','assets/emblems/air.svg'),
+    ('Trevas','Anel de energia sombria animado ao redor do avatar.','🌑','darkness','assets/emblems/darkness.svg'),
+    ('Luz','Anel de luz animado ao redor do avatar.','✨','light','assets/emblems/light.svg')
+  ) as v(name,description,icon,effect_style,asset_url)
+  loop
+    insert into public.badges(name,description,icon,asset_url,asset_type,active)
+    values(r.name,r.description,r.icon,r.asset_url,'image/svg+xml',true)
+    on conflict(name) do update set description=excluded.description,icon=excluded.icon,asset_url=excluded.asset_url,asset_type=excluded.asset_type,active=true
+    returning id into b_id;
+
+    p_id:='badge-'||replace(lower(r.name),' ','-');
+    insert into public.premium_items(id,name,category,description,price_cents,price_coins,promo_price_cents,promo_price_coins,promo_active,promo_expires_at,icon,asset_url,asset_type,effect_style,kind,source_type,source_id,active,created_by)
+    values(p_id,r.name,'Emblemas',r.description,500,500,null,null,false,null,'',r.asset_url,'image/svg+xml',r.effect_style,'badge','badge',b_id::text,true,null)
+    on conflict(id) do update set name=excluded.name,category=excluded.category,description=excluded.description,price_cents=excluded.price_cents,price_coins=excluded.price_coins,icon=excluded.icon,asset_url=excluded.asset_url,asset_type=excluded.asset_type,effect_style=excluded.effect_style,kind='badge',source_type='badge',source_id=excluded.source_id,active=true;
+  end loop;
+end $$;
+
+-- ================================================================
+-- Fim da v39.0.3
+-- ================================================================

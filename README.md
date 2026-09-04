@@ -141,3 +141,24 @@ Execute `quizup_v38_9_MIGRATION_VENDAS_TITULOS_EMBLEMAS_FUNDOS.sql` após a v38.
 - IDs internos como `custom-...` não são exibidos como título público.
 - Molduras PNG transparentes são renderizadas como uma única camada sobre o avatar, sem segunda borda CSS.
 - Execute `quizup_v38_9_1_MIGRATION_CORRECOES_TITULO_ADMIN_MOLDURA.sql` após a v38.9.
+
+## v39.0.3 — correções finais
+
+Esta versão inclui:
+- botão flutuante de jogar na tela inicial;
+- emblemas animados de Fogo, Água, Terra, Ar, Trevas e Luz, visíveis ao redor do avatar onde o perfil aparece;
+- inventário separado por categoria de origem;
+- correção da RPC ambígua `activate_premium_item`;
+- exclusão administrativa de título/emblema/cosmético removendo também posse e equipamento dos jogadores;
+- bate-papo completo no suporte do administrador;
+- jogador pode apagar a própria publicação de Notícias;
+- conquistas verificadas ao atingir metas e recompensas de itens configuráveis pelo administrador;
+- títulos com cor, efeito e fonte personalizada por URL ou arquivo;
+- prévia em tempo real de título;
+- correção de camadas para títulos ficarem acima de fundos de perfil;
+- logout reforçado para não restaurar a sessão anterior.
+
+### Supabase
+Execute a migration `quizup_v39_0_MIGRATION_COMPLETA.sql` inteira no SQL Editor do Supabase. A parte final marcada como `v39.0.3` cria os ajustes necessários e cadastra os seis emblemas de exemplo.
+
+Os SVGs dos emblemas ficam em `assets/emblems/` e são usados diretamente pela Loja no GitHub Pages.
