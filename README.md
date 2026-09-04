@@ -162,3 +162,14 @@ Esta versão inclui:
 Execute a migration `quizup_v39_0_MIGRATION_COMPLETA.sql` inteira no SQL Editor do Supabase. A parte final marcada como `v39.0.3` cria os ajustes necessários e cadastra os seis emblemas de exemplo.
 
 Os SVGs dos emblemas ficam em `assets/emblems/` e são usados diretamente pela Loja no GitHub Pages.
+
+## v39.1 — correções finais
+- Emojis da partida corrigidos e com intervalo obrigatório de 3 segundos por jogador.
+- Indicador `+18` removido da partida.
+- Títulos novos usam PNG transparente em **600 × 160 px** e são exibidos como arte no perfil, ranking/listas e partida.
+- O administrador escolhe apenas o efeito animado ao redor da arte do título.
+- Exclusão de títulos/emblemas limpa posse, perfil e inventário dos jogadores.
+- Conquistas são reavaliadas ao finalizar partidas e podem entregar título, emblema ou outro item.
+- Painel administrativo ganhou ações para conceder título, emblema e conquista a jogadores.
+- Incluídos seis emblemas animados de exemplo: Fogo, Água, Terra, Ar, Trevas e Luz.
+- Novo SQL: `QUIZUP_V39_1_FIX_FINAL.sql` corrige a ambiguidade das RPCs e o `notifications_type_check`.

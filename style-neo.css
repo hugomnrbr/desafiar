@@ -752,3 +752,62 @@ html,body,#app{background:#03050a!important;color:#f7f9fc!important}
 .title-font-help{font-size:9px;color:#8793a2}
 @media(max-width:520px){.quick-play-fab{right:14px;bottom:72px;width:56px;height:56px}.avatar-badge-overlay{inset:-14%!important;width:128%!important;height:128%!important}.support-admin-messages{height:48vh}}
 .admin-download-link{display:inline-flex!important;align-items:center;justify-content:center;text-decoration:none!important}
+
+/* v39.1 — títulos em PNG 600x160 e emblemas animados */
+.title-visual-shell{display:inline-flex;align-items:center;justify-content:center;position:relative;isolation:isolate;overflow:visible}
+.title-visual-shell:before{content:'';position:absolute;inset:-6px;border-radius:12px;z-index:-1;pointer-events:none;opacity:.9}
+.title-visual-shell.title-effect-fire:before{box-shadow:0 0 8px #ff5a00,0 0 18px #ff9d00;animation:titleFrameFire .65s infinite alternate}
+.title-visual-shell.title-effect-water:before{box-shadow:0 0 8px #00bfff,0 0 18px #0878ff;animation:titleFrameWater 1.1s infinite}
+.title-visual-shell.title-effect-earth:before{box-shadow:0 0 8px #9b6a36,0 0 16px #5b3518;animation:titleFrameEarth 1.5s infinite}
+.title-visual-shell.title-effect-air:before{box-shadow:0 0 8px #dffaff,0 0 18px #9ccbe8;animation:titleFrameAir 1s infinite}
+.title-visual-shell.title-effect-lightning:before{box-shadow:0 0 10px #fff,0 0 20px #55cfff;animation:titleFrameLightning .7s infinite}
+.title-visual-shell.title-effect-darkness:before{box-shadow:0 0 9px #8d4cff,0 0 20px #3b007a;animation:titleFrameDark 1.2s infinite}
+.title-visual-shell.title-effect-light:before{box-shadow:0 0 10px #fff,0 0 22px #ffe66d;animation:titleFrameLight 1s infinite}
+.title-visual-shell.title-effect-gold:before{box-shadow:0 0 8px #ffd700,0 0 18px #ff9f00;animation:titleFrameGold 1.2s infinite}
+.title-visual-shell.title-effect-silver:before{box-shadow:0 0 8px #dcecff,0 0 18px #9fb8d5;animation:titleFrameSilver 1.4s infinite}
+.title-visual-shell.title-effect-bronze:before{box-shadow:0 0 8px #cd7f32,0 0 16px #8c461f;animation:titleFrameBronze 1.4s infinite}
+.title-visual-shell.title-effect-vip:before{box-shadow:0 0 10px #ffb000,0 0 22px #ff5c00;animation:titleFrameVip .9s infinite}
+.title-visual-shell.title-effect-diamond:before{box-shadow:0 0 10px #9ff8ff,0 0 22px #46dfff;animation:titleFrameDiamond 1.1s infinite}
+.title-visual-shell.title-effect-ruby:before{box-shadow:0 0 10px #ff1744,0 0 20px #9b001b;animation:titleFrameRuby .9s infinite}
+.title-visual-shell.title-effect-emerald:before{box-shadow:0 0 10px #00e676,0 0 20px #007a42;animation:titleFrameEmerald 1.1s infinite}
+.premium-title-visual{object-fit:contain;display:block;max-width:100%;border:0;background:transparent}
+.premium-mini-title-image{width:92px;height:auto;max-height:25px}
+.premium-game-title-image{width:145px;height:auto;max-height:39px;margin-top:3px}
+.profile-main-title-image{width:min(300px,90vw);height:auto;max-height:80px}
+.profile-title-image{width:110px;height:auto;max-height:30px}
+.title-live-preview{min-height:86px;display:flex;align-items:center;justify-content:center;padding:12px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff12}
+.title-live-preview span{display:flex;align-items:center;justify-content:center;min-height:50px}
+.title-live-preview-img{width:300px;max-width:90%;height:80px;object-fit:contain;background:transparent}
+.title-admin-thumb{width:150px!important;height:40px!important;object-fit:contain!important;background:transparent!important}
+@keyframes titleFrameFire{to{transform:scale(1.04);filter:brightness(1.35)}}
+@keyframes titleFrameWater{50%{transform:scale(1.03);opacity:.7}}
+@keyframes titleFrameEarth{50%{transform:translateX(1px)}}
+@keyframes titleFrameAir{50%{transform:translateY(-2px);opacity:.65}}
+@keyframes titleFrameLightning{20%,24%{opacity:.35;filter:brightness(2)}50%{opacity:1}}
+@keyframes titleFrameDark{50%{transform:scale(1.04);filter:brightness(1.3)}}
+@keyframes titleFrameLight{50%{transform:scale(1.05);filter:brightness(1.8)}}
+@keyframes titleFrameGold{50%{transform:scale(1.03);filter:brightness(1.5)}}
+@keyframes titleFrameSilver{50%{transform:scale(1.03);filter:brightness(1.35)}}
+@keyframes titleFrameBronze{50%{transform:scale(1.03);filter:brightness(1.3)}}
+@keyframes titleFrameVip{50%{transform:scale(1.06);filter:brightness(1.5)}}
+@keyframes titleFrameDiamond{50%{transform:scale(1.05);filter:brightness(1.7)}}
+@keyframes titleFrameRuby{50%{transform:scale(1.04);filter:saturate(1.6)}}
+@keyframes titleFrameEmerald{50%{transform:scale(1.04);filter:saturate(1.5)}}
+@media(max-width:520px){.premium-game-title-image{width:120px;max-height:33px}.profile-main-title-image{max-width:250px;max-height:65px}.profile-title-image{width:90px;max-height:25px}.premium-mini-title-image{width:76px;max-height:22px}.title-admin-thumb{width:120px!important;height:32px!important}}
+
+/* QuizUp v39.2 — identidade dupla do administrador e perfil sem avatar duplicado */
+.title-pair-display{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:5px!important}
+.title-pair-display .title-slot{display:flex;align-items:center;justify-content:center;min-height:24px}
+.title-pair-display .title-slot-secondary{opacity:.96}
+.title-pair-display .title-slot-secondary .profile-main-title-image{max-width:min(250px,82vw);max-height:62px}
+.title-slot .premium-game-title-image{display:block;width:120px;max-height:34px;object-fit:contain}
+.duel-player-copy .title-slot{justify-content:flex-start;margin-top:2px}
+.duel-player-copy .title-slot-admin .premium-game-title-image{width:120px;max-height:32px}
+.duel-player-copy .title-slot-secondary .premium-game-title-image{width:105px;max-height:28px}
+.profile-title-management{display:grid;gap:8px}
+.admin-secondary-title{border-color:#6d5715!important}
+.admin-secondary-title select{border-color:#ffd21a66!important}
+/* O +18 antigo não faz mais parte da interface. */
+.age18-badge{display:none!important}
+/* O avatar da barra superior é navegação; no perfil ele é ocultado pelo app para não duplicar a foto principal. */
+@media(max-width:520px){.title-pair-display .title-slot-secondary .profile-main-title-image{max-width:220px;max-height:54px}.duel-player-copy .title-slot-admin .premium-game-title-image{width:108px}.duel-player-copy .title-slot-secondary .premium-game-title-image{width:96px}}
