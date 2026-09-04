@@ -88,3 +88,14 @@ Execute a migration consolidada `quizup_v36_2_7_MIGRATION_COMPLETA.sql` no SQL E
 
 ### SQL
 Execute `quizup_v37_MIGRATION_COMPLETA.sql` no Supabase SQL Editor depois de aplicar a estrutura anterior.
+
+
+## QuizUp v38
+- Painel administrativo modular: Dashboard, perguntas, categorias/aprovação, loja, Coins, conquistas, títulos, emblemas, contas, suporte, moderação e comunidade.
+- Loja reconstruída para cosméticos comprados com QuizCoins; Mercado Pago permanece OFF.
+- Categorias da loja são administradas separadamente.
+- Avatares personalizados usam imagem cadastrada pelo administrador e padronização circular no perfil/partida.
+- Títulos conquistados ficam no perfil público; o jogador escolhe um título principal para aparecer na partida.
+- Conquistas podem ter meta e entregar automaticamente um título associado.
+- Corrigida compatibilidade da RPC `purchase_premium_item` com bancos antigos e colunas promocionais ausentes.
+- Sessão atualizada para não reinicializar o app em `TOKEN_REFRESHED`; partida recente pode ser restaurada por até 60 segundos após retorno/reload.

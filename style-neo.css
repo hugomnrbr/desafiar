@@ -437,3 +437,124 @@ html,body,#app{background:#03050a!important;color:#f7f9fc!important}
 @keyframes v37Reaction{0%{opacity:0;transform:translate(-50%,10px) scale(.45)}20%{opacity:1;transform:translate(-50%,0) scale(1.18)}75%{opacity:1;transform:translate(-50%,-22px) scale(1)}100%{opacity:0;transform:translate(-50%,-42px) scale(.86)}}
 .avatar-reaction-bubble.mine,.avatar-reaction-bubble.opponent{animation:v37Reaction 1.9s ease-out forwards!important}
 @media(max-width:430px){.classic-top .top-notify{width:34px;height:34px;font-size:15px}.coin-ledger-row{grid-template-columns:75px 1fr}.coin-ledger-row small{grid-column:2}.notifications-head .secondary{font-size:8px!important;padding:8px!important}}
+
+/* ==========================================================
+   QuizUp v38 — loja/avatar/títulos e painel administrativo
+   ========================================================== */
+:root{--quizup-avatar-profile:88px;--quizup-avatar-match:74px;--quizup-avatar-mini:46px;}
+.avatar,.avatar-img{overflow:hidden;border-radius:50%!important;object-fit:cover;object-position:center;display:grid;place-items:center;flex:0 0 auto}
+.profile-avatar,.profile-avatar.avatar-img{width:var(--quizup-avatar-profile)!important;height:var(--quizup-avatar-profile)!important;min-width:var(--quizup-avatar-profile)!important;min-height:var(--quizup-avatar-profile)!important;border-radius:50%!important}
+.neon-avatar,.neon-avatar.avatar-img{width:var(--quizup-avatar-match)!important;height:var(--quizup-avatar-match)!important;min-width:var(--quizup-avatar-match)!important;min-height:var(--quizup-avatar-match)!important;border-radius:50%!important}
+.avatar.mini,.avatar.mini.avatar-img{width:var(--quizup-avatar-mini)!important;height:var(--quizup-avatar-mini)!important;min-width:var(--quizup-avatar-mini)!important;min-height:var(--quizup-avatar-mini)!important;border-radius:50%!important}
+.premium-art.avatar,.premium-art.avatar img,.premium-art.avatar img.avatar-img{width:120px!important;height:120px!important;border-radius:50%!important;object-fit:cover;object-position:center;margin:auto}
+.premium-art.avatar{display:grid;place-items:center;overflow:hidden;background:#111b27;border:1px solid #2b3a4b}
+.premium-art.avatar img{display:block}
+.profile-main-title-card{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px auto;padding:13px 14px;max-width:520px;background:#0e1722;border:1px solid #29384a;border-radius:14px;text-align:left}
+.profile-main-title-card div{display:flex;flex-direction:column;gap:3px}.profile-main-title-card b{font-size:12px;color:#ffd21a}.profile-main-title-card small{font-size:9px;color:#8e9aac}.profile-main-title-card select{width:auto;min-width:155px;background:#111c29!important;color:#fff!important;border:1px solid #3a4655!important;border-radius:10px;padding:9px 10px;font-weight:800}
+.profile-owned-titles{max-width:520px;margin:9px auto 3px;text-align:center}.profile-owned-titles>b{font-size:10px;color:#ffd21a;display:block;margin-bottom:6px}.profile-owned-titles>div{display:flex;flex-wrap:wrap;justify-content:center;gap:5px}.profile-title-chip{display:inline-flex;align-items:center;gap:4px;padding:5px 8px;border-radius:999px;background:#121d2a;border:1px solid #2b3b4d;color:#dce4ee;font-size:9px;font-weight:900}.profile-title-chip.main{border-color:#ffd21a77;color:#ffd21a;box-shadow:0 0 12px #ffd21a14}
+.premium-game-title{display:block!important;min-height:12px;color:#ffd21a!important;font-size:9px!important;font-weight:900;margin-top:3px}.premium-mini-title{display:inline-flex!important;padding:2px 5px;border-radius:999px;background:#151b25;border:1px solid #ffd21a44;color:#ffd21a!important;font-size:8px!important}
+.admin-module-note{font-size:10px;color:#697587;margin:5px 0 12px}
+.store-category-admin{margin:0 0 14px!important;background:#f9fafb!important}
+.quizup-admin-main .store-category-admin{background:#f9fafb!important}
+@media(max-width:600px){.profile-main-title-card{align-items:stretch;flex-direction:column}.profile-main-title-card select{width:100%}.profile-avatar,.profile-avatar.avatar-img{width:78px!important;height:78px!important;min-width:78px!important;min-height:78px!important}.neon-avatar,.neon-avatar.avatar-img{width:66px!important;height:66px!important;min-width:66px!important;min-height:66px!important}}
+
+/* ==========================================================
+   v38.0.1 — cabeçalho da partida reorganizado
+   Nunca sobrepor pontos, avatar, título ou +18.
+   ========================================================== */
+.neon-duel-head{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr)!important;
+  align-items:start!important;
+  gap:8px!important;
+  min-height:136px!important;
+  padding:10px 3px 8px!important;
+  overflow:visible!important;
+}
+.duel-player-card{
+  min-width:0!important;
+  display:grid!important;
+  grid-template-columns:76px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:8px!important;
+  padding:4px 3px!important;
+  overflow:visible!important;
+}
+.duel-player-card.rival{
+  grid-template-columns:minmax(0,1fr) 76px!important;
+  text-align:right!important;
+}
+.duel-player-card.rival .neon-avatar-wrap{grid-column:2;grid-row:1}
+.duel-player-card.rival .duel-player-copy{grid-column:1;grid-row:1;align-items:flex-end}
+.duel-player-copy{
+  min-width:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  line-height:1.08!important;
+  overflow:hidden!important;
+}
+.duel-player-copy span{
+  font-size:7px!important;font-weight:950!important;letter-spacing:1px!important;
+  color:var(--n-yellow)!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.duel-player-copy b{
+  font-size:10px!important;margin-top:4px!important;white-space:nowrap!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important;
+}
+.duel-player-copy small{
+  margin-top:5px!important;color:#ffd21a!important;font-size:8px!important;font-weight:900!important;
+  white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;max-width:100%;
+}
+.neon-avatar-wrap{
+  width:76px!important;height:auto!important;min-height:112px!important;flex:0 0 76px!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;
+  position:relative!important;overflow:visible!important;
+}
+.neon-avatar,.neon-avatar.avatar-img{
+  width:66px!important;height:66px!important;min-width:66px!important;min-height:66px!important;
+  flex:0 0 66px!important;border:2px solid var(--n-yellow)!important;position:relative!important;z-index:2!important;
+}
+.age18-badge{
+  order:2!important;margin:4px 0 0!important;position:relative!important;z-index:3!important;
+  height:20px!important;min-height:20px!important;line-height:15px!important;box-sizing:border-box!important;
+}
+.score-under-avatar{
+  order:3!important;position:relative!important;inset:auto!important;transform:none!important;
+  width:100%!important;min-height:22px!important;margin:4px 0 0!important;
+  display:flex!important;align-items:baseline!important;justify-content:center!important;gap:2px!important;
+  color:#ffd21a!important;font-size:17px!important;line-height:20px!important;text-align:center!important;
+  z-index:3!important;white-space:nowrap!important;
+}
+.score-under-avatar small{font-size:7px!important;color:#8f9aaa!important;margin:0!important}
+.score-under-avatar em{
+  position:absolute!important;top:-1px!important;right:-9px!important;margin:0!important;
+  font-size:9px!important;line-height:13px!important;color:#35ee83!important;
+}
+.premium-game-title{display:none!important}
+.avatar-reaction-bubble{
+  top:-6px!important;left:50%!important;right:auto!important;z-index:20!important;
+  pointer-events:none!important;
+}
+.avatar-reaction-bubble.mine,.avatar-reaction-bubble.opponent{right:auto!important;left:50%!important}
+.neon-vs{
+  align-self:start!important;margin-top:18px!important;width:40px!important;height:40px!important;
+}
+.neon-progress{margin-top:2px!important;padding-top:6px!important}
+.neon-rounds{padding-top:8px!important}
+
+@media(max-width:430px){
+  .neon-duel-head{grid-template-columns:minmax(0,1fr) 38px minmax(0,1fr)!important;gap:3px!important;min-height:126px!important;padding-left:0!important;padding-right:0!important}
+  .duel-player-card{grid-template-columns:62px minmax(0,1fr)!important;gap:5px!important;padding:2px 0!important}
+  .duel-player-card.rival{grid-template-columns:minmax(0,1fr) 62px!important}
+  .duel-player-card.rival .neon-avatar-wrap{grid-column:2}
+  .duel-player-card.rival .duel-player-copy{grid-column:1}
+  .neon-avatar-wrap{width:62px!important;min-height:102px!important;flex-basis:62px!important}
+  .neon-avatar,.neon-avatar.avatar-img{width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important;flex-basis:58px!important}
+  .neon-vs{width:34px!important;height:34px!important;font-size:9px!important;margin-top:14px!important}
+  .duel-player-copy b{font-size:9px!important}
+  .duel-player-copy small{font-size:7px!important}
+  .score-under-avatar{font-size:16px!important}
+  .age18-badge{font-size:8px!important;min-width:30px!important;height:18px!important;min-height:18px!important;padding:1px 6px!important}
+  .neon-progress{padding-left:0!important;padding-right:0!important}
+}
