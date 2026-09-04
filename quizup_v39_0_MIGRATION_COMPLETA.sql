@@ -1,3 +1,21 @@
+-- ================================================================
+-- CORREÇÃO v39.0.1.1: função de autorização base
+-- ================================================================
+create or replace function public.is_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path=public
+as $$
+  select exists(
+    select 1 from public.profiles
+    where id=auth.uid() and role='admin'
+  );
+$$;
+revoke all on function public.is_admin() from public;
+grant execute on function public.is_admin() to authenticated;
+
 -- QUIZUP v39.0.0 - MIGRATION COMPLETA LIMPA E IDEMPOTENTE
 -- Pode ser executada mesmo que parte ou toda a estrutura já exista.
 -- Policies e triggers são recriados com segurança; tabelas/índices usam IF NOT EXISTS.
@@ -2351,3 +2369,42 @@ alter table if exists public.premium_items drop constraint if exists premium_ite
 alter table if exists public.premium_items add constraint premium_items_title_color_check check (title_color ~ '^#[0-9A-Fa-f]{6}$');
 alter table if exists public.premium_items drop constraint if exists premium_items_title_font_check;
 alter table if exists public.premium_items add constraint premium_items_title_font_check check (title_font in ('Inter','Arial','Georgia','Trebuchet MS','Courier New','Impact','Verdana'));
+
+-- ================================================================
+-- v39.0.1 - Loja totalmente administrada pelo painel
+-- ================================================================
+-- Somente administradores podem criar/editar/retirar itens da Loja.
+-- Jogadores continuam podendo apenas visualizar e comprar itens ativos.
+alter table if exists public.premium_items enable row level security;
+drop policy if exists "premium items authenticated read" on public.premium_items;
+create policy "premium items authenticated read" on public.premium_items
+  for select to authenticated using(true);
+drop policy if exists "premium items admin manage" on public.premium_items;
+create policy "premium items admin manage" on public.premium_items
+  for all to authenticated
+  using(public.is_admin()) with check(public.is_admin());
+
+-- Exclusão segura: títulos e emblemas são retirados da Loja sem apagar o
+-- inventário de quem já comprou/conquistou.
+drop policy if exists "titles admin delete" on public.titles;
+create policy "titles admin delete" on public.titles
+  for delete to authenticated
+  using(public.is_admin());
+drop policy if exists "badges admin delete" on public.badges;
+create policy "badges admin delete" on public.badges
+  for delete to authenticated
+  using(public.is_admin());
+
+-- Categorias que não foram solicitadas para esta versão ficam fora da Loja.
+-- Elas não são apagadas do banco para não quebrar dados antigos.
+update public.store_categories
+set active=false
+where name in ('Emojis','Temas','VIP','Passe','Moedas');
+
+-- Itens antigos/fictícios dessas categorias não aparecem mais para compra.
+update public.premium_items
+set active=false
+where category in ('Emojis','Temas','VIP','Passe','Moedas');
+
+-- A Loja não recebe mais produtos padrão/fictícios pelo código do navegador.
+-- Todos os itens vendidos devem ser cadastrados pelo painel administrativo.
