@@ -594,3 +594,40 @@ alter table public.notifications replica identity full;
 
 -- Mercado Pago permanece desligado no v37.
 update public.premium_store_settings set payments_enabled=false where id=1;
+
+-- 27. Garante que as notificações sejam entregues em tempo real pelo Realtime.
+do $$
+begin
+  begin alter publication supabase_realtime add table public.notifications; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.social_posts; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.social_likes; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.social_comments; exception when duplicate_object then null; end;
+exception when undefined_object then null;
+end $$;
+
+-- 28. Notificação de amizade aceita e recebimento de Coins.
+create or replace function public.quizup_notify_friend_accept()
+returns trigger language plpgsql security definer set search_path=public as $$
+declare u public.profiles;
+begin
+  if old.status is distinct from 'accepted' and new.status='accepted' then
+    select * into u from public.profiles where id=new.addressee_id;
+    insert into public.notifications(recipient_id,actor_id,type,title,body,data)
+    values(new.requester_id,new.addressee_id,'friend_request','🤝 Solicitação aceita',coalesce(u.username,'Seu amigo')||' aceitou sua solicitação de amizade.',jsonb_build_object('friendship_id',new.id));
+  end if;
+  return new;
+end $$;
+drop trigger if exists trg_quizup_notify_friend_accept on public.friendships;
+create trigger trg_quizup_notify_friend_accept after update of status on public.friendships for each row execute function public.quizup_notify_friend_accept();
+
+create or replace function public.quizup_notify_coin_credit()
+returns trigger language plpgsql security definer set search_path=public as $$
+begin
+  if new.amount>0 and new.source_type in ('admin_grant','match_reward','mercadopago_payment') then
+    insert into public.notifications(recipient_id,actor_id,type,title,body,data)
+    values(new.user_id,null,'coin','⚡ QuizCoins recebidas','Você recebeu +'||new.amount||' QuizCoins.',jsonb_build_object('ledger_id',new.id,'amount',new.amount,'source',new.source_type));
+  end if;
+  return new;
+end $$;
+drop trigger if exists trg_quizup_notify_coin_credit on public.coin_ledger;
+create trigger trg_quizup_notify_coin_credit after insert on public.coin_ledger for each row execute function public.quizup_notify_coin_credit();

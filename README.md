@@ -44,3 +44,47 @@ Depois de validar, troque o `MERCADOPAGO_ACCESS_TOKEN` para o token de produçã
 
 ## SQL adicional
 Execute o arquivo `quizup_v36_2_7_MIGRATION_COMPLETA.sql` completo. A parte final cria as tabelas/RPCs de Coins administrativas, suporte e sessão única. 
+
+
+## v36.2.9 — correções e melhorias
+- Loja movida para a navegação inferior; removido o botão de loja do topo.
+- Topo reduzido a Início, avatar/perfil, saldo de QuizCoins e Sair.
+- Logout passou a executar diretamente o encerramento da sessão e liberar a sessão única.
+- Corrigida a compra de cosméticos por QuizCoins com RPC `purchase_premium_item`. Mercado Pago continua OFF.
+- Feed social Notícias com publicações de texto/foto, filtros Global/Amigos/Categoria, curtidas e comentários.
+- Upload de fotos/prints usa o bucket `social-posts`.
+- Painel administrativo ganhou moderação da comunidade.
+- Contas com `role=admin` exibem publicamente o título `👑 Administrador`.
+- No duelo, +18, pontuação acumulada e ganho da rodada ficam abaixo do avatar.
+- Reações da partida usam realtime e aparecem sobre o avatar dos dois jogadores.
+- Campo de suporte ampliado para textarea.
+
+### Supabase
+Execute a migration consolidada `quizup_v36_2_7_MIGRATION_COMPLETA.sql` no SQL Editor. Ela é cumulativa e cria/atualiza as funções, RLS, feed social, bucket de mídia e compra por Coins.
+
+### Próximas melhorias recomendadas
+1. Denúncia de publicação/comentário pelos jogadores e fila de denúncias no admin.
+2. Bloquear/mutar jogadores.
+3. Compressão automática de imagens antes do upload.
+4. Paginação/infinite scroll do feed para não carregar 40 posts de uma vez.
+5. Histórico de Coins no perfil e extrato detalhado no admin.
+6. Presença online/offline de amigos e indicador de “digitando…”.
+7. Proteção adicional contra spam de comentários, curtidas e reações via rate limit no banco.
+8. Testes de ponta a ponta para login, logout, compra, partida 1v1 e sessão única.
+
+
+## QuizUp v37
+
+- Feed social com paginação/carregamento automático, Global/Amigos/Categoria.
+- Curtidas, comentários, denúncias, bloqueio e silenciamento.
+- Notificações persistentes no topo com contador e sincronização em tempo real.
+- Presença online simples e indicador de amigo online.
+- Chat com indicador "digitando...".
+- Conquistas desbloqueáveis por partidas, vitórias, sequência e Coins.
+- Histórico de movimentações de QuizCoins.
+- Publicação automática do resultado de partidas no feed.
+- Mercado Pago permanece OFF.
+- Administradores continuam identificados publicamente como "Título: Administrador".
+
+### SQL
+Execute `quizup_v37_MIGRATION_COMPLETA.sql` no Supabase SQL Editor depois de aplicar a estrutura anterior.
