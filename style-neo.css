@@ -693,3 +693,25 @@ html,body,#app{background:#03050a!important;color:#f7f9fc!important}
 .frame-effect-fire{animation:frameFire .75s infinite alternate}.frame-effect-water{animation:frameWater 1.4s infinite}.frame-effect-earth{animation:frameEarth 1.6s infinite}.frame-effect-air{animation:frameAir 1.1s infinite}.frame-effect-lightning{animation:frameLightning 1.05s infinite}.frame-effect-darkness{animation:frameDark 1.5s infinite}.frame-effect-light{animation:frameLight 1.2s infinite}.frame-effect-gold{animation:frameGold 1.5s infinite}.frame-effect-silver{animation:frameSilver 1.7s infinite}.frame-effect-bronze{animation:frameBronze 1.8s infinite}.frame-effect-vip{animation:frameVip 1s infinite}.frame-effect-diamond{animation:frameDiamond 1.2s infinite}.frame-effect-ruby{animation:frameRuby 1s infinite}.frame-effect-emerald{animation:frameEmerald 1.3s infinite}
 @keyframes effectWater{50%{filter:brightness(1.35);transform:translateY(-1px)}}@keyframes effectEarth{50%{transform:translateX(1px)}}@keyframes effectAir{50%{transform:translateY(-2px);opacity:.85}}@keyframes effectDark{50%{filter:brightness(1.45);transform:scale(1.02)}}@keyframes effectLight{50%{filter:brightness(1.8)}}@keyframes effectMetal{50%{filter:brightness(1.35)}}@keyframes effectVip{50%{transform:scale(1.04);filter:brightness(1.45)}}@keyframes effectDiamond{50%{filter:brightness(1.8)}}@keyframes effectRuby{50%{filter:saturate(1.7);transform:scale(1.02)}}@keyframes effectEmerald{50%{filter:saturate(1.5);transform:scale(1.02)}}
 @keyframes frameFire{50%{filter:drop-shadow(0 0 7px #ff4d00) drop-shadow(0 0 14px #ffb000)}}@keyframes frameWater{50%{filter:drop-shadow(0 0 8px #00bfff) drop-shadow(0 0 15px #0066ff)}}@keyframes frameEarth{50%{filter:drop-shadow(0 0 8px #8b5a2b)}}@keyframes frameAir{50%{filter:drop-shadow(0 0 9px #dff6ff)}}@keyframes frameLightning{20%,24%{filter:brightness(1.8) drop-shadow(0 0 12px #fff)}50%{filter:drop-shadow(0 0 9px #5ac8ff)}}@keyframes frameDark{50%{filter:drop-shadow(0 0 10px #7a00ff) brightness(1.2)}}@keyframes frameLight{50%{filter:brightness(1.8) drop-shadow(0 0 12px #fff2a6)}}@keyframes frameGold{50%{filter:brightness(1.5) drop-shadow(0 0 10px #ffd700)}}@keyframes frameSilver{50%{filter:brightness(1.45) drop-shadow(0 0 9px #dfeaff)}}@keyframes frameBronze{50%{filter:brightness(1.35) drop-shadow(0 0 8px #cd7f32)}}@keyframes frameVip{50%{filter:brightness(1.55) drop-shadow(0 0 12px #ffb000)}}@keyframes frameDiamond{50%{filter:brightness(1.7) drop-shadow(0 0 13px #7eeeff)}}@keyframes frameRuby{50%{filter:brightness(1.45) drop-shadow(0 0 12px #ff1744)}}@keyframes frameEmerald{50%{filter:brightness(1.4) drop-shadow(0 0 11px #00e676)}}
+
+/* v38.8 — Fundos de Perfil estáticos e animados */
+.profile-cover{overflow:hidden;isolation:isolate;min-height:320px}
+.profile-cover .profile-background-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;pointer-events:none}
+.profile-cover.has-profile-background:after{background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.66))!important;z-index:1}
+.profile-cover.has-profile-background:before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.06),rgba(0,0,0,.48));z-index:1;pointer-events:none}
+.profile-cover>*:not(.profile-background-media):not(:after):not(:before){z-index:2}
+.profile-background-media + .profile-avatar-stage{position:relative}
+.premium-art.background{overflow:hidden;padding:0;background:#0b121a}
+.premium-art.background img{width:100%!important;height:100%!important;object-fit:cover!important;display:block}
+.premium-background-card .premium-art{height:105px}
+.premium-background-card .premium-item-btn{border-color:rgba(255,210,26,.35)}
+.admin-premium-line{display:flex;align-items:center;gap:10px;min-width:0}
+.admin-premium-line>div{min-width:0}
+.admin-premium-thumb{width:72px;height:48px;object-fit:cover;border-radius:8px;border:1px solid #2c3b4a;background:#0b121a;flex:0 0 auto}
+.background-type-wrap{padding:10px;border:1px solid #293747;border-radius:10px;background:#0b121a}
+.background-type-wrap[hidden]{display:none!important}
+.background-type-wrap label{display:block;margin-bottom:6px;font-size:10px;font-weight:900;color:#ffd21a}
+.frame-spec-box{line-height:1.5}
+.inventory-card .inventory-art:has(img[src*=".gif"]){overflow:hidden}
+@media(max-width:520px){.profile-cover{min-height:300px}.premium-background-card .premium-art{height:92px}.admin-premium-thumb{width:64px;height:44px}}
+.check-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #263544;border-radius:10px;background:#0d141d;font-size:11px;font-weight:800;color:#dbe4ef}.check-row input{accent-color:#ff7a00;width:16px;height:16px}.admin-premium-thumb{width:92px;height:58px;object-fit:cover;border-radius:8px;border:1px solid #263544;background:#0a1017}.admin-media-row{display:flex;gap:12px;align-items:center}.background-type-wrap{padding:10px;border:1px solid #263544;border-radius:10px;background:#0d141d}

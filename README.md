@@ -115,3 +115,22 @@ Execute `quizup_v37_MIGRATION_COMPLETA.sql` no Supabase SQL Editor depois de apl
 - Molduras usam canvas oficial 256×256 px e são renderizadas como camada sobre o avatar.
 - Para criar uma moldura, envie PNG/WebP/GIF quadrado com centro transparente; o avatar fica por baixo.
 - O jogador continua sem upload de foto própria: o avatar vem exclusivamente do inventário.
+
+## v38.8 — Fundos de Perfil
+- Nova categoria **Fundos de Perfil** na Loja.
+- Jogador pode comprar fundo com QuizCoins e ativar/desativar pelo próprio inventário.
+- Um único fundo pode ficar ativo por vez.
+- Fundo ativo é salvo no perfil e aparece também quando outro jogador abre o perfil público.
+- Resolução padrão obrigatória: **800 × 500 px**.
+- Fundo estático: PNG, JPG/JPEG ou WebP.
+- Fundo animado: **GIF 800 × 500 px**; o GIF continua animado no fundo do perfil.
+- Administrador escolhe no painel se o fundo é Estático ou Animado, envia a arte, define preço, promoção, descrição e ativa/desativa o item.
+- A ativação usa a RPC `activate_premium_item`, que também corrige a compatibilidade de bancos que não tinham essa função criada pela versão anterior.
+
+### Supabase — v38.8
+Depois de aplicar a v38.7, execute **somente** `quizup_v38_8_MIGRATION_FUNDOS_PERFIL.sql`.
+Não é necessário repetir as migrations antigas.
+
+
+### v38.9 — Vendas de Títulos, Emblemas e Fundos
+Execute `quizup_v38_9_MIGRATION_VENDAS_TITULOS_EMBLEMAS_FUNDOS.sql` após a v38.8. Títulos vendidos agora entregam `user_titles` e ativam o título real com nome + efeito; emblemas e fundos possuem fluxo próprio de venda/ativação no painel administrativo.
