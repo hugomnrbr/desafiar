@@ -558,3 +558,47 @@ html,body,#app{background:#03050a!important;color:#f7f9fc!important}
   .age18-badge{font-size:8px!important;min-width:30px!important;height:18px!important;min-height:18px!important;padding:1px 6px!important}
   .neon-progress{padding-left:0!important;padding-right:0!important}
 }
+
+/* ===== QuizUp Admin v38.2 — painel modular inspirado no MacroFood ===== */
+.quizup-admin-layout{background:#f7f4ef!important;color:#171717!important;min-height:100vh}
+.quizup-admin-sidebar{width:250px!important;background:#171717!important;color:#fff!important;padding:18px 15px!important;border-right:1px solid #ff6500;box-shadow:none!important}
+.quizup-admin-brand{padding:4px 8px 24px!important}
+.quizup-admin-logo{width:42px!important;height:42px!important;border-radius:10px!important;background:#ff6500!important;color:#fff!important;box-shadow:none!important;font-weight:950}
+.quizup-admin-brand b{font-size:20px!important}.quizup-admin-brand span{color:#c9c9c9!important;font-size:11px!important}
+.quizup-admin-nav{gap:4px!important}
+.quizup-admin-nav button{color:#f1f1f1!important;border-radius:8px!important;padding:11px 12px!important;font-size:13px!important;transition:.15s!important}
+.quizup-admin-nav button:hover{background:#262626!important;color:#fff!important}
+.quizup-admin-nav button.active{background:#ff6500!important;color:#fff!important;box-shadow:none!important}
+.quizup-admin-nav button.active:hover{background:#ff6500!important}
+.quizup-admin-sidebar-bottom{padding-top:14px!important}
+.admin-security-note{border-color:#3c3c3c!important;background:#1c1c1c!important;color:#fff!important}
+.admin-security-note small{color:#bcbcbc!important}
+.admin-logout-btn{color:#fff!important;border-radius:8px!important}.admin-logout-btn:hover{background:#292929!important}
+.quizup-admin-main{margin-left:250px!important;width:calc(100% - 250px)!important;max-width:none!important;padding:0 34px 60px!important;background:#f7f4ef!important}
+.quizup-admin-topbar{height:70px;margin:0 -34px 28px;padding:0 34px;background:#fff;border-bottom:1px solid #e5e0d8;display:flex;align-items:center;justify-content:space-between;gap:18px;position:sticky;top:0;z-index:40;box-shadow:0 2px 8px #00000008}
+.admin-top-title{display:flex;flex-direction:column;gap:2px}.admin-top-title b{font-size:18px;color:#181818}.admin-top-title span{font-size:11px;color:#777}
+.admin-top-user{display:flex;align-items:center;gap:10px}.admin-top-user b{display:block;font-size:13px;color:#222}.admin-top-user small{display:block;font-size:10px;color:#777}.admin-top-avatar{width:38px;height:38px;border:1px solid #ff6500;border-radius:50%;display:grid;place-items:center;color:#ff6500;font-weight:950;background:#fff7ef}.admin-top-logout{border:1px solid #ded8cf;background:#fff;border-radius:50%;width:34px;height:34px;font-weight:900;cursor:pointer}.admin-top-logout:hover{background:#fff3e8;border-color:#ff6500;color:#ff6500}
+.admin-mobile-menu{display:none}
+.quizup-admin-main .admin-section{display:none}.quizup-admin-main .admin-section.admin-visible{display:block}.quizup-admin-main #admin-dashboard.admin-visible{display:block}
+.admin-page-head{background:transparent!important;margin-bottom:20px!important}.admin-page-head h1{font-size:30px!important;color:#171717!important}.admin-page-head p{color:#777!important}.admin-live{background:#eaf7ec!important;color:#28763a!important}
+.admin-metrics{gap:16px!important}.admin-metric{border-color:#e4ded5!important;box-shadow:0 2px 9px #00000008!important}.admin-metric strong{color:#171717!important}
+.admin-overview>div,.quizup-admin-main .card{border-color:#e4ded5!important;box-shadow:0 2px 9px #00000008!important}
+.admin-section-title{border-bottom:1px solid #e5e0d8;padding-bottom:13px;margin-bottom:18px}.admin-section-title h2{color:#171717!important;font-size:24px!important}.admin-backtop{border-color:#ddd5cc!important;background:#fff!important;color:#222!important}.admin-backtop:hover{border-color:#ff6500!important;color:#ff6500!important}
+.quizup-admin-main .primary{background:#ff6500!important;border-color:#ff6500!important;color:#fff!important}.quizup-admin-main .primary:hover{filter:brightness(.96)}
+.quizup-admin-main .secondary{background:#fff!important;color:#222!important;border-color:#d9d2c9!important}.quizup-admin-main .secondary:hover{border-color:#ff6500!important;color:#ff6500!important}
+.quizup-admin-main input,.quizup-admin-main textarea,.quizup-admin-main select{border-color:#d9d2c9!important;background:#fff!important;color:#222!important}
+.quizup-admin-main .admin-module-note{color:#777!important}
+
+@media(max-width:900px){
+  .quizup-admin-sidebar{transform:translateX(-105%)!important;transition:transform .2s ease!important;box-shadow:10px 0 30px #0005!important}
+  .quizup-admin-sidebar.mobile-open{transform:translateX(0)!important}
+  .quizup-admin-main{margin-left:0!important;width:100%!important;padding:0 16px 50px!important}
+  .quizup-admin-topbar{margin:0 -16px 20px;padding:0 16px;height:62px}
+  .admin-mobile-menu{display:grid;place-items:center;width:36px;height:36px;border:1px solid #ddd5cc;border-radius:8px;background:#fff;cursor:pointer}
+  .admin-top-title{margin-right:auto}
+}
+@media(max-width:520px){
+  .quizup-admin-main{padding:0 12px 40px!important}.quizup-admin-topbar{margin:0 -12px 18px;padding:0 12px}
+  .admin-top-title span{display:none}.admin-top-user small{display:none}.admin-top-user b{font-size:11px}.admin-top-avatar{width:34px;height:34px}
+  .admin-metrics{grid-template-columns:1fr 1fr!important;gap:9px!important}.admin-metric{padding:12px!important}.admin-metric strong{font-size:22px!important}
+}
