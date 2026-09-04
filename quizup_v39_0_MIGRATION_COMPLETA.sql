@@ -2408,3 +2408,23 @@ where category in ('Emojis','Temas','VIP','Passe','Moedas');
 
 -- A Loja não recebe mais produtos padrão/fictícios pelo código do navegador.
 -- Todos os itens vendidos devem ser cadastrados pelo painel administrativo.
+
+-- ================================================================
+-- v39.0.2 - CORREÇÕES TÍTULOS, EMBLEMAS, BACKGROUNDS E CAPAS
+-- ================================================================
+alter table if exists public.titles alter column icon set default '🏷️';
+update public.titles set icon='🏷️' where icon is null;
+alter table if exists public.badges alter column icon set default '🏅';
+update public.badges set icon='🏅' where icon is null;
+alter table if exists public.categories add column if not exists cover_url text;
+
+-- Elimina a ambiguidade criada por versões antigas que tinham duas assinaturas.
+drop function if exists public.active_premium_item(integer);
+drop function if exists public.active_premium_item(text);
+create or replace function public.active_premium_item(p_item_id text)
+returns jsonb language sql security definer set search_path=public as $$
+  select public.activate_premium_item(p_item_id::text);
+$$;
+revoke all on function public.active_premium_item(text) from public;
+grant execute on function public.active_premium_item(text) to authenticated;
+
