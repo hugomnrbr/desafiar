@@ -1636,97 +1636,89 @@ img[src*="/frames/"],img[src*="/frames_png/"]{
 }
 
 /* =========================================================
-   CORREÇÃO DEFINITIVA — AVATAR CENTRALIZADO DENTRO DA MOLDURA
-   O avatar nunca pode ultrapassar o aro da moldura.
+   CORREÇÃO DEFINITIVA — AVATAR DENTRO DA MOLDURA
+   A moldura é a camada externa (100%) e o avatar fica
+   centralizado dentro da abertura, sem ultrapassar o aro.
    ========================================================= */
 .avatar-frame-shell{
-  overflow:visible!important;
   position:relative!important;
   display:inline-block!important;
+  overflow:hidden!important;
   isolation:isolate!important;
-  text-align:center!important;
+  width:var(--avatar-size,56px)!important;
+  height:var(--avatar-size,56px)!important;
+  min-width:var(--avatar-size,56px)!important;
+  min-height:var(--avatar-size,56px)!important;
+  flex:0 0 var(--avatar-size,56px)!important;
+  line-height:0!important;
+  vertical-align:middle!important;
 }
 
+/* O avatar ocupa somente a área interna da moldura. */
 .avatar-frame-shell .avatar-base,
 .avatar-frame-shell .avatar-base.avatar-img{
   position:absolute!important;
-  left:21%!important;
-  top:21%!important;
-  width:58%!important;
-  height:58%!important;
-  min-width:0!important;
-  min-height:0!important;
+  left:25%!important;
+  top:25%!important;
+  width:50%!important;
+  height:50%!important;
+  inset:auto!important;
   margin:0!important;
   padding:0!important;
   border:0!important;
   border-radius:50%!important;
   object-fit:cover!important;
-  object-position:center center!important;
+  object-position:center!important;
   overflow:hidden!important;
-  display:block!important;
   z-index:1!important;
-  transform:none!important;
-  filter:none!important;
   box-shadow:none!important;
 }
 
-.avatar-frame-shell .avatar-frame-overlay{
+/* Moldura exatamente sobre o shell, sem aumentar de tamanho. */
+.avatar-frame-overlay{
   position:absolute!important;
+  left:0!important;
+  top:0!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  object-fit:fill!important;
+  object-position:center!important;
+  border:0!important;
+  border-radius:50%!important;
+  z-index:2!important;
+  pointer-events:none!important;
+}
+
+/* O avatar fica rigorosamente no centro em todos os tamanhos. */
+.profile-avatar-stage .avatar-frame-shell .avatar-base,
+.match-player .avatar-frame-shell .avatar-base,
+.neon-avatar-wrap .avatar-frame-shell .avatar-base,
+.friend-avatar-stack .avatar-frame-shell .avatar-base,
+.queue-player-card .avatar-frame-shell .avatar-base,
+.player-row .avatar-frame-shell .avatar-base,
+.podium-card .avatar-frame-shell .avatar-base{
+  left:25%!important;
+  top:25%!important;
+  width:50%!important;
+  height:50%!important;
+}
+
+.profile-avatar-stage .avatar-frame-overlay,
+.match-player .avatar-frame-overlay,
+.neon-avatar-wrap .avatar-frame-overlay,
+.friend-avatar-stack .avatar-frame-overlay,
+.queue-player-card .avatar-frame-overlay,
+.player-row .avatar-frame-overlay,
+.podium-card .avatar-frame-overlay{
   left:0!important;
   top:0!important;
   width:100%!important;
   height:100%!important;
-  margin:0!important;
-  padding:0!important;
-  object-fit:contain!important;
-  object-position:center center!important;
-  border:0!important;
-  border-radius:0!important;
-  z-index:3!important;
-  pointer-events:none!important;
-  transform:none!important;
-  filter:none!important;
-  animation:none!important;
-}
-
-/* Mantém o avatar exatamente no centro em todos os tamanhos usados pelo site. */
-.profile-avatar-stage .avatar-frame-shell .avatar-base,
-.match-player .avatar-frame-shell .avatar-base,
-.neon-avatar-wrap .avatar-frame-shell .avatar-base,
-.queue-player-card .avatar-frame-shell .avatar-base,
-.friend-avatar-stack .avatar-frame-shell .avatar-base,
-.player-row .avatar-frame-shell .avatar-base,
-.podium-card .avatar-frame-shell .avatar-base{
-  left:21%!important;
-  top:21%!important;
-  width:58%!important;
-  height:58%!important;
-}
-
-/* Títulos ficam abaixo da moldura/avatar, sem sobreposição. */
-.profile-title-stack{position:relative!important;z-index:6!important;}
-.player-title-below,
-.rank-title-below,
-.friend-title-below,
-.queue-title-art,
-.game-title-below{
-  position:relative!important;
-  z-index:6!important;
-  margin-left:auto!important;
-  margin-right:auto!important;
-  text-align:center!important;
-}
-
-/* Evita qualquer deslocamento horizontal causado por imagens de título. */
-.player-title-below img,
-.rank-title-below img,
-.friend-title-below img,
-.queue-title-art img,
-.game-title-below img,
-.profile-title-image{
-  display:block!important;
-  margin-left:auto!important;
-  margin-right:auto!important;
-  object-fit:contain!important;
-  object-position:center!important;
+  inset:auto!important;
 }
