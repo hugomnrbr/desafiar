@@ -1,5 +1,5 @@
 -- ============================================================================
--- QuizUp v40 FINAL — Referência visual + cosméticos + segurança de compras
+-- QuizUp v40.3 FINAL — limpeza de cosméticos antigos + reações de partida
 -- Execute ESTE ÚNICO arquivo no Supabase SQL Editor.
 -- Não apaga contas, partidas, amizades, notícias ou histórico.
 -- ============================================================================
@@ -533,6 +533,102 @@ where id=1;
 create index if not exists premium_items_category_active_idx on public.premium_items(category,active);
 create index if not exists premium_items_kind_active_idx on public.premium_items(kind,active);
 create index if not exists user_premium_items_user_active_idx on public.user_premium_items(user_id,active);
+
+
+-- --------------------------------------------------------------------------
+-- 12) LIMPEZA SEGURA DE PRODUTOS COSMÉTICOS ANTIGOS/QUEBRADOS
+-- --------------------------------------------------------------------------
+-- Remove somente cosméticos que não têm arte utilizável ou que pertencem
+-- explicitamente ao catálogo antigo de Emblemas. Itens funcionais com arte
+-- válida permanecem disponíveis.
+create temp table _quizup_remove_items on commit drop as
+select id, kind, source_type, source_id
+from public.premium_items
+where
+  -- antigo catálogo de Emblemas/molduras que não deve mais ser usado
+  category in ('Emblemas','Emblem')
+  or asset_url ilike '%/assets/store/emblems/%'
+  or asset_url ilike '%/assets/emblems/%'
+  -- cosmético sem arquivo: não pode ser exibido/comprado corretamente
+  or (kind in ('avatar','frame','title','background','emoji','badge')
+      and coalesce(trim(asset_url),'')='');
+
+-- Primeiro remove a posse dos itens que serão excluídos, evitando referências
+-- antigas no inventário.
+delete from public.user_premium_items up
+where up.item_id in (select id from _quizup_remove_items);
+
+-- Limpa referências de perfil para itens antigos/removidos.
+update public.profiles p
+set premium_avatar=case when premium_avatar in (select id::text from _quizup_remove_items) then null else premium_avatar end,
+    premium_frame=case when premium_frame in (select id::text from _quizup_remove_items) then null else premium_frame end,
+    premium_effect=case when premium_effect in (select id::text from _quizup_remove_items) then null else premium_effect end,
+    premium_theme=case when premium_theme in (select id::text from _quizup_remove_items) then null else premium_theme end,
+    premium_background=case when premium_background in (select id::text from _quizup_remove_items) then null else premium_background end,
+    premium_title=case when premium_title in (select id::text from _quizup_remove_items) then null else premium_title end,
+    premium_badge=case when premium_badge in (select id::text from _quizup_remove_items) then null else premium_badge end
+where
+  premium_avatar in (select id::text from _quizup_remove_items)
+  or premium_frame in (select id::text from _quizup_remove_items)
+  or premium_effect in (select id::text from _quizup_remove_items)
+  or premium_theme in (select id::text from _quizup_remove_items)
+  or premium_background in (select id::text from _quizup_remove_items)
+  or premium_title in (select id::text from _quizup_remove_items)
+  or premium_badge in (select id::text from _quizup_remove_items);
+
+delete from public.premium_items
+where id in (select id from _quizup_remove_items);
+
+-- --------------------------------------------------------------------------
+-- 13) REAÇÕES/EMOJIS DURANTE A PARTIDA
+-- --------------------------------------------------------------------------
+-- Garante que o recurso exista mesmo em bancos onde a tabela não foi criada
+-- por uma migration anterior.
+create table if not exists public.match_reactions(
+  id uuid primary key default gen_random_uuid(),
+  match_id uuid not null,
+  sender_id uuid not null references public.profiles(id) on delete cascade,
+  emoji text not null check (char_length(emoji) between 1 and 120),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists match_reactions_match_created_idx
+  on public.match_reactions(match_id,created_at desc);
+create index if not exists match_reactions_sender_idx
+  on public.match_reactions(sender_id);
+
+alter table public.match_reactions enable row level security;
+drop policy if exists "match reactions read authenticated" on public.match_reactions;
+create policy "match reactions read authenticated"
+  on public.match_reactions for select to authenticated
+  using (true);
+
+drop policy if exists "match reactions insert own" on public.match_reactions;
+create policy "match reactions insert own"
+  on public.match_reactions for insert to authenticated
+  with check (sender_id=auth.uid());
+
+drop policy if exists "match reactions delete own" on public.match_reactions;
+create policy "match reactions delete own"
+  on public.match_reactions for delete to authenticated
+  using (sender_id=auth.uid());
+
+-- Habilita realtime sem gerar erro se a tabela já estiver publicada.
+do $$
+begin
+  if exists(select 1 from pg_publication where pubname='supabase_realtime')
+     and not exists(
+       select 1 from pg_publication_tables
+       where pubname='supabase_realtime'
+         and schemaname='public'
+         and tablename='match_reactions'
+     ) then
+    execute 'alter publication supabase_realtime add table public.match_reactions';
+  end if;
+exception when others then
+  -- A tabela continua funcional mesmo que o projeto não permita alterar a publicação.
+  null;
+end $$;
 
 commit;
 
