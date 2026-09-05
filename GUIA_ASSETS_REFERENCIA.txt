@@ -1,30 +1,19 @@
-QUIZUP — PADRÕES OFICIAIS DE ARTE
+QUIZUP — GUIA DE ARTES V41.5
 
-MOLDURAS
-256 x 256 px — PNG transparente — estáticas, sem animação.
-A arte deve ocupar o anel externo e deixar o centro transparente para o avatar.
+MOLDURAS OFICIAIS
+- fire.png      256 x 256 px, PNG RGBA transparente
+- water.png     256 x 256 px, PNG RGBA transparente
+- earth.png     256 x 256 px, PNG RGBA transparente
+- air.png       256 x 256 px, PNG RGBA transparente
+- darkness.png  256 x 256 px, PNG RGBA transparente
+- light.png     256 x 256 px, PNG RGBA transparente
 
-AVATARES
-256 x 256 px — PNG/JPG/WebP.
-O personagem/rosto deve ficar centralizado. A área segura recomendada é o círculo central de aproximadamente 66% do canvas (169 x 169 px).
+As seis molduras são estáticas. Não aplicar animação, transform, filter, GIF ou efeitos de moldura.
+O avatar é renderizado por baixo da moldura e centralizado na abertura interna.
+Composição oficial: FUNDO -> MOLDURA -> AVATAR -> TITULO -> NOME/INFO.
 
-TÍTULOS
-600 x 160 px — PNG transparente.
-O texto/arte deve ficar centralizado, com margem de segurança nas bordas.
-
-FUNDOS DE PERFIL
-800 x 500 px — PNG/JPG/WebP estático. GIF somente se o fundo animado estiver habilitado.
-
-EMOJIS
-128 x 128 px — PNG/WebP/GIF.
-
-ORDEM VISUAL DO JOGADOR
-1. Fundo de perfil atrás de todo o conteúdo do perfil.
-2. Moldura por cima do avatar.
-3. Avatar dentro da abertura da moldura.
-4. Nome do jogador.
-5. Títulos abaixo do avatar/nome, com o principal destacado.
-
-MOLDURAS INCLUÍDAS
-Fogo, Água, Terra, Ar, Trevas e Luz.
-Todas são PNG 256x256, transparentes e sem animação.
+Outras artes:
+- Avatar: 256 x 256 px, PNG
+- Titulo: 600 x 160 px, PNG transparente
+- Fundo de perfil: 800 x 500 px, PNG/JPG
+- Emoji: 128 x 128 px, PNG transparente
