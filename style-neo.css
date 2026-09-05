@@ -690,9 +690,7 @@ html,body,#app{background:#03050a!important;color:#f7f9fc!important}
 
 /* v38.7 — efeitos animados para títulos e molduras */
 .title-effect-fire{animation:titleFire .7s infinite alternate}.title-effect-water{display:inline-block;color:#7ddcff;text-shadow:0 0 6px #00bfff,0 0 14px #0077ff;animation:effectWater 1.2s infinite}.title-effect-earth{display:inline-block;color:#d8a36b;text-shadow:0 0 7px #7b4a21;animation:effectEarth 1.4s infinite}.title-effect-air{display:inline-block;color:#eaf6ff;text-shadow:0 0 8px #b8d9ef;animation:effectAir 1.1s infinite}.title-effect-darkness{display:inline-block;color:#c6a8ff;text-shadow:0 0 7px #7b36ff,0 0 18px #26005f;animation:effectDark 1.4s infinite}.title-effect-light{display:inline-block;color:#fff7b0;text-shadow:0 0 6px #fff,0 0 16px #ffe66d;animation:effectLight 1.2s infinite}.title-effect-bronze{display:inline-block;color:#e0a66d;text-shadow:0 0 7px #a85d28;animation:effectMetal 1.7s infinite}.title-effect-vip{display:inline-block;color:#ffd86b;text-shadow:0 0 7px #ffb000,0 0 18px #ff6b00;animation:effectVip 1s infinite}.title-effect-diamond{display:inline-block;color:#dffaff;text-shadow:0 0 6px #b9f6ff,0 0 16px #52dfff;animation:effectDiamond 1.3s infinite}.title-effect-ruby{display:inline-block;color:#ff9aa8;text-shadow:0 0 7px #ff1744,0 0 16px #b00020;animation:effectRuby 1s infinite}.title-effect-emerald{display:inline-block;color:#a9ffd3;text-shadow:0 0 7px #00d96b,0 0 16px #007a42;animation:effectEmerald 1.2s infinite}
-.frame-effect-fire{animation:frameFire .75s infinite alternate}.frame-effect-water{animation:frameWater 1.4s infinite}.frame-effect-earth{animation:frameEarth 1.6s infinite}.frame-effect-air{animation:frameAir 1.1s infinite}.frame-effect-lightning{animation:frameLightning 1.05s infinite}.frame-effect-darkness{animation:frameDark 1.5s infinite}.frame-effect-light{animation:frameLight 1.2s infinite}.frame-effect-gold{animation:frameGold 1.5s infinite}.frame-effect-silver{animation:frameSilver 1.7s infinite}.frame-effect-bronze{animation:frameBronze 1.8s infinite}.frame-effect-vip{animation:frameVip 1s infinite}.frame-effect-diamond{animation:frameDiamond 1.2s infinite}.frame-effect-ruby{animation:frameRuby 1s infinite}.frame-effect-emerald{animation:frameEmerald 1.3s infinite}
 @keyframes effectWater{50%{filter:brightness(1.35);transform:translateY(-1px)}}@keyframes effectEarth{50%{transform:translateX(1px)}}@keyframes effectAir{50%{transform:translateY(-2px);opacity:.85}}@keyframes effectDark{50%{filter:brightness(1.45);transform:scale(1.02)}}@keyframes effectLight{50%{filter:brightness(1.8)}}@keyframes effectMetal{50%{filter:brightness(1.35)}}@keyframes effectVip{50%{transform:scale(1.04);filter:brightness(1.45)}}@keyframes effectDiamond{50%{filter:brightness(1.8)}}@keyframes effectRuby{50%{filter:saturate(1.7);transform:scale(1.02)}}@keyframes effectEmerald{50%{filter:saturate(1.5);transform:scale(1.02)}}
-@keyframes frameFire{50%{filter:drop-shadow(0 0 7px #ff4d00) drop-shadow(0 0 14px #ffb000)}}@keyframes frameWater{50%{filter:drop-shadow(0 0 8px #00bfff) drop-shadow(0 0 15px #0066ff)}}@keyframes frameEarth{50%{filter:drop-shadow(0 0 8px #8b5a2b)}}@keyframes frameAir{50%{filter:drop-shadow(0 0 9px #dff6ff)}}@keyframes frameLightning{20%,24%{filter:brightness(1.8) drop-shadow(0 0 12px #fff)}50%{filter:drop-shadow(0 0 9px #5ac8ff)}}@keyframes frameDark{50%{filter:drop-shadow(0 0 10px #7a00ff) brightness(1.2)}}@keyframes frameLight{50%{filter:brightness(1.8) drop-shadow(0 0 12px #fff2a6)}}@keyframes frameGold{50%{filter:brightness(1.5) drop-shadow(0 0 10px #ffd700)}}@keyframes frameSilver{50%{filter:brightness(1.45) drop-shadow(0 0 9px #dfeaff)}}@keyframes frameBronze{50%{filter:brightness(1.35) drop-shadow(0 0 8px #cd7f32)}}@keyframes frameVip{50%{filter:brightness(1.55) drop-shadow(0 0 12px #ffb000)}}@keyframes frameDiamond{50%{filter:brightness(1.7) drop-shadow(0 0 13px #7eeeff)}}@keyframes frameRuby{50%{filter:brightness(1.45) drop-shadow(0 0 12px #ff1744)}}@keyframes frameEmerald{50%{filter:brightness(1.4) drop-shadow(0 0 11px #00e676)}}
 
 /* v38.8 — Fundos de Perfil estáticos e animados */
 .profile-cover{overflow:hidden;isolation:isolate;min-height:320px}
@@ -873,8 +871,6 @@ input,textarea,select{background:#09121b!important;border-color:#2a3a49!importan
 .avatar-frame-shell .avatar-base{inset:9%!important;width:82%!important;height:82%!important;border-radius:50%!important;object-fit:cover!important;z-index:1!important}
 .avatar-frame-overlay{inset:-5%!important;width:110%!important;height:110%!important;object-fit:contain!important;animation:none!important;transform:none!important}
 .avatar-frame-shell.has-custom-frame{filter:drop-shadow(0 0 8px rgba(255,210,26,.12))!important}
-.avatar-frame-shell[class*="frame-effect-"] .avatar-frame-overlay{animation:none!important;transform:none!important}
-.frame-effect-fire,.frame-effect-water,.frame-effect-earth,.frame-effect-air,.frame-effect-lightning,.frame-effect-darkness,.frame-effect-light,.frame-effect-gold,.frame-effect-silver,.frame-effect-bronze,.frame-effect-vip,.frame-effect-diamond,.frame-effect-ruby,.frame-effect-emerald{animation:none!important;transform:none!important}
 .avatar-badge-generated{animation:none!important;transform:none!important}
 
 .cosmetic-editor-backdrop{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.78);backdrop-filter:blur(10px)}
@@ -889,8 +885,6 @@ input,textarea,select{background:#09121b!important;border-color:#2a3a49!importan
 .avatar-frame-shell .avatar-base.avatar-img{object-fit:cover!important;object-position:center!important}
 .avatar-frame-overlay{position:absolute!important;left:-2%!important;top:-2%!important;width:104%!important;height:104%!important;inset:auto!important;object-fit:contain!important;border-radius:0!important;z-index:2!important;pointer-events:none!important;animation:none!important;transform:none!important}
 .avatar-frame-shell.has-custom-frame{filter:none!important}
-.avatar-frame-shell[class*="frame-effect-"] .avatar-frame-overlay{animation:none!important;transform:none!important}
-.frame-effect-fire,.frame-effect-water,.frame-effect-earth,.frame-effect-air,.frame-effect-lightning,.frame-effect-darkness,.frame-effect-light,.frame-effect-gold,.frame-effect-silver,.frame-effect-bronze,.frame-effect-vip,.frame-effect-diamond,.frame-effect-ruby,.frame-effect-emerald{animation:none!important;transform:none!important}
 .premium-art.frame img{width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;border-radius:0!important;animation:none!important;transform:none!important}
 
 /* Fila de matchmaking: mostra avatar + moldura + título do jogador */
@@ -1046,7 +1040,6 @@ img{max-width:100%;}
 .avatar-frame-shell .avatar-base.avatar-img{background:#111a24!important}
 .avatar-frame-overlay{position:absolute!important;left:-1%!important;top:-1%!important;width:102%!important;height:102%!important;margin:0!important;padding:0!important;object-fit:contain!important;border-radius:0!important;z-index:2!important;display:block!important;pointer-events:none!important;animation:none!important;transform:none!important}
 .avatar-frame-shell.has-custom-frame{filter:none!important}
-.avatar-frame-shell[class*="frame-effect-"] .avatar-frame-overlay{animation:none!important;transform:none!important}
 .profile-avatar-stage .avatar-frame-shell{--avatar-size:150px}
 .profile-avatar-stage .avatar-base{left:17%!important;top:17%!important;width:66%!important;height:66%!important}
 .home-avatar.avatar-frame-shell{--avatar-size:128px}
@@ -1133,7 +1126,6 @@ img{max-width:100%;}
 .avatar-frame-shell{position:relative!important;display:inline-block!important;width:var(--avatar-size,56px)!important;height:var(--avatar-size,56px)!important;min-width:var(--avatar-size,56px)!important;min-height:var(--avatar-size,56px)!important;flex:0 0 var(--avatar-size,56px)!important;overflow:visible!important;line-height:0!important}
 .avatar-frame-shell .avatar-base{position:absolute!important;left:17%!important;top:17%!important;width:66%!important;height:66%!important;border:0!important;border-radius:50%!important;object-fit:cover!important;object-position:center!important;z-index:1!important;box-shadow:0 0 0 2px rgba(0,0,0,.45),0 0 22px rgba(0,0,0,.25)!important}
 .avatar-frame-overlay{position:absolute!important;left:0!important;top:0!important;width:100%!important;height:100%!important;object-fit:contain!important;z-index:3!important;pointer-events:none!important;animation:none!important;transform:none!important}
-.avatar-frame-shell[class*="frame-effect-"] .avatar-frame-overlay{animation:none!important;transform:none!important}
 .profile-avatar-stage .profile-effect-badge{z-index:5!important;position:absolute!important;bottom:5px!important;right:calc(50% - 82px)!important}
 .profile-title-stack{width:min(560px,92%)!important;margin:8px auto 10px!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:6px!important}
 .profile-title-row{width:auto!important;max-width:100%!important;min-height:26px!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:4px 12px!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:999px!important;background:rgba(8,13,20,.78)!important;box-shadow:0 6px 20px rgba(0,0,0,.22)!important}
@@ -1237,40 +1229,353 @@ img[src*="/frames/"],img[src*="/frames_png/"]{animation:none!important;transform
   .queue-player-card .avatar-frame-shell{--avatar-size:62px!important}
 }
 
-/* v41.1 — moldura externa ao avatar: avatar fica dentro da moldura */
-.avatar-frame-shell.has-custom-frame{
+/* =========================================================
+   QuizUp v41.2 — COMPOSIÇÃO ÚNICA DE JOGADOR
+   Usa a mesma lógica visual em TODOS os lugares:
+   FUNDO (container) → MOLDURA → AVATAR → TÍTULO → NOME/INFO
+   A página inicial já estava correta; estas regras padronizam
+   perfil, ranking, amigos, fila, início da partida e partida.
+   Molduras são sempre estáticas.
+   ========================================================= */
+
+/* A moldura é o elemento externo. O avatar nunca pode sair dela. */
+.avatar-frame-shell{
   position:relative!important;
+  display:inline-block!important;
+  width:var(--avatar-size,64px)!important;
+  height:var(--avatar-size,64px)!important;
+  min-width:var(--avatar-size,64px)!important;
+  min-height:var(--avatar-size,64px)!important;
+  flex:0 0 var(--avatar-size,64px)!important;
   overflow:visible!important;
   isolation:isolate!important;
+  line-height:0!important;
+  vertical-align:middle!important;
 }
 .avatar-frame-shell .avatar-base{
   position:absolute!important;
-  inset:6%!important;
-  width:88%!important;
-  height:88%!important;
-  z-index:2!important;
+  left:9%!important;
+  top:9%!important;
+  inset:auto!important;
+  width:82%!important;
+  height:82%!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
   border-radius:50%!important;
+  object-fit:cover!important;
+  object-position:center!important;
   overflow:hidden!important;
+  z-index:1!important;
+  box-shadow:none!important;
+  display:block!important;
 }
-.avatar-frame-overlay{
+.avatar-frame-shell .avatar-frame-overlay{
   position:absolute!important;
-  inset:-10%!important;
-  width:120%!important;
-  height:120%!important;
+  left:-9%!important;
+  top:-9%!important;
+  inset:auto!important;
+  width:118%!important;
+  height:118%!important;
   max-width:none!important;
   max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
   object-fit:contain!important;
   z-index:3!important;
+  display:block!important;
   pointer-events:none!important;
-  border-radius:50%!important;
-  animation:none!important;
-}
-.avatar-frame-shell [class*="frame-effect-"]{
   animation:none!important;
   transform:none!important;
 }
-/* Mantém o conjunto compacto nos tamanhos pequenos, mas sem apertar o avatar. */
+.avatar-frame-shell.has-custom-frame .avatar-frame-overlay,
+img[src*="/frames/"]{
+  animation:none!important;
+  transform:none!important;
+}
+
+/* O conjunto inteiro fica sempre vertical: moldura/avata r -> título -> nome/infos. */
+.match-player,
+.friend-avatar-stack,
+.queue-player-card,
+.neon-avatar-wrap,
+.podium-card{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  text-align:center!important;
+}
+
+/* Título é um bloco próprio imediatamente abaixo do conjunto avatar+moldura. */
+.player-title-below,
+.queue-title-art,
+.rank-title-below,
+.friend-title-below,
+.game-title-below{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:auto!important;
+  max-width:100%!important;
+  min-height:18px!important;
+  margin:5px auto 2px!important;
+  padding:0!important;
+  overflow:visible!important;
+  line-height:1!important;
+  z-index:5!important;
+}
+.player-title-below .player-title-image,
+.queue-title-art .queue-title-image,
+.rank-title-below .player-title-image,
+.friend-title-below .player-title-image,
+.game-title-below .player-title-image{
+  position:static!important;
+  display:block!important;
+  width:auto!important;
+  height:auto!important;
+  max-width:100%!important;
+  max-height:28px!important;
+  object-fit:contain!important;
+  margin:0!important;
+}
+
+/* PERFIL */
+.profile-avatar-stage{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  position:relative!important;
+  min-height:180px!important;
+  margin:8px auto 0!important;
+}
+.profile-avatar-stage .avatar-frame-shell{--avatar-size:160px!important}
+.profile-title-stack{
+  position:relative!important;
+  z-index:6!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  width:min(620px,94%)!important;
+  margin:10px auto 12px!important;
+  gap:7px!important;
+}
+.profile-title-row{
+  position:relative!important;
+  z-index:6!important;
+}
+
+/* RANKING — cada jogador tem moldura+avatar e título na mesma coluna visual. */
+.podium-card .avatar-frame-shell{--avatar-size:104px!important}
+.podium-card .player-title-below{max-width:110px!important}
+.player-row{
+  grid-template-columns:38px 82px minmax(0,1fr) auto!important;
+  align-items:center!important;
+}
+.player-row .avatar-frame-shell{--avatar-size:72px!important}
+.player-row .rank-title-below{
+  grid-column:2!important;
+  grid-row:2!important;
+  width:82px!important;
+  max-width:82px!important;
+}
+.player-row .rank-title-below .player-title-image{max-width:82px!important;max-height:20px!important}
+
+/* AMIGOS — título permanece embaixo do avatar, nunca ao lado. */
+.friend{
+  display:grid!important;
+  grid-template-columns:104px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:10px!important;
+}
+.friend-avatar-stack{
+  width:104px!important;
+  gap:4px!important;
+}
+.friend-avatar-stack .avatar-frame-shell{--avatar-size:78px!important}
+.friend-avatar-stack .friend-title-below{width:100px!important;max-width:100px!important}
+.friend-avatar-stack .friend-title-below .player-title-image{max-width:100px!important;max-height:21px!important}
+
+/* FILA — nome fica abaixo do título; nada se sobrepõe. */
+.queue-player-card{
+  width:108px!important;
+  min-width:108px!important;
+  max-width:108px!important;
+  gap:3px!important;
+}
+.queue-player-card .avatar-frame-shell{--avatar-size:84px!important}
+.queue-player-card .queue-title-art{width:108px!important;min-height:24px!important;max-width:108px!important}
+.queue-player-card .queue-title-art .queue-title-image{max-width:108px!important;max-height:25px!important}
+.queue-player-card>b{
+  display:block!important;
+  width:108px!important;
+  max-width:108px!important;
+  margin:1px 0 0!important;
+  font-size:10px!important;
+  line-height:14px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.queue-players{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  gap:20px!important;
+  width:100%!important;
+  max-width:820px!important;
+  margin:24px auto 10px!important;
+}
+
+/* INÍCIO DA PARTIDA — mesma composição da fila, em escala maior. */
+.match-vs{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 70px minmax(0,1fr)!important;
+  align-items:start!important;
+  justify-items:center!important;
+  gap:30px!important;
+  width:min(900px,100%)!important;
+  margin:26px auto!important;
+}
+.match-player{
+  width:100%!important;
+  gap:5px!important;
+}
+.match-player .avatar-frame-shell{--avatar-size:164px!important}
+.match-player .player-title-below{width:164px!important;max-width:164px!important}
+.match-player .player-title-below .player-title-image{max-width:164px!important;max-height:34px!important}
+.match-player>b{
+  display:block!important;
+  margin:1px 0 0!important;
+  line-height:18px!important;
+}
+
+/* PARTIDA AO VIVO — título abaixo da moldura/avatar e antes da pontuação. */
+.neon-avatar-wrap{
+  width:100%!important;
+  gap:3px!important;
+}
+.neon-avatar-wrap .avatar-frame-shell{--avatar-size:142px!important}
+.neon-avatar-wrap .game-title-below{
+  width:150px!important;
+  max-width:150px!important;
+  min-height:24px!important;
+  margin-top:4px!important;
+}
+.neon-avatar-wrap .game-title-below .player-title-image{max-width:150px!important;max-height:30px!important}
+.neon-avatar-wrap .score-under-avatar{
+  position:relative!important;
+  order:20!important;
+  margin-top:2px!important;
+}
+
+/* LOJA — quando uma arte de avatar/moldura é mostrada como conjunto, mantém proporção. */
+.premium-art.frame img{
+  width:256px!important;
+  height:256px!important;
+  object-fit:contain!important;
+  animation:none!important;
+  transform:none!important;
+}
+.premium-art.avatar img{
+  width:256px!important;
+  height:256px!important;
+  object-fit:contain!important;
+  border-radius:50%!important;
+}
+
+/* Desktop */
+@media(min-width:901px){
+  .profile-avatar-stage .avatar-frame-shell{--avatar-size:176px!important}
+  .podium-card .avatar-frame-shell{--avatar-size:118px!important}
+  .player-row .avatar-frame-shell{--avatar-size:76px!important}
+  .friend-avatar-stack .avatar-frame-shell{--avatar-size:82px!important}
+  .queue-player-card .avatar-frame-shell{--avatar-size:92px!important}
+  .match-player .avatar-frame-shell{--avatar-size:178px!important}
+  .neon-avatar-wrap .avatar-frame-shell{--avatar-size:154px!important}
+}
+
+/* Mobile */
 @media(max-width:520px){
-  .avatar-frame-shell .avatar-base{inset:6%!important;width:88%!important;height:88%!important}
-  .avatar-frame-overlay{inset:-10%!important;width:120%!important;height:120%!important}
+  .profile-avatar-stage{min-height:140px!important;margin-top:5px!important}
+  .profile-avatar-stage .avatar-frame-shell{--avatar-size:128px!important}
+  .profile-title-stack{width:96%!important;margin-top:8px!important;gap:5px!important}
+  .profile-title-row .profile-title-image{max-width:84vw!important;max-height:38px!important}
+  .profile-title-row.main .profile-title-image{max-height:42px!important}
+  .podium-card .avatar-frame-shell{--avatar-size:76px!important}
+  .player-row{grid-template-columns:30px 64px minmax(0,1fr) auto!important;column-gap:6px!important}
+  .player-row .avatar-frame-shell{--avatar-size:58px!important}
+  .player-row .rank-title-below{width:64px!important;max-width:64px!important}
+  .player-row .rank-title-below .player-title-image{max-width:64px!important;max-height:18px!important}
+  .friend{grid-template-columns:84px minmax(0,1fr) auto!important;gap:6px!important}
+  .friend-avatar-stack{width:84px!important}
+  .friend-avatar-stack .avatar-frame-shell{--avatar-size:64px!important}
+  .friend-avatar-stack .friend-title-below{width:82px!important;max-width:82px!important}
+  .friend-avatar-stack .friend-title-below .player-title-image{max-width:82px!important;max-height:18px!important}
+  .queue-players{gap:10px!important;margin-top:20px!important}
+  .queue-player-card{width:78px!important;min-width:78px!important;max-width:78px!important}
+  .queue-player-card .avatar-frame-shell{--avatar-size:64px!important}
+  .queue-player-card .queue-title-art{width:78px!important;max-width:78px!important;min-height:20px!important}
+  .queue-player-card .queue-title-art .queue-title-image{max-width:78px!important;max-height:20px!important}
+  .queue-player-card>b{width:78px!important;max-width:78px!important;font-size:9px!important}
+  .match-vs{grid-template-columns:minmax(0,1fr) 38px minmax(0,1fr)!important;gap:8px!important}
+  .match-player .avatar-frame-shell{--avatar-size:108px!important}
+  .match-player .player-title-below{width:112px!important;max-width:112px!important}
+  .match-player .player-title-below .player-title-image{max-width:112px!important;max-height:24px!important}
+  .neon-avatar-wrap .avatar-frame-shell{--avatar-size:94px!important}
+  .neon-avatar-wrap .game-title-below{width:108px!important;max-width:108px!important}
+  .neon-avatar-wrap .game-title-below .player-title-image{max-width:108px!important;max-height:23px!important}
+}
+
+/* =========================================================
+   V41.3 — MOLDURAS OFICIAIS SOMENTE ESTÁTICAS
+   Ordem única em todo o aplicativo: FUNDO -> MOLDURA -> AVATAR -> TÍTULO.
+   ========================================================= */
+.avatar-frame-shell,
+.avatar-frame-shell *{
+  animation:none!important;
+  transition:none!important;
+}
+  animation:none!important;
+  transform:none!important;
+  filter:none!important;
+}
+.avatar-frame-shell .avatar-frame-overlay{
+  animation:none!important;
+  transition:none!important;
+  transform:none!important;
+  filter:none!important;
+  z-index:3!important;
+}
+.avatar-frame-shell .avatar-base{
+  z-index:1!important;
+}
+.avatar-frame-shell{
+  z-index:2!important;
+}
+
+/* Remove visual effects previously associated with frame classes. */
+  animation:none!important;
+  transform:none!important;
+  filter:none!important;
+}
+
+/* Same geometry everywhere: frame is larger, avatar stays inside it. */
+.avatar-frame-shell .avatar-base{
+  left:17%!important;
+  top:17%!important;
+  width:66%!important;
+  height:66%!important;
+}
+.avatar-frame-shell .avatar-frame-overlay{
+  left:0!important;
+  top:0!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
 }

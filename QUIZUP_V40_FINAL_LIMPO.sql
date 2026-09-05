@@ -140,12 +140,12 @@ insert into public.premium_items(
   asset_width,asset_height,frame_inset_percent,frame_version,active
 )
 values
- ('frame-fire','Fogo','Molduras','Moldura Fogo estática — 256 × 256 px, PNG/SVG transparente.',500,500,null,null,false,null,'🔥','fire','assets/store/frames/fire.svg','image/svg+xml','frame','frame','frame-fire',256,256,0,'static-v3',true),
- ('frame-water','Água','Molduras','Moldura Água estática — 256 × 256 px, PNG/SVG transparente.',500,500,null,null,false,null,'💧','water','assets/store/frames/water.svg','image/svg+xml','frame','frame','frame-water',256,256,0,'static-v3',true),
- ('frame-earth','Terra','Molduras','Moldura Terra estática — 256 × 256 px, PNG/SVG transparente.',500,500,null,null,false,null,'🌿','earth','assets/store/frames/earth.svg','image/svg+xml','frame','frame','frame-earth',256,256,0,'static-v3',true),
- ('frame-air','Ar','Molduras','Moldura Ar estática — 256 × 256 px, PNG/SVG transparente.',500,500,null,null,false,null,'🌪️','air','assets/store/frames/air.svg','image/svg+xml','frame','frame','frame-air',256,256,0,'static-v3',true),
- ('frame-darkness','Trevas','Molduras','Moldura Trevas estática — 256 × 256 px, PNG/SVG transparente.',500,500,null,null,false,null,'🌑','darkness','assets/store/frames/darkness.svg','image/svg+xml','frame','frame','frame-darkness',256,256,0,'static-v3',true),
- ('frame-light','Luz','Molduras','Moldura Luz estática — 256 × 256 px, PNG/SVG transparente.',500,500,null,null,false,null,'✨','light','assets/store/frames/light.svg','image/svg+xml','frame','frame','frame-light',256,256,0,'static-v3',true)
+ ('frame-fire','Fogo','Molduras','Moldura Fogo estática — 256 × 256 px, PNG transparente.',500,500,null,null,false,null,'🔥','fire','assets/store/frames/fire.png','image/png','frame','frame','frame-fire',256,256,0,'static-v3',true),
+ ('frame-water','Água','Molduras','Moldura Água estática — 256 × 256 px, PNG transparente.',500,500,null,null,false,null,'💧','water','assets/store/frames/water.png','image/png','frame','frame','frame-water',256,256,0,'static-v3',true),
+ ('frame-earth','Terra','Molduras','Moldura Terra estática — 256 × 256 px, PNG transparente.',500,500,null,null,false,null,'🌿','earth','assets/store/frames/earth.png','image/png','frame','frame','frame-earth',256,256,0,'static-v3',true),
+ ('frame-air','Ar','Molduras','Moldura Ar estática — 256 × 256 px, PNG transparente.',500,500,null,null,false,null,'🌪️','air','assets/store/frames/air.png','image/png','frame','frame','frame-air',256,256,0,'static-v3',true),
+ ('frame-darkness','Trevas','Molduras','Moldura Trevas estática — 256 × 256 px, PNG transparente.',500,500,null,null,false,null,'🌑','darkness','assets/store/frames/darkness.png','image/png','frame','frame','frame-darkness',256,256,0,'static-v3',true),
+ ('frame-light','Luz','Molduras','Moldura Luz estática — 256 × 256 px, PNG transparente.',500,500,null,null,false,null,'✨','light','assets/store/frames/light.png','image/png','frame','frame','frame-light',256,256,0,'static-v3',true)
 on conflict(id) do update set
  name=excluded.name,category=excluded.category,description=excluded.description,
  price_cents=excluded.price_cents,price_coins=excluded.price_coins,
@@ -155,7 +155,7 @@ on conflict(id) do update set
 
 -- Garantia: as seis molduras oficiais são sempre estáticas e sem GIF.
 update public.premium_items
-set asset_type='image/svg+xml',asset_width=256,asset_height=256,frame_inset_percent=0,frame_version='static-v3'
+set asset_type='image/png',asset_width=256,asset_height=256,frame_inset_percent=0,frame_version='static-v3'
 where id in ('frame-fire','frame-water','frame-earth','frame-air','frame-darkness','frame-light');
 
 -- Se existirem cópias antigas com os mesmos nomes, os seis oficiais são os únicos vendidos.
@@ -576,6 +576,30 @@ where
   or exists (select 1 from public.premium_items pi where pi.id::text=p.premium_background and (pi.category in ('Emblemas','Emblem') or pi.asset_url ilike '%/assets/store/emblems/%' or pi.asset_url ilike '%/assets/emblems/%' or (pi.kind in ('avatar','frame','title','background','emoji','badge') and coalesce(trim(pi.asset_url),'')='')))
   or exists (select 1 from public.premium_items pi where pi.id::text=p.premium_title and (pi.category in ('Emblemas','Emblem') or pi.asset_url ilike '%/assets/store/emblems/%' or pi.asset_url ilike '%/assets/emblems/%' or (pi.kind in ('avatar','frame','title','background','emoji','badge') and coalesce(trim(pi.asset_url),'')='')))
   or exists (select 1 from public.premium_items pi where pi.id::text=p.premium_badge and (pi.category in ('Emblemas','Emblem') or pi.asset_url ilike '%/assets/store/emblems/%' or pi.asset_url ilike '%/assets/emblems/%' or (pi.kind in ('avatar','frame','title','background','emoji','badge') and coalesce(trim(pi.asset_url),'')='')));
+
+-- Remove todas as molduras antigas e com efeitos.
+-- Permanecem SOMENTE as seis molduras estáticas oficiais da referência.
+delete from public.user_premium_items up
+where exists (
+  select 1 from public.premium_items pi
+  where pi.id=up.item_id
+    and pi.kind='frame'
+    and pi.id not in ('frame-fire','frame-water','frame-earth','frame-air','frame-darkness','frame-light')
+);
+
+update public.profiles p
+set premium_frame=null
+where p.premium_frame is not null
+  and p.premium_frame::text not in ('frame-fire','frame-water','frame-earth','frame-air','frame-darkness','frame-light');
+
+delete from public.premium_items pi
+where pi.kind='frame'
+  and pi.id not in ('frame-fire','frame-water','frame-earth','frame-air','frame-darkness','frame-light');
+
+-- As molduras oficiais não possuem efeito de execução.
+update public.premium_items
+set effect_style='none', asset_type='image/png', asset_width=256, asset_height=256, frame_version='static-v3'
+where id in ('frame-fire','frame-water','frame-earth','frame-air','frame-darkness','frame-light');
 
 -- Finalmente exclui do catálogo somente os itens antigos/quebrados.
 delete from public.premium_items pi

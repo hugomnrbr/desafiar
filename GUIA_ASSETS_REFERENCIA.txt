@@ -1,0 +1,30 @@
+QUIZUP — PADRÕES OFICIAIS DE ARTE
+
+MOLDURAS
+256 x 256 px — PNG transparente — estáticas, sem animação.
+A arte deve ocupar o anel externo e deixar o centro transparente para o avatar.
+
+AVATARES
+256 x 256 px — PNG/JPG/WebP.
+O personagem/rosto deve ficar centralizado. A área segura recomendada é o círculo central de aproximadamente 66% do canvas (169 x 169 px).
+
+TÍTULOS
+600 x 160 px — PNG transparente.
+O texto/arte deve ficar centralizado, com margem de segurança nas bordas.
+
+FUNDOS DE PERFIL
+800 x 500 px — PNG/JPG/WebP estático. GIF somente se o fundo animado estiver habilitado.
+
+EMOJIS
+128 x 128 px — PNG/WebP/GIF.
+
+ORDEM VISUAL DO JOGADOR
+1. Fundo de perfil atrás de todo o conteúdo do perfil.
+2. Moldura por cima do avatar.
+3. Avatar dentro da abertura da moldura.
+4. Nome do jogador.
+5. Títulos abaixo do avatar/nome, com o principal destacado.
+
+MOLDURAS INCLUÍDAS
+Fogo, Água, Terra, Ar, Trevas e Luz.
+Todas são PNG 256x256, transparentes e sem animação.
