@@ -1532,50 +1532,290 @@ img[src*="/frames/"]{
   .neon-avatar-wrap .game-title-below .player-title-image{max-width:108px!important;max-height:23px!important}
 }
 
+
 /* =========================================================
-   V41.3 — MOLDURAS OFICIAIS SOMENTE ESTÁTICAS
-   Ordem única em todo o aplicativo: FUNDO -> MOLDURA -> AVATAR -> TÍTULO.
+   V41.4 — COMPOSIÇÃO OFICIAL DOS COSMÉTICOS
+   Uma única geometria para o aplicativo inteiro.
+   Fundo -> moldura -> avatar -> título -> nome/pontos.
+   Molduras são PNG estáticos, sem efeitos ou animações.
    ========================================================= */
-.avatar-frame-shell,
-.avatar-frame-shell *{
-  animation:none!important;
-  transition:none!important;
-}
-  animation:none!important;
-  transform:none!important;
-  filter:none!important;
-}
-.avatar-frame-shell .avatar-frame-overlay{
-  animation:none!important;
-  transition:none!important;
-  transform:none!important;
-  filter:none!important;
-  z-index:3!important;
-}
-.avatar-frame-shell .avatar-base{
-  z-index:1!important;
-}
+
 .avatar-frame-shell{
-  z-index:2!important;
+  position:relative!important;
+  display:inline-block!important;
+  width:var(--avatar-size,96px)!important;
+  height:var(--avatar-size,96px)!important;
+  min-width:var(--avatar-size,96px)!important;
+  min-height:var(--avatar-size,96px)!important;
+  flex:0 0 var(--avatar-size,96px)!important;
+  overflow:visible!important;
+  vertical-align:middle!important;
+  line-height:0!important;
+  isolation:isolate!important;
+  border-radius:0!important;
+  filter:none!important;
+  transform:none!important;
+  animation:none!important;
+  transition:none!important;
 }
 
-/* Remove visual effects previously associated with frame classes. */
+/* O avatar ocupa somente a abertura central da moldura.
+   As artes oficiais possuem transparência externa e abertura interna. */
+.avatar-frame-shell .avatar-base{
+  position:absolute!important;
+  left:25%!important;
+  top:25%!important;
+  width:50%!important;
+  height:50%!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  z-index:1!important;
   animation:none!important;
+  transition:none!important;
   transform:none!important;
   filter:none!important;
 }
 
-/* Same geometry everywhere: frame is larger, avatar stays inside it. */
-.avatar-frame-shell .avatar-base{
-  left:17%!important;
-  top:17%!important;
-  width:66%!important;
-  height:66%!important;
-}
 .avatar-frame-shell .avatar-frame-overlay{
+  position:absolute!important;
   left:0!important;
   top:0!important;
   width:100%!important;
   height:100%!important;
+  margin:0!important;
+  padding:0!important;
   object-fit:contain!important;
+  object-position:center center!important;
+  border:0!important;
+  border-radius:0!important;
+  z-index:2!important;
+  pointer-events:none!important;
+  animation:none!important;
+  transition:none!important;
+  transform:none!important;
+  filter:none!important;
+  box-shadow:none!important;
+}
+
+/* Nenhuma moldura pode receber efeitos antigos. */
+.avatar-frame-shell[class*="frame-effect"],
+.avatar-frame-shell[class*="badge-effect"],
+.avatar-frame-shell.has-custom-frame{
+  filter:none!important;
+  box-shadow:none!important;
+  animation:none!important;
+  transform:none!important;
+}
+.avatar-frame-shell:before,
+.avatar-frame-shell:after{content:none!important;display:none!important;}
+
+/* Composição vertical universal */
+.match-player,
+.friend-avatar-stack,
+.queue-player-card,
+.neon-avatar-wrap,
+.podium-card,
+.profile-avatar-stage{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  text-align:center!important;
+}
+
+.player-title-below,
+.rank-title-below,
+.friend-title-below,
+.queue-title-art,
+.game-title-below{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:auto!important;
+  min-width:0!important;
+  min-height:18px!important;
+  max-width:100%!important;
+  margin:7px auto 1px!important;
+  padding:0!important;
+  overflow:visible!important;
+  line-height:1!important;
+  z-index:4!important;
+}
+
+.player-title-below .player-title-image,
+.rank-title-below .player-title-image,
+.friend-title-below .player-title-image,
+.queue-title-art .queue-title-image,
+.game-title-below .player-title-image{
+  position:static!important;
+  display:block!important;
+  width:auto!important;
+  height:auto!important;
+  max-width:100%!important;
+  max-height:30px!important;
+  object-fit:contain!important;
+  margin:0!important;
+}
+
+/* PERFIL — fundo cobre toda a área e fica atrás de absolutamente tudo. */
+.profile-cover{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+}
+.profile-background-media{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  z-index:0!important;
+  pointer-events:none!important;
+  animation:none!important;
+}
+.profile-cover:after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  background:linear-gradient(180deg,rgba(3,5,10,.08),rgba(3,5,10,.42))!important;
+  z-index:0!important;
+  pointer-events:none!important;
+}
+.profile-cover>*:not(.profile-background-media):not(:after){position:relative!important;z-index:2!important;}
+.profile-avatar-stage{min-height:190px!important;margin:8px auto 2px!important;}
+.profile-avatar-stage .avatar-frame-shell{--avatar-size:190px!important;}
+.profile-title-stack{
+  position:relative!important;
+  z-index:5!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  width:min(620px,94%)!important;
+  margin:8px auto 12px!important;
+  gap:6px!important;
+}
+.profile-title-row{position:relative!important;z-index:5!important;display:flex!important;justify-content:center!important;width:100%!important;}
+.profile-title-row .profile-title-image{max-width:100%!important;height:auto!important;object-fit:contain!important;}
+.profile-title-row.main .profile-title-image{filter:drop-shadow(0 2px 8px rgba(255,210,26,.35))!important;}
+
+/* RANKING */
+.podium-card{gap:2px!important;}
+.podium-card .avatar-frame-shell{--avatar-size:126px!important;}
+.podium-card .player-title-below{width:130px!important;max-width:130px!important;}
+.podium-card .player-title-below .player-title-image{max-width:130px!important;max-height:28px!important;}
+.player-row{
+  grid-template-columns:38px 88px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  min-width:0!important;
+}
+.player-row .avatar-frame-shell{--avatar-size:88px!important;}
+.player-row .rank-title-below{grid-column:2!important;grid-row:2!important;width:88px!important;max-width:88px!important;}
+.player-row .rank-title-below .player-title-image{max-width:88px!important;max-height:20px!important;}
+
+/* AMIGOS */
+.friend{
+  display:grid!important;
+  grid-template-columns:112px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:10px!important;
+  min-width:0!important;
+}
+.friend-avatar-stack{width:112px!important;gap:3px!important;}
+.friend-avatar-stack .avatar-frame-shell{--avatar-size:88px!important;}
+.friend-avatar-stack .friend-title-below{width:108px!important;max-width:108px!important;}
+.friend-avatar-stack .friend-title-below .player-title-image{max-width:108px!important;max-height:22px!important;}
+
+/* FILA */
+.queue-player-card{
+  width:116px!important;
+  min-width:116px!important;
+  max-width:116px!important;
+  gap:2px!important;
+  overflow:visible!important;
+}
+.queue-player-card .avatar-frame-shell{--avatar-size:94px!important;}
+.queue-player-card .queue-title-art{width:112px!important;max-width:112px!important;min-height:24px!important;}
+.queue-player-card .queue-title-art .queue-title-image{max-width:112px!important;max-height:25px!important;}
+.queue-player-card>b{width:112px!important;max-width:112px!important;margin:2px 0 0!important;font-size:10px!important;line-height:14px!important;}
+.queue-players{display:flex!important;flex-wrap:wrap!important;align-items:flex-start!important;justify-content:center!important;gap:22px!important;width:100%!important;max-width:900px!important;margin:24px auto 10px!important;}
+
+/* ADVERSÁRIO ENCONTRADO */
+.match-vs{align-items:start!important;justify-items:center!important;}
+.match-player{gap:2px!important;min-width:0!important;}
+.match-player .avatar-frame-shell{--avatar-size:184px!important;}
+.match-player .player-title-below{width:176px!important;max-width:176px!important;}
+.match-player .player-title-below .player-title-image{max-width:176px!important;max-height:34px!important;}
+.match-player>b{display:block!important;margin:2px 0 0!important;line-height:18px!important;}
+
+/* PARTIDA */
+.neon-avatar-wrap{gap:2px!important;min-width:0!important;}
+.neon-avatar-wrap .avatar-frame-shell{--avatar-size:156px!important;}
+.neon-avatar-wrap .game-title-below{width:154px!important;max-width:154px!important;min-height:25px!important;margin-top:5px!important;}
+.neon-avatar-wrap .game-title-below .player-title-image{max-width:154px!important;max-height:30px!important;}
+.neon-avatar-wrap .score-under-avatar{position:relative!important;order:20!important;margin-top:3px!important;}
+
+/* Loja: as artes não ganham filtros/efeitos. */
+.premium-art.frame img{
+  width:256px!important;height:256px!important;object-fit:contain!important;
+  animation:none!important;transform:none!important;filter:none!important;box-shadow:none!important;
+}
+
+/* DESKTOP */
+@media(min-width:901px){
+  .profile-avatar-stage .avatar-frame-shell{--avatar-size:210px!important;}
+  .podium-card .avatar-frame-shell{--avatar-size:132px!important;}
+  .player-row .avatar-frame-shell{--avatar-size:92px!important;}
+  .friend-avatar-stack .avatar-frame-shell{--avatar-size:92px!important;}
+  .queue-player-card .avatar-frame-shell{--avatar-size:104px!important;}
+  .match-player .avatar-frame-shell{--avatar-size:194px!important;}
+  .neon-avatar-wrap .avatar-frame-shell{--avatar-size:164px!important;}
+}
+
+/* TABLET */
+@media(min-width:521px) and (max-width:900px){
+  .profile-avatar-stage .avatar-frame-shell{--avatar-size:190px!important;}
+  .podium-card .avatar-frame-shell{--avatar-size:120px!important;}
+  .player-row .avatar-frame-shell{--avatar-size:84px!important;}
+  .friend-avatar-stack .avatar-frame-shell{--avatar-size:84px!important;}
+  .queue-player-card .avatar-frame-shell{--avatar-size:92px!important;}
+  .match-player .avatar-frame-shell{--avatar-size:174px!important;}
+  .neon-avatar-wrap .avatar-frame-shell{--avatar-size:146px!important;}
+}
+
+/* MOBILE */
+@media(max-width:520px){
+  .profile-avatar-stage{min-height:150px!important;margin-top:5px!important;}
+  .profile-avatar-stage .avatar-frame-shell{--avatar-size:150px!important;}
+  .profile-title-stack{width:96%!important;margin-top:7px!important;gap:5px!important;}
+  .profile-title-row .profile-title-image{max-width:88vw!important;max-height:38px!important;}
+  .profile-title-row.main .profile-title-image{max-height:42px!important;}
+  .podium-card .avatar-frame-shell{--avatar-size:84px!important;}
+  .player-row{grid-template-columns:30px 70px minmax(0,1fr) auto!important;column-gap:6px!important;}
+  .player-row .avatar-frame-shell{--avatar-size:70px!important;}
+  .player-row .rank-title-below{width:70px!important;max-width:70px!important;}
+  .player-row .rank-title-below .player-title-image{max-width:70px!important;max-height:18px!important;}
+  .friend{grid-template-columns:88px minmax(0,1fr) auto!important;gap:6px!important;}
+  .friend-avatar-stack{width:88px!important;}
+  .friend-avatar-stack .avatar-frame-shell{--avatar-size:70px!important;}
+  .friend-avatar-stack .friend-title-below{width:86px!important;max-width:86px!important;}
+  .friend-avatar-stack .friend-title-below .player-title-image{max-width:86px!important;max-height:18px!important;}
+  .queue-players{gap:12px!important;margin-top:20px!important;}
+  .queue-player-card{width:82px!important;min-width:82px!important;max-width:82px!important;}
+  .queue-player-card .avatar-frame-shell{--avatar-size:68px!important;}
+  .queue-player-card .queue-title-art{width:82px!important;max-width:82px!important;min-height:20px!important;}
+  .queue-player-card .queue-title-art .queue-title-image{max-width:82px!important;max-height:20px!important;}
+  .queue-player-card>b{width:82px!important;max-width:82px!important;font-size:9px!important;}
+  .match-vs{grid-template-columns:minmax(0,1fr) 38px minmax(0,1fr)!important;gap:8px!important;}
+  .match-player .avatar-frame-shell{--avatar-size:116px!important;}
+  .match-player .player-title-below{width:112px!important;max-width:112px!important;}
+  .match-player .player-title-below .player-title-image{max-width:112px!important;max-height:24px!important;}
+  .neon-avatar-wrap .avatar-frame-shell{--avatar-size:98px!important;}
+  .neon-avatar-wrap .game-title-below{width:106px!important;max-width:106px!important;}
+  .neon-avatar-wrap .game-title-below .player-title-image{max-width:106px!important;max-height:23px!important;}
 }

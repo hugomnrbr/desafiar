@@ -116,7 +116,7 @@
     const a=isOther?{}:premiumActive();
     const requestedFrame=profile?.premium_frame || a.frame || '';
     const frameItem=premiumItemById(requestedFrame);
-    const safeFrame=(frameItem?.kind==='frame' && OFFICIAL_STATIC_FRAMES.has(String(frameItem.id)))?String(frameItem.id):'';
+    const safeFrame=(frameItem?.kind==='frame' && frameItem?.asset_type==='image/png' && String(frameItem?.effect_style||'none')==='none')?String(frameItem.id):'';
     return {
       frame: safeFrame,
       effect: profile?.premium_effect || a.effect || '',
@@ -1007,7 +1007,7 @@
         <label>Descrição<textarea id="ceDesc" maxlength="300">${esc(source.description||item.description||'')}</textarea></label>
         <div class="cosmetic-editor-grid"><label>Preço normal (QuizCoins)<input id="cePrice" type="number" min="0" step="1" value="${currentPrice}"></label><label>Preço promocional<input id="cePromo" type="number" min="0" step="1" value="${currentPromo||''}" placeholder="Vazio = sem promoção"></label></div>
         <label>Fim da promoção (opcional)<input id="ceExpires" type="datetime-local" value="${item.promo_expires_at?new Date(item.promo_expires_at).toISOString().slice(0,16):''}"></label>
-        ${(kind==='frame'||kind==='title')?`<label>Efeito visual<select id="ceEffect"><option value="none">Sem efeito</option><option value="fire">🔥 Fogo</option><option value="water">💧 Água</option><option value="earth">🌍 Terra</option><option value="air">🌪️ Ar</option><option value="lightning">⚡ Raio</option><option value="darkness">🌑 Trevas</option><option value="light">✨ Luz</option><option value="gold">🥇 Dourado</option><option value="silver">🥈 Prata</option><option value="bronze">🥉 Bronze</option><option value="vip">👑 VIP</option><option value="diamond">💎 Diamante</option><option value="ruby">♦️ Rubi</option><option value="emerald">💚 Esmeralda</option></select></label>`:''}
+        ${kind==='title'?`<label>Efeito visual<select id="ceEffect"><option value="none">Sem efeito</option><option value="fire">🔥 Fogo</option><option value="water">💧 Água</option><option value="earth">🌍 Terra</option><option value="air">🌪️ Ar</option><option value="lightning">⚡ Raio</option><option value="darkness">🌑 Trevas</option><option value="light">✨ Luz</option><option value="gold">🥇 Dourado</option><option value="silver">🥈 Prata</option><option value="bronze">🥉 Bronze</option><option value="vip">👑 VIP</option><option value="diamond">💎 Diamante</option><option value="ruby">♦️ Rubi</option><option value="emerald">💚 Esmeralda</option></select></label>`:''}
         ${kind==='title'?`<div class="cosmetic-editor-grid"><label>Cor do título<input id="ceColor" type="text" maxlength="7" value="${esc(item.title_color||title?.title_color||'#ffd21a')}"></label><label>Fonte<input id="ceFont" maxlength="60" value="${esc(item.title_font||title?.title_font||'Inter')}"></label></div>`:''}
         ${kind==='background'?`<label>Tipo do fundo<select id="ceBgType"><option value="static" ${item.asset_type==='static'?'selected':''}>🖼️ Estático</option><option value="animated" ${item.asset_type==='animated'?'selected':''}>🎞️ Animado (GIF)</option></select></label>`:''}
         <div class="cosmetic-upload-box"><b>🖼️ Trocar imagem</b><span>${spec.w&&spec.h?`Obrigatório: ${spec.w} × ${spec.h} px`:'Resolução definida pelo tipo'}</span><input id="ceFile" type="file" accept="${spec.accept}"><small id="ceFileName">Nenhum arquivo novo selecionado</small></div>
@@ -1016,7 +1016,7 @@
         <div class="cosmetic-editor-actions"><button type="button" class="secondary" id="cosmeticEditorCancel">CANCELAR</button><button type="submit" class="primary">SALVAR TODAS AS ALTERAÇÕES</button></div>
       </form></div>`;
     document.body.appendChild(overlay);
-    if(kind==='frame'||kind==='title'){
+    if(kind==='title'){
       const el=overlay.querySelector('#ceEffect'); if(el)el.value=item.effect_style||source.effect_style||'none';
     }
     overlay.querySelector('#cosmeticEditorClose').onclick=closeCosmeticEditor;
@@ -1043,7 +1043,7 @@
       let asset_url=item.asset_url||null,asset_type=item.asset_type||null,asset_width=item.asset_width||spec.w||null,asset_height=item.asset_height||spec.h||null;
       try{
         if(newFile){const folder=spec.folder;const asset=await uploadAdminAsset(newFile,folder,spec.max);asset_url=asset.url;asset_type=asset.type;asset_width=spec.w||asset_width;asset_height=spec.h||asset_height;}
-        const effect=overlay.querySelector('#ceEffect')?.value||item.effect_style||'none';
+        const effect=kind==='frame'?'none':(overlay.querySelector('#ceEffect')?.value||item.effect_style||'none');
         const bgType=overlay.querySelector('#ceBgType')?.value||item.asset_type||'static';
         if(kind==='background'&&newFile&&bgType==='animated'&&newFile.type!=='image/gif')return alert('Fundo animado deve ser GIF.');
         if(kind==='background'&&newFile&&bgType==='static'&&!['image/png','image/jpeg','image/webp'].includes(newFile.type))return alert('Fundo estático deve ser PNG, JPG/JPEG ou WebP.');
