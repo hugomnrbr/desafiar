@@ -1030,3 +1030,90 @@ input,textarea,select{background:#09121b!important;border-color:#2a3a49!importan
   .classic-top{height:58px!important}
   .classic-bottom{width:min(760px,100%)!important}
 }
+
+/* =========================================================
+   QuizUp v40.5 — VISUAL BUG FIXES
+   Corrige overflow desktop, fila, avatar/moldura e títulos.
+   ========================================================= */
+
+html,body{width:100%;max-width:100%;overflow-x:hidden!important}
+*,*::before,*::after{min-width:0}
+img{max-width:100%;}
+
+/* ---------- Avatar + Moldura: composição estável ---------- */
+.avatar-frame-shell{position:relative!important;display:inline-block!important;width:var(--avatar-size,56px)!important;height:var(--avatar-size,56px)!important;min-width:var(--avatar-size,56px)!important;min-height:var(--avatar-size,56px)!important;flex:0 0 var(--avatar-size,56px)!important;overflow:visible!important;vertical-align:middle!important;line-height:0!important}
+.avatar-frame-shell .avatar-base{position:absolute!important;left:17%!important;top:17%!important;width:66%!important;height:66%!important;margin:0!important;padding:0!important;border-radius:50%!important;object-fit:cover!important;object-position:center!important;z-index:1!important;display:block!important;line-height:normal!important}
+.avatar-frame-shell .avatar-base.avatar-img{background:#111a24!important}
+.avatar-frame-overlay{position:absolute!important;left:-1%!important;top:-1%!important;width:102%!important;height:102%!important;margin:0!important;padding:0!important;object-fit:contain!important;border-radius:0!important;z-index:2!important;display:block!important;pointer-events:none!important;animation:none!important;transform:none!important}
+.avatar-frame-shell.has-custom-frame{filter:none!important}
+.avatar-frame-shell[class*="frame-effect-"] .avatar-frame-overlay{animation:none!important;transform:none!important}
+.profile-avatar-stage .avatar-frame-shell{--avatar-size:150px}
+.profile-avatar-stage .avatar-base{left:17%!important;top:17%!important;width:66%!important;height:66%!important}
+.home-avatar.avatar-frame-shell{--avatar-size:128px}
+.match-player .avatar-frame-shell{--avatar-size:150px}
+
+/* ---------- Fila: cada item ocupa seu próprio bloco ---------- */
+.queue-players{display:flex!important;justify-content:center!important;align-items:flex-start!important;gap:18px!important;flex-wrap:wrap!important;width:100%!important;max-width:760px!important;margin:22px auto 10px!important;padding:0 8px!important;min-height:118px!important}
+.queue-player-card{width:92px!important;min-width:92px!important;max-width:92px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;gap:7px!important;text-align:center!important;overflow:visible!important;line-height:1.15!important}
+.queue-player-card .avatar-frame-shell,.queue-avatar{--avatar-size:70px;width:70px!important;height:70px!important;min-width:70px!important;min-height:70px!important;flex:0 0 70px!important}
+.queue-player-card b{display:block!important;width:100%!important;max-width:92px!important;margin:0!important;font-size:10px!important;line-height:14px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.queue-title-art{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;max-width:92px!important;height:24px!important;min-height:24px!important;margin:0!important;overflow:visible!important;line-height:1!important}
+.queue-title-art img,.queue-title-art .premium-game-title-image,.queue-title-art .premium-mini-title-image{display:block!important;width:auto!important;max-width:92px!important;height:auto!important;max-height:24px!important;object-fit:contain!important;margin:0 auto!important}
+.queue-title-art:not(:has(img)){font-size:10px!important;line-height:14px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;color:#ffd21a!important;font-weight:900!important}
+.queue-caption{margin-top:6px!important;line-height:14px!important}
+
+/* ---------- Títulos: nunca invadem o nome ---------- */
+.title-visual-shell{display:inline-flex!important;align-items:center!important;justify-content:center!important;vertical-align:middle!important;line-height:1!important;max-width:100%!important;overflow:visible!important}
+.title-visual-shell:before{animation:none!important}
+.premium-mini-title-image,.premium-game-title-image,.profile-main-title-image{display:block!important;object-fit:contain!important;max-width:100%!important}
+.premium-game-title-image{width:auto!important;max-height:34px!important}
+.premium-mini-title-image{width:auto!important;max-height:25px!important}
+
+/* ---------- Painel admin: remove a largura duplicada e o corte lateral ---------- */
+.quizup-admin-layout{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important}
+.quizup-admin-main{box-sizing:border-box!important;min-width:0!important;max-width:none!important;overflow-x:hidden!important}
+.quizup-admin-main>*{min-width:0!important;max-width:100%!important}
+.quizup-admin-main .admin-section,.quizup-admin-main #admin-dashboard{box-sizing:border-box!important;width:100%!important;max-width:none!important;min-width:0!important;margin-left:0!important;margin-right:0!important}
+.quizup-admin-main .admin-section-title,.quizup-admin-main .admin-page-head{width:100%!important;max-width:1400px!important;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box!important}
+.quizup-admin-main .card,.quizup-admin-main .admin-overview,.quizup-admin-main .admin-metrics,.quizup-admin-main .admin-list{max-width:1400px!important;width:100%!important;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box!important}
+.quizup-admin-main .admin-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.quizup-admin-main .form,.quizup-admin-main .form>*{min-width:0!important;max-width:100%!important}
+.quizup-admin-main input,.quizup-admin-main textarea,.quizup-admin-main select{box-sizing:border-box!important;max-width:100%!important}
+.quizup-admin-main .store-category-admin{overflow:hidden!important}
+.quizup-admin-main .store-category-admin .admin-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.quizup-admin-main .premium-admin-grid,.quizup-admin-main .admin-premium-grid{width:100%!important;max-width:1400px!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.quizup-admin-main .premium-admin-grid>*,.quizup-admin-main .admin-premium-grid>*{min-width:0!important}
+.quizup-admin-main .question-admin{min-width:0!important;overflow:hidden!important}
+.quizup-admin-main .admin-actions{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.quizup-admin-main .admin-actions button{min-width:0!important;white-space:normal!important;overflow-wrap:anywhere!important}
+.quizup-admin-topbar{box-sizing:border-box!important;width:100%!important;max-width:none!important}
+
+/* Desktop: sidebar fixa ocupa espaço uma única vez. */
+@media (min-width:901px){
+  .quizup-admin-main{margin-left:250px!important;width:calc(100% - 250px)!important;padding:0 28px 60px!important}
+  .quizup-admin-main .admin-section,.quizup-admin-main #admin-dashboard{padding-left:0!important;padding-right:0!important}
+  .quizup-admin-main .card,.quizup-admin-main .admin-overview,.quizup-admin-main .admin-metrics,.quizup-admin-main .admin-list{max-width:1400px!important}
+  .quizup-admin-main .store-category-admin .form{grid-template-columns:repeat(2,minmax(0,1fr))!important;display:grid!important;gap:10px!important}
+  .quizup-admin-main .store-category-admin .form .primary{grid-column:1/-1!important}
+  .quizup-admin-main .premium-admin-grid,.quizup-admin-main .admin-premium-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+
+/* Tablet/mobile: painel não herda largura desktop. */
+@media (max-width:900px){
+  .quizup-admin-main{margin-left:0!important;width:100%!important;padding:0 16px 50px!important}
+  .quizup-admin-main .admin-section,.quizup-admin-main #admin-dashboard{width:100%!important}
+  .quizup-admin-main .admin-list,.quizup-admin-main .premium-admin-grid,.quizup-admin-main .admin-premium-grid{grid-template-columns:1fr!important}
+  .quizup-admin-main .store-category-admin .form{display:grid!important;grid-template-columns:1fr!important}
+  .quizup-admin-main .admin-actions{grid-template-columns:1fr!important}
+}
+
+@media (max-width:520px){
+  .queue-players{gap:10px!important;margin-top:20px!important;padding:0 4px!important}
+  .queue-player-card{width:72px!important;min-width:72px!important;max-width:72px!important}
+  .queue-player-card .avatar-frame-shell,.queue-avatar{--avatar-size:58px;width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important;flex-basis:58px!important}
+  .queue-player-card b{max-width:72px!important;font-size:9px!important}
+  .queue-title-art{max-width:72px!important;height:20px!important;min-height:20px!important}
+  .queue-title-art img{max-width:72px!important;max-height:20px!important}
+  .quizup-admin-main{padding-left:10px!important;padding-right:10px!important}
+  .quizup-admin-main .card{border-radius:14px!important}
+}
