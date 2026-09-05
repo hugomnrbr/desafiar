@@ -1050,7 +1050,7 @@
   async function deletePremiumItem(id){
     if(!sb||!S.isAdmin)return; const x=(S.adminPremiumItems||[]).find(i=>String(i.id)===String(id)); if(!x)return;
     if(!confirm(`Excluir \"${x.name}\"? O item será retirado da Loja e dos inventários/perfis dos jogadores.`))return;
-    const {error}=await sb.rpc('admin_remove_premium_item',{p_item_id:String(id),p_source_type:null,p_source_id:null});
+    const {error}=await sb.rpc('admin_remove_premium_item',{p_item_id:String(id)});
     if(error)return alert(error.message);
     await loadAdminPremiumItems();await loadPremiumItems();S.inventoryItems=[];render();
   }
