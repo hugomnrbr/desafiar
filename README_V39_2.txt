@@ -27,3 +27,11 @@ SUPABASE
 
 TÍTULOS PERSONALIZADOS
 No painel administrativo, envie um PNG exatamente em 600 x 160 px. O efeito é escolhido no painel e passa ao redor da arte.
+
+V39.3 — CONQUISTAS COM RECOMPENSA DA LOJA
+- No painel Administrativo > Conquistas, o administrador pode escolher qualquer produto do catálogo da Loja como recompensa.
+- Ao atingir a meta, a conquista é registrada e o produto é entregue automaticamente ao inventário do jogador.
+- A recompensa também é entregue quando o administrador concede manualmente a conquista.
+- O produto premiado não é equipado automaticamente.
+- Títulos recebidos como recompensa também entram nos títulos disponíveis do jogador.
+- Incluído SQL: QUIZUP_V39_3_CONQUISTAS_RECOMPENSAS.sql

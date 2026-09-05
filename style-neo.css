@@ -811,3 +811,6 @@ html,body,#app{background:#03050a!important;color:#f7f9fc!important}
 .age18-badge{display:none!important}
 /* O avatar da barra superior é navegação; no perfil ele é ocultado pelo app para não duplicar a foto principal. */
 @media(max-width:520px){.title-pair-display .title-slot-secondary .profile-main-title-image{max-width:220px;max-height:54px}.duel-player-copy .title-slot-admin .premium-game-title-image{width:108px}.duel-player-copy .title-slot-secondary .premium-game-title-image{width:96px}}
+
+/* V39.3 - recompensa exibida na tela de conquistas */
+.achievement-reward{margin-top:4px;font-weight:700}
