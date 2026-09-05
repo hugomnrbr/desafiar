@@ -21,6 +21,8 @@ alter table if exists public.titles add column if not exists asset_width integer
 alter table if exists public.titles add column if not exists asset_height integer;
 alter table if exists public.titles add column if not exists title_color text default '#ffd21a';
 alter table if exists public.titles add column if not exists title_font text default 'Inter';
+alter table if exists public.titles add column if not exists title_font_url text;
+alter table if exists public.titles add column if not exists title_font_asset_url text;
 
 create table if not exists public.user_titles(
   id uuid primary key default gen_random_uuid(),
@@ -122,7 +124,7 @@ update public.store_categories set active=false where name='Emblemas';
 update public.premium_items
 set category='Molduras',kind='frame',source_type='frame',
     asset_width=coalesce(asset_width,256),asset_height=coalesce(asset_height,256),
-    frame_version=coalesce(frame_version,'v2')
+    frame_version=coalesce(frame_version,'static-v3')
 where category='Emblemas'
   and (asset_url ilike '%assets/store/emblems/%' or name in ('Emblema de Fogo','Emblema de Água','Emblema Galáxia'));
 
@@ -138,18 +140,23 @@ insert into public.premium_items(
   asset_width,asset_height,frame_inset_percent,frame_version,active
 )
 values
- ('frame-fire','Fogo','Molduras','Moldura Fogo — 256 × 256 px.',500,500,null,null,false,null,'🔥','fire','assets/store/frames/fire.svg','image/svg+xml','frame','frame','frame-fire',256,256,0,'v2',true),
- ('frame-water','Água','Molduras','Moldura Água — 256 × 256 px.',500,500,null,null,false,null,'💧','water','assets/store/frames/water.svg','image/svg+xml','frame','frame','frame-water',256,256,0,'v2',true),
- ('frame-earth','Terra','Molduras','Moldura Terra — 256 × 256 px.',500,500,null,null,false,null,'🌿','earth','assets/store/frames/earth.svg','image/svg+xml','frame','frame','frame-earth',256,256,0,'v2',true),
- ('frame-air','Ar','Molduras','Moldura Ar — 256 × 256 px.',500,500,null,null,false,null,'🌪️','air','assets/store/frames/air.svg','image/svg+xml','frame','frame','frame-air',256,256,0,'v2',true),
- ('frame-darkness','Trevas','Molduras','Moldura Trevas — 256 × 256 px.',500,500,null,null,false,null,'🌑','darkness','assets/store/frames/darkness.svg','image/svg+xml','frame','frame','frame-darkness',256,256,0,'v2',true),
- ('frame-light','Luz','Molduras','Moldura Luz — 256 × 256 px.',500,500,null,null,false,null,'✨','light','assets/store/frames/light.svg','image/svg+xml','frame','frame','frame-light',256,256,0,'v2',true)
+ ('frame-fire','Fogo','Molduras','Moldura Fogo estática — 256 × 256 px, PNG/SVG transparente.',500,500,null,null,false,null,'🔥','fire','assets/store/frames/fire.svg','image/svg+xml','frame','frame','frame-fire',256,256,0,'static-v3',true),
+ ('frame-water','Água','Molduras','Moldura Água estática — 256 × 256 px, PNG/SVG transparente.',500,500,null,null,false,null,'💧','water','assets/store/frames/water.svg','image/svg+xml','frame','frame','frame-water',256,256,0,'static-v3',true),
+ ('frame-earth','Terra','Molduras','Moldura Terra estática — 256 × 256 px, PNG/SVG transparente.',500,500,null,null,false,null,'🌿','earth','assets/store/frames/earth.svg','image/svg+xml','frame','frame','frame-earth',256,256,0,'static-v3',true),
+ ('frame-air','Ar','Molduras','Moldura Ar estática — 256 × 256 px, PNG/SVG transparente.',500,500,null,null,false,null,'🌪️','air','assets/store/frames/air.svg','image/svg+xml','frame','frame','frame-air',256,256,0,'static-v3',true),
+ ('frame-darkness','Trevas','Molduras','Moldura Trevas estática — 256 × 256 px, PNG/SVG transparente.',500,500,null,null,false,null,'🌑','darkness','assets/store/frames/darkness.svg','image/svg+xml','frame','frame','frame-darkness',256,256,0,'static-v3',true),
+ ('frame-light','Luz','Molduras','Moldura Luz estática — 256 × 256 px, PNG/SVG transparente.',500,500,null,null,false,null,'✨','light','assets/store/frames/light.svg','image/svg+xml','frame','frame','frame-light',256,256,0,'static-v3',true)
 on conflict(id) do update set
  name=excluded.name,category=excluded.category,description=excluded.description,
  price_cents=excluded.price_cents,price_coins=excluded.price_coins,
  icon=excluded.icon,effect_style=excluded.effect_style,asset_url=excluded.asset_url,
  asset_type=excluded.asset_type,kind='frame',source_type='frame',source_id=excluded.source_id,
- asset_width=256,asset_height=256,frame_inset_percent=0,frame_version='v2',active=true;
+ asset_width=256,asset_height=256,frame_inset_percent=0,frame_version='static-v3',active=true;
+
+-- Garantia: as seis molduras oficiais são sempre estáticas e sem GIF.
+update public.premium_items
+set asset_type='image/svg+xml',asset_width=256,asset_height=256,frame_inset_percent=0,frame_version='static-v3'
+where id in ('frame-fire','frame-water','frame-earth','frame-air','frame-darkness','frame-light');
 
 -- Se existirem cópias antigas com os mesmos nomes, os seis oficiais são os únicos vendidos.
 update public.premium_items
@@ -165,7 +172,7 @@ where category='Molduras'
 update public.premium_items set asset_width=256,asset_height=256
 where kind='avatar' and asset_url is not null;
 -- Moldura: 256 x 256
-update public.premium_items set asset_width=256,asset_height=256,frame_version=coalesce(frame_version,'v2')
+update public.premium_items set asset_width=256,asset_height=256,frame_version=coalesce(frame_version,'static-v3')
 where kind='frame' and asset_url is not null;
 -- Título: 600 x 160
 update public.titles set asset_width=600,asset_height=160 where asset_url is not null;
@@ -177,6 +184,27 @@ where kind='background' and asset_url is not null;
 -- Emoji: 128 x 128
 update public.premium_items set asset_width=128,asset_height=128
 where kind='emoji' and asset_url is not null;
+-- Emblemas legados: 128 x 128
+update public.premium_items set asset_width=128,asset_height=128
+where kind='badge' and asset_url is not null;
+
+-- Títulos precisam ser visíveis no painel mesmo quando a consulta de perguntas falhar.
+alter table public.titles enable row level security;
+drop policy if exists "titles authenticated read" on public.titles;
+create policy "titles authenticated read" on public.titles
+for select to authenticated using(true);
+drop policy if exists "titles admin manage" on public.titles;
+create policy "titles admin manage" on public.titles
+for all to authenticated using(public.is_admin()) with check(public.is_admin());
+
+-- Emblemas legados também podem ser administrados sem depender da tela de perguntas.
+alter table public.badges enable row level security;
+drop policy if exists "badges authenticated read" on public.badges;
+create policy "badges authenticated read" on public.badges
+for select to authenticated using(true);
+drop policy if exists "badges admin manage" on public.badges;
+create policy "badges admin manage" on public.badges
+for all to authenticated using(public.is_admin()) with check(public.is_admin());
 
 -- --------------------------------------------------------------------------
 -- 5) RLS e Storage para o painel poder cadastrar artes
@@ -451,6 +479,46 @@ begin
 end $$;
 revoke all on function public.admin_remove_premium_item(text,text,text) from public;
 grant execute on function public.admin_remove_premium_item(text,text,text) to authenticated;
+
+-- --------------------------------------------------------------------------
+-- 9.1) Exclusão administrativa de títulos e emblemas
+-- --------------------------------------------------------------------------
+drop function if exists public.admin_delete_title(uuid);
+create function public.admin_delete_title(p_title_id uuid)
+returns jsonb language plpgsql security definer set search_path=public
+as $$
+begin
+  if not public.is_admin() then raise exception 'Acesso negado'; end if;
+  delete from public.user_titles where title_id=p_title_id;
+  update public.profiles set main_title_id=null where main_title_id=p_title_id;
+  update public.profiles set premium_title=null where premium_title in (
+    select id::text from public.premium_items where source_type='title' and source_id=p_title_id::text
+  );
+  update public.premium_items set active=false where source_type='title' and source_id=p_title_id::text;
+  delete from public.titles where id=p_title_id;
+  return jsonb_build_object('ok',true,'title_id',p_title_id);
+end $$;
+revoke all on function public.admin_delete_title(uuid) from public;
+grant execute on function public.admin_delete_title(uuid) to authenticated;
+
+drop function if exists public.admin_delete_badge(uuid);
+create function public.admin_delete_badge(p_badge_id uuid)
+returns jsonb language plpgsql security definer set search_path=public
+as $$
+declare sale_id text;
+begin
+  if not public.is_admin() then raise exception 'Acesso negado'; end if;
+  select id into sale_id from public.premium_items where source_type='badge' and source_id=p_badge_id::text limit 1;
+  if sale_id is not null then
+    delete from public.user_premium_items where item_id=sale_id;
+    update public.profiles set premium_badge=null where premium_badge=sale_id;
+    update public.premium_items set active=false where id=sale_id;
+  end if;
+  delete from public.badges where id=p_badge_id;
+  return jsonb_build_object('ok',true,'badge_id',p_badge_id);
+end $$;
+revoke all on function public.admin_delete_badge(uuid) from public;
+grant execute on function public.admin_delete_badge(uuid) to authenticated;
 
 -- --------------------------------------------------------------------------
 -- 10) Loja e pagamentos: Mercado Pago continua DESATIVADO
