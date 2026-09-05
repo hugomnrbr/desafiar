@@ -538,9 +538,7 @@ create index if not exists user_premium_items_user_active_idx on public.user_pre
 -- --------------------------------------------------------------------------
 -- 12) LIMPEZA SEGURA DE PRODUTOS COSMÉTICOS ANTIGOS/QUEBRADOS
 -- --------------------------------------------------------------------------
--- IMPORTANTE: esta versão não usa tabela temporária. Isso evita o erro
--- "relation _quizup_remove_items does not exist" quando o SQL Editor
--- executa comandos em blocos/transações separados.
+-- Esta limpeza não usa tabela temporária.
 --
 -- Remove somente itens explicitamente pertencentes ao catálogo antigo de
 -- Emblemas ou cosméticos sem arte utilizável. Itens funcionais com arte
@@ -641,8 +639,3 @@ end $$;
 
 commit;
 
--- Conferência rápida no SQL Editor:
-select id,name,category,kind,price_coins,asset_width,asset_height,active
-from public.premium_items
-where kind in ('avatar','frame','title','background','emoji')
-order by category,name;

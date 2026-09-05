@@ -904,3 +904,129 @@ input,textarea,select{background:#09121b!important;border-color:#2a3a49!importan
 .queue-caption{font-size:9px;color:#778697;margin:3px auto 12px;text-align:center;max-width:280px}
 .queue-more{width:40px;height:40px;display:grid;place-items:center;border:1px solid #2c3d4c;border-radius:50%;color:#ffd21a;font-weight:900;background:#0a1118}
 @media(max-width:430px){.queue-players{gap:8px}.queue-player-card{width:62px}.queue-player-card b{max-width:62px}.queue-avatar,.queue-player-card .avatar-frame-shell{width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important}.queue-title-art,.queue-title-art img{max-width:60px!important;max-height:18px!important}}
+
+/* =========================================================
+   QuizUp v40.4 — RESPONSIVE DESKTOP + MOBILE PRESERVADO
+   Desktop: >= 900px | Mobile/tablet: regras existentes mantidas
+   ========================================================= */
+@media (min-width:900px){
+  html,body{min-width:0;overflow-x:hidden}
+  body{background:#02060b}
+  #app{min-height:100vh}
+  .app{width:calc(100% - 88px)!important;max-width:none!important;margin:0 0 0 88px!important;padding:0 32px 32px!important;min-height:100vh;background:radial-gradient(circle at 50% -15%,#182332 0,#080e15 35%,#02060b 100%)!important}
+  .app>.classic-top{margin:0 -32px 20px!important;padding:0 32px!important;height:68px!important;border-radius:0!important;position:sticky!important;top:0!important}
+  .classic-top>b{font-size:17px!important}
+  .classic-top .top-right{gap:10px!important}
+  .classic-top .top-avatar{width:42px!important;height:42px!important}
+  .top-coin-pill{font-size:12px!important;padding:9px 13px!important}
+
+  /* Navegação lateral no computador */
+  .classic-bottom{left:0!important;top:0!important;bottom:auto!important;transform:none!important;width:88px!important;height:100vh!important;grid-template-columns:1fr!important;grid-template-rows:repeat(6,1fr)!important;padding:18px 10px!important;background:rgba(4,9,14,.98)!important;border-top:0!important;border-right:1px solid #263746!important;box-shadow:10px 0 30px #0008!important;gap:8px!important;backdrop-filter:blur(18px)!important}
+  .classic-bottom .classic-nav{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:5px!important;border-radius:13px!important;color:#738194!important;font-size:22px!important;min-width:0!important}
+  .classic-bottom .classic-nav:hover{background:#101922!important;color:#fff!important}
+  .classic-bottom .classic-nav.active{background:linear-gradient(145deg,#191b10,#0e1514)!important;color:#ffd21a!important;box-shadow:inset 0 0 0 1px #ffd21a44,0 8px 20px #0005!important}
+  .classic-bottom .classic-nav small{font-size:9px!important;font-weight:850!important}
+
+  /* Área de conteúdo */
+  .classic-home,.classic-page,.classic-profile,.topic-detail,.friends,.chat-page,.notifications-page,.achievements-page,.contribute-page{width:min(100%,1400px)!important;margin:0 auto!important;padding:0 0 28px!important}
+  .classic-home{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(320px,.8fr);gap:20px;align-items:start}
+  .classic-home>.home-hero{grid-column:1/-1}
+  .classic-home>.home-coin-strip{grid-column:1/-1}
+  .classic-home>.classic-myquiz{grid-column:1/-1}
+  .classic-home>.classic-section-head:nth-of-type(1){grid-column:1/-1}
+  .classic-home>.followed-grid{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .classic-home>.classic-section-head:nth-of-type(2),.classic-home>.activity-feed{grid-column:1}
+  .classic-home>.home-news-entry{grid-column:2;grid-row:6;align-self:stretch}
+
+  .home-hero{padding:34px 34px 0!important;border-radius:22px!important;min-height:310px!important;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+  .home-avatar{width:128px!important;height:128px!important;margin:5px auto 12px!important}
+  .home-name h1{font-size:30px!important}
+  .home-name div{font-size:13px!important}
+  .home-stats{width:min(760px,90%);margin-top:24px!important;border-radius:16px 16px 0 0;overflow:hidden}
+  .home-stats b{font-size:24px!important}
+  .home-stats small{font-size:9px!important}
+  .home-coin-strip{padding:15px 20px!important;border-radius:14px!important}
+  .classic-myquiz{min-height:78px!important;padding:18px 22px!important;border-radius:16px!important}
+
+  .classic-page .topic-grid,.topic-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important}
+  .topic-grid .cat{min-height:170px!important;padding:18px!important}
+  .classic-page .topic-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .classic-page .classic-banner{padding:24px!important}
+  .classic-page .classic-search{max-width:900px}
+
+  .profile-cover{min-height:430px!important;padding:34px!important;border-radius:22px!important}
+  .profile-avatar{width:150px!important;height:150px!important}
+  .profile-cover h1{font-size:30px!important}
+  .profile-cover p{font-size:12px!important}
+  .profile-numbers{max-width:850px;margin:24px auto 0!important;border-radius:15px 15px 0 0}
+  .profile-numbers b{font-size:24px!important}
+  .profile-numbers span{font-size:10px!important}
+  .classic-profile-grid{max-width:1200px;margin:20px auto!important;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;border:0!important;background:transparent!important}
+
+  .premium-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important}
+  .premium-card{min-width:0!important;border-radius:18px!important}
+  .premium-card .premium-art{min-height:190px!important}
+  .premium-store-hero{padding:26px!important;border-radius:20px!important}
+  .store-category-tabs{overflow:visible!important;flex-wrap:wrap!important}
+
+  .friends,.chat-page,.notifications-page,.achievements-page,.contribute-page{max-width:1200px!important}
+  .friends .friends-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .chat-box{min-height:620px!important}
+  .chat-messages{min-height:480px!important}
+  .notifications-page .notification-list,.achievements-page .achievement-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+
+  .ranking-grid,.rank-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:16px}
+  .rank-list,.ranking-list{max-height:none!important}
+  .result-actions{max-width:760px;margin-left:auto;margin-right:auto}
+  .result-detail{max-width:1100px;margin-left:auto;margin-right:auto}
+
+  /* Partida e fila usam a largura do monitor, sem perder a aparência mobile */
+  .classic-match-found,.classic-loading,.game-shell,.match-shell,.classic-result{width:min(100%,1200px)!important;margin-left:auto!important;margin-right:auto!important}
+  .classic-loading{padding:70px 40px!important;min-height:calc(100vh - 100px)!important;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .queue-players{gap:28px!important;max-width:800px!important;margin:28px auto 10px!important}
+  .queue-player-card{width:110px!important}
+  .queue-avatar,.queue-player-card .avatar-frame-shell{width:86px!important;height:86px!important;min-width:86px!important;min-height:86px!important}
+  .queue-player-card b{font-size:11px!important;max-width:110px!important}
+  .queue-title-art,.queue-title-art img{max-width:100px!important;max-height:28px!important}
+  .match-vs{gap:80px!important}
+  .match-player .avatar.huge,.match-player .avatar-frame-shell{width:150px!important;height:150px!important}
+  .question{font-size:27px!important;max-width:950px;margin-left:auto;margin-right:auto}
+  .answers{grid-template-columns:1fr 1fr;max-width:950px;margin:0 auto;gap:12px}
+  .answer{min-height:68px!important;font-size:16px!important}
+  .qmeta{max-width:1000px;margin-left:auto;margin-right:auto}
+
+  /* Painel administrativo: ocupar todo o monitor */
+  .quizup-admin-layout{width:100vw!important;min-height:100vh!important}
+  .quizup-admin-sidebar{width:250px!important;flex:0 0 250px!important}
+  .quizup-admin-main{min-width:0!important;flex:1!important}
+  .quizup-admin-main .admin-content,.quizup-admin-main .admin-page,.quizup-admin-main .admin-dashboard,.quizup-admin-main>section{max-width:1500px;margin-left:auto;margin-right:auto}
+  .quizup-admin-main .premium-admin-grid,.quizup-admin-main .admin-premium-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .quizup-admin-main .admin-list{grid-template-columns:repeat(2,minmax(0,1fr));display:grid;gap:12px}
+  .quizup-admin-main .admin-actions{grid-template-columns:repeat(3,1fr)!important}
+  .quizup-admin-main .cosmetic-editor-card{max-width:980px!important}
+  .quizup-admin-main .cosmetic-editor-grid{grid-template-columns:1fr 1fr!important}
+  .quizup-admin-main .title-admin-thumb{width:180px!important;height:48px!important}
+
+  /* Molduras com tamanho consistente no desktop */
+  .avatar-frame-shell{flex:0 0 auto!important}
+  .avatar-frame-shell .avatar-base{left:17%!important;top:17%!important;width:66%!important;height:66%!important}
+  .avatar-frame-overlay{left:-2%!important;top:-2%!important;width:104%!important;height:104%!important}
+}
+
+/* Monitores muito largos */
+@media (min-width:1400px){
+  .app{padding-left:46px!important;padding-right:46px!important}
+  .app>.classic-top{margin-left:-46px!important;margin-right:-46px!important;padding-left:46px!important;padding-right:46px!important}
+  .classic-home,.classic-page,.classic-profile,.topic-detail,.friends,.chat-page,.notifications-page,.achievements-page,.contribute-page{width:min(100%,1500px)!important}
+  .premium-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+  .classic-page .topic-grid,.topic-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+}
+
+/* Tablet horizontal: mantém experiência de celular, mas aproveita espaço */
+@media (min-width:600px) and (max-width:899px){
+  .app{width:min(100%,820px)!important;padding-left:22px!important;padding-right:22px!important}
+  .premium-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .topic-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .classic-top{height:58px!important}
+  .classic-bottom{width:min(760px,100%)!important}
+}
