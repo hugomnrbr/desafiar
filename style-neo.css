@@ -1957,3 +1957,101 @@ html,body,#app{overflow-x:hidden!important}
   .match-player .avatar-frame-shell{--avatar-size:178px!important}
   .neon-avatar-wrap .avatar-frame-shell{--avatar-size:104px!important}
 }
+
+/* ==========================================================
+   v41.9 — acabamento visual final
+   1) Avatar + moldura sem fundo extra em nenhum contexto.
+   2) Foto e moldura ocupam exatamente o mesmo quadro.
+   3) Cabeçalho da rodada reorganizado para mobile.
+   4) Aplicativo respeita a largura/altura real do viewport.
+   ========================================================== */
+html,body,#app{width:100%;min-width:0;max-width:100%;margin:0;overflow-x:hidden}
+body{min-height:100svh}
+.app{width:100%;max-width:560px;min-height:100svh;margin:0 auto;overflow-x:clip;padding-bottom:calc(94px + env(safe-area-inset-bottom))}
+.classic-top{width:100%;max-width:100%;box-sizing:border-box}
+.classic-bottom{width:min(100%,560px)!important;max-width:100%!important}
+
+/* Sem painel, círculo ou retângulo adicional atrás da composição. */
+.avatar-frame-shell,
+.avatar-frame-shell::before,
+.avatar-frame-shell::after{background:transparent!important;border:0!important;box-shadow:none!important}
+.avatar-frame-shell > .avatar-base,
+.avatar-frame-shell > .avatar-base.avatar,
+.avatar-frame-shell > .avatar-base.avatar-img,
+.avatar-frame-shell > .avatar-base.neon-avatar{background:transparent!important;border:0!important;box-shadow:none!important}
+.avatar-frame-shell > .avatar-frame-overlay{background:transparent!important;border:0!important;box-shadow:none!important}
+
+/* Mantém foto e PNG perfeitamente coincidentes. */
+.avatar-frame-shell{position:relative!important;overflow:visible!important;isolation:isolate!important}
+.avatar-frame-shell > .avatar-base,
+.avatar-frame-shell > .avatar-frame-overlay{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;padding:0!important}
+.avatar-frame-shell > .avatar-base{z-index:1!important;object-fit:cover!important;border-radius:50%!important}
+.avatar-frame-shell > .avatar-frame-overlay{z-index:20!important;object-fit:fill!important;border-radius:0!important;pointer-events:none!important}
+
+/* ===================== RODADA ===================== */
+.neon-game{width:100%;max-width:100%;overflow-x:hidden!important}
+.neon-duel-head{
+  grid-template-columns:minmax(0,1fr) 40px minmax(0,1fr)!important;
+  align-items:start!important;
+  gap:7px!important;
+  min-height:124px!important;
+  padding:9px 3px 8px!important;
+  overflow:visible!important;
+}
+.neon-player{
+  position:relative!important;
+  min-width:0!important;
+  min-height:108px!important;
+  display:grid!important;
+  grid-template-columns:74px minmax(0,1fr)!important;
+  align-items:start!important;
+  gap:7px!important;
+  padding:8px 6px!important;
+  background:linear-gradient(145deg,#0b131d,#071019)!important;
+  border:1px solid #263849!important;
+  border-radius:16px!important;
+  overflow:visible!important;
+}
+.neon-player:not(.rival){border-color:#ffd21a55!important}
+.neon-player.rival{grid-template-columns:minmax(0,1fr) 74px!important;text-align:right!important}
+.neon-player .neon-avatar-wrap{
+  grid-column:1!important;grid-row:1!important;
+  width:74px!important;min-width:74px!important;height:auto!important;min-height:96px!important;
+  flex:0 0 74px!important;display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:flex-start!important;position:relative!important;overflow:visible!important;
+}
+.neon-player.rival .neon-avatar-wrap{grid-column:2!important;grid-row:1!important}
+.neon-player .neon-avatar-wrap .avatar-frame-shell{--avatar-size:72px!important;width:72px!important;height:72px!important;flex-basis:72px!important}
+.neon-player .duel-player-copy,.neon-player .neon-player-copy{
+  grid-column:2!important;grid-row:1!important;min-width:0!important;
+  display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+  justify-content:center!important;padding-top:18px!important;line-height:1.08!important;overflow:visible!important;
+}
+.neon-player.rival .duel-player-copy,.neon-player.rival .neon-player-copy{grid-column:1!important;grid-row:1!important;align-items:flex-end!important;text-align:right!important}
+.neon-player .neon-player-copy span{font-size:7px!important;letter-spacing:1px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important}
+.neon-player .neon-player-copy b{font-size:11px!important;margin-top:5px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important}
+.neon-player .game-title-below{width:72px!important;max-width:72px!important;margin:2px auto 0!important;display:block!important;text-align:center!important;line-height:1!important;order:2!important}
+.neon-player .game-title-below img{display:block!important;width:72px!important;max-width:72px!important;max-height:24px!important;height:auto!important;object-fit:contain!important;margin:0 auto!important}
+.neon-player .score-under-avatar{order:3!important;width:100%!important;margin:4px 0 0!important;min-height:20px!important;display:flex!important;align-items:baseline!important;justify-content:center!important;gap:2px!important;font-size:17px!important;line-height:18px!important;position:relative!important;inset:auto!important;transform:none!important;white-space:nowrap!important}
+.neon-player .score-under-avatar small{font-size:7px!important;color:#9ba5b4!important}
+.neon-player .score-under-avatar em{position:absolute!important;right:-5px!important;top:-2px!important;font-size:8px!important}
+.neon-player .avatar-reaction-bubble{top:-2px!important;left:50%!important;z-index:30!important}
+.neon-vs{width:36px!important;height:36px!important;margin-top:18px!important;align-self:start!important;position:relative!important;z-index:5!important}
+.neon-match-tools{position:absolute!important;right:8px!important;top:7px!important;z-index:100!important;height:auto!important;overflow:visible!important}
+.match-forfeit-btn{font-size:9px!important;padding:7px 10px!important;border-radius:999px!important;white-space:nowrap!important}
+
+@media(max-width:430px){
+  .app{padding-left:10px!important;padding-right:10px!important;padding-bottom:calc(88px + env(safe-area-inset-bottom))!important}
+  .neon-duel-head{grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr)!important;gap:4px!important;min-height:116px!important;padding:7px 0!important}
+  .neon-player{grid-template-columns:62px minmax(0,1fr)!important;min-height:102px!important;gap:5px!important;padding:6px 4px!important;border-radius:14px!important}
+  .neon-player.rival{grid-template-columns:minmax(0,1fr) 62px!important}
+  .neon-player .neon-avatar-wrap{width:62px!important;min-width:62px!important;min-height:90px!important;flex-basis:62px!important}
+  .neon-player .neon-avatar-wrap .avatar-frame-shell{--avatar-size:60px!important;width:60px!important;height:60px!important;flex-basis:60px!important}
+  .neon-player .game-title-below{width:60px!important;max-width:60px!important}
+  .neon-player .game-title-below img{width:60px!important;max-width:60px!important;max-height:21px!important}
+  .neon-player .neon-player-copy{padding-top:14px!important}
+  .neon-player .neon-player-copy b{font-size:9px!important}
+  .neon-player .score-under-avatar{font-size:15px!important}
+  .neon-vs{width:32px!important;height:32px!important;font-size:8px!important;margin-top:12px!important}
+  .match-forfeit-btn{font-size:8px!important;padding:6px 8px!important}
+}
