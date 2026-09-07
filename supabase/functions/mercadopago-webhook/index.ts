@@ -1,13 +1,40 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-const cors={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'content-type, x-signature, x-request-id'};
-function parseSig(v:string|null){const o:Record<string,string>={};for(const p of String(v||'').split(',')){const [k,val]=p.split('=');if(k&&val)o[k.trim()]=val.trim()}return o}
-async function hmac(secret:string,msg:string){const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);const sig=await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(msg));return [...new Uint8Array(sig)].map(b=>b.toString(16).padStart(2,'0')).join('')}
-function safeEq(a:string,b:string){if(a.length!==b.length)return false;let x=0;for(let i=0;i<a.length;i++)x|=a.charCodeAt(i)^b.charCodeAt(i);return x===0}
-Deno.serve(async(req)=>{if(req.method==='OPTIONS')return new Response('ok',{headers:cors});try{
- if(req.method!=='POST')return new Response('ok',{status:200,headers:cors});const url=new URL(req.url);const id=url.searchParams.get('data.id')||url.searchParams.get('id')||'',rid=req.headers.get('x-request-id')||'',sig=parseSig(req.headers.get('x-signature')),secret=Deno.env.get('MERCADOPAGO_WEBHOOK_SECRET'),token=Deno.env.get('MERCADOPAGO_ACCESS_TOKEN'),supabaseUrl=Deno.env.get('SUPABASE_URL')!,service=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
- if(!id||!rid||!sig.ts||!sig.v1||!secret||!token)throw new Error('Webhook não configurado corretamente');const expected=await hmac(secret,`id:${id};request-id:${rid};ts:${sig.ts};`);if(!safeEq(expected,sig.v1))return new Response('Assinatura inválida',{status:401,headers:cors});
- const body=await req.json().catch(()=>({}));if(body?.type!=='payment'&&!url.searchParams.get('type')?.includes('payment'))return new Response('ok',{status:200,headers:cors});
- const pr=await fetch(`https://api.mercadopago.com/v1/payments/${encodeURIComponent(id)}`,{headers:{Authorization:`Bearer ${token}`}});const payment=await pr.json();if(!pr.ok)throw new Error(payment?.message||'Falha ao consultar pagamento');const ext=String(payment.external_reference||'');if(!ext.startsWith('quizup_'))return new Response('ok',{status:200,headers:cors});
- const admin=createClient(supabaseUrl,service);const {data:order,error:oe}=await admin.from('coin_orders').select('id').eq('external_reference',ext).maybeSingle();if(oe)throw oe;if(!order)return new Response('ok',{status:200,headers:cors});
- const amount=Math.round(Number(payment.transaction_amount||0)*100);const {error:fe}=await admin.rpc('finalize_coin_payment',{p_order_id:order.id,p_payment_id:String(payment.id),p_status:String(payment.status||''),p_amount_cents:amount,p_raw:payment});if(fe)throw fe;return new Response('ok',{status:200,headers:cors});
-}catch(e){console.error(e);return new Response(JSON.stringify({ok:false,error:e?.message||String(e)}),{status:500,headers:{...cors,'Content-Type':'application/json'}})}});
+
+Deno.serve(async (req) => {
+  try {
+    if (req.method !== 'POST') return new Response('ok');
+    const url = new URL(req.url);
+    const body = await req.json().catch(() => ({}));
+    const type = body?.type || url.searchParams.get('type');
+    const paymentId = body?.data?.id || url.searchParams.get('data.id') || url.searchParams.get('id');
+    if (type !== 'payment' || !paymentId) return new Response('ignored', { status: 200 });
+
+    const token = Deno.env.get('MERCADOPAGO_ACCESS_TOKEN')!;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const admin = createClient(supabaseUrl, serviceKey);
+    const mp = await fetch(`https://api.mercadopago.com/v1/payments/${encodeURIComponent(paymentId)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const payment = await mp.json();
+    if (!mp.ok) throw new Error(payment?.message || 'Falha ao consultar pagamento.');
+
+    const external = payment?.external_reference;
+    if (!external) return new Response('no reference', { status: 200 });
+    const { data: order } = await admin.from('coin_orders').select('id,amount_cents').eq('external_reference', external).maybeSingle();
+    if (!order) return new Response('order not found', { status: 200 });
+
+    const { error } = await admin.rpc('finalize_coin_payment', {
+      p_order_id: order.id,
+      p_payment_id: String(payment.id),
+      p_status: payment.status,
+      p_amount_cents: Math.round(Number(payment.transaction_amount || 0) * 100),
+      p_raw: payment,
+    });
+    if (error) throw error;
+    return new Response('ok', { status: 200 });
+  } catch (e) {
+    console.error(e);
+    return new Response('error', { status: 500 });
+  }
+});

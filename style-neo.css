@@ -1700,15 +1700,17 @@ html,body,#app{overflow-x:hidden!important}
 }
 
 /* =========================================================
-   QuizUp v41.7 — Avatar + Moldura: composição universal
-   Regra única em todo o aplicativo:
-   - avatar e moldura ocupam EXATAMENTE o mesmo quadrado;
-   - avatar fica atrás;
-   - moldura PNG fica sempre na frente;
-   - o centro transparente da moldura revela o avatar;
-   - ambos ficam centralizados no mesmo ponto, independentemente
-     do local onde o componente aparece.
+   QuizUp v41.13 — correções finais solicitadas
+   1) Mantém a partida com o layout clássico da referência.
+   2) Avatar fica totalmente dentro da área transparente da moldura.
+   3) Moldura sempre na frente e sem fundo/painel extra.
+   4) Reação aparece sobre o avatar por 2s e tem intervalo de 3s.
+   5) Criar Quiz recebe uma tela/formulário funcional.
    ========================================================= */
+
+html,body,#app{max-width:100%!important;overflow-x:hidden!important}
+
+/* AVATAR + MOLDURA: um único quadrado, sem fundo atrás. */
 .avatar-frame-shell{
   position:relative!important;
   display:inline-block!important;
@@ -1720,714 +1722,212 @@ html,body,#app{overflow-x:hidden!important}
   max-height:var(--avatar-size,64px)!important;
   flex:0 0 var(--avatar-size,64px)!important;
   aspect-ratio:1/1!important;
-  padding:0!important;
-  margin:0!important;
-  border:0!important;
-  overflow:visible!important;
-  vertical-align:middle!important;
-  line-height:0!important;
+  margin:0!important;padding:0!important;border:0!important;
+  background:transparent!important;box-shadow:none!important;
+  overflow:visible!important;line-height:0!important;
   isolation:isolate!important;
 }
+.avatar-frame-shell::before,.avatar-frame-shell::after{display:none!important;content:none!important;background:transparent!important}
 
-/* FOTO: mesmo tamanho/posição da moldura. A própria moldura recorta
-   visualmente a área central através da transparência do PNG. */
-.avatar-frame-shell > .avatar-base,
-.avatar-frame-shell > .avatar-base.avatar-img{
+/* Foto: 66% central. Isso impede qualquer parte da foto de escapar da abertura. */
+.avatar-frame-shell>.avatar-base,
+.avatar-frame-shell>.avatar-base.avatar,
+.avatar-frame-shell>.avatar-base.avatar-img,
+.avatar-frame-shell>.avatar-base.neon-avatar{
   position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  min-width:100%!important;
-  min-height:100%!important;
-  max-width:100%!important;
-  max-height:100%!important;
-  margin:0!important;
-  padding:0!important;
-  box-sizing:border-box!important;
-  border:0!important;
-  border-radius:50%!important;
-  object-fit:cover!important;
-  object-position:center center!important;
-  display:block!important;
-  z-index:1!important;
-  transform:none!important;
-  animation:none!important;
-  filter:none!important;
-  box-shadow:none!important;
-}
-
-/* MOLDURA: exatamente o mesmo quadrado do avatar e sempre na frente. */
-.avatar-frame-shell > .avatar-frame-overlay{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  min-width:100%!important;
-  min-height:100%!important;
-  max-width:100%!important;
-  max-height:100%!important;
-  margin:0!important;
-  padding:0!important;
-  box-sizing:border-box!important;
-  border:0!important;
-  border-radius:0!important;
-  object-fit:fill!important;
-  object-position:center center!important;
-  display:block!important;
-  z-index:10!important;
-  pointer-events:none!important;
-  transform:none!important;
-  animation:none!important;
-  filter:none!important;
-}
-
-/* Quando não houver moldura, o avatar continua ocupando o componente inteiro. */
-.avatar-frame-shell:not(.has-custom-frame) > .avatar-base{
-  z-index:1!important;
-}
-
-/* Mantém o mesmo alinhamento nos principais contextos do app. */
-.top-avatar .avatar-frame-shell,
-.home-hero .avatar-frame-shell,
-.profile-avatar-stage .avatar-frame-shell,
-.player-row .avatar-frame-shell,
-.friend-avatar-stack .avatar-frame-shell,
-.news-author .avatar-frame-shell,
-.notification-avatar .avatar-frame-shell,
-.queue-player-card .avatar-frame-shell,
-.match-player .avatar-frame-shell,
-.neon-avatar-wrap .avatar-frame-shell,
-.podium-card .avatar-frame-shell{
-  position:relative!important;
-  top:auto!important;
-  left:auto!important;
-  right:auto!important;
-  bottom:auto!important;
-  transform:none!important;
-}
-
-/* Evita regras antigas do .avatar/.neon-avatar de alterarem a foto interna. */
-.avatar-frame-shell .avatar-base.avatar,
-.avatar-frame-shell .avatar-base.neon-avatar{
-  width:100%!important;
-  height:100%!important;
-  min-width:100%!important;
-  min-height:100%!important;
-  max-width:100%!important;
-  max-height:100%!important;
-  border:0!important;
-  box-shadow:none!important;
-  font-size:inherit!important;
-}
-
-/* O PNG da moldura não pode ser afetado por regras de imagem de avatar. */
-.avatar-frame-shell .avatar-frame-overlay[src*="/frames/"],
-.avatar-frame-shell .avatar-frame-overlay[src*="/frames_png/"]{
-  object-fit:fill!important;
-  border-radius:0!important;
-  z-index:10!important;
-}
-
-/* =========================================================
-   QuizUp v41.8 — AVATAR + MOLDURA: COMPOSIÇÃO ÚNICA E EXATA
-   Regra definitiva: foto e moldura usam o MESMO quadro.
-   Foto fica atrás; PNG da moldura fica sempre na frente.
-   O centro transparente do PNG revela a foto naturalmente.
-   ========================================================= */
-.avatar-frame-shell{
-  position:relative!important;
-  display:inline-block!important;
-  width:var(--avatar-size,56px)!important;
-  height:var(--avatar-size,56px)!important;
-  min-width:var(--avatar-size,56px)!important;
-  min-height:var(--avatar-size,56px)!important;
-  max-width:var(--avatar-size,56px)!important;
-  max-height:var(--avatar-size,56px)!important;
-  flex:0 0 var(--avatar-size,56px)!important;
-  margin:0!important;
-  padding:0!important;
-  overflow:visible!important;
-  line-height:0!important;
-  isolation:isolate!important;
-  vertical-align:middle!important;
-}
-
-/* A FOTO ocupa exatamente o mesmo quadro da moldura. */
-.avatar-frame-shell > .avatar-base,
-.avatar-frame-shell > .avatar-base.avatar,
-.avatar-frame-shell > .avatar-base.avatar-img,
-.avatar-frame-shell > .avatar-base.neon-avatar{
-  position:absolute!important;
-  left:0!important;
-  top:0!important;
-  right:auto!important;
-  bottom:auto!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  min-width:100%!important;
-  min-height:100%!important;
-  max-width:100%!important;
-  max-height:100%!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  border-radius:50%!important;
-  object-fit:cover!important;
-  object-position:center!important;
-  box-shadow:none!important;
-  z-index:1!important;
-  display:block!important;
-  transform:none!important;
-}
-
-/* A MOLDURA PNG ocupa exatamente o mesmo quadro e SEMPRE fica na frente. */
-.avatar-frame-shell > .avatar-frame-overlay{
-  position:absolute!important;
-  left:0!important;
-  top:0!important;
-  right:auto!important;
-  bottom:auto!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  min-width:100%!important;
-  min-height:100%!important;
-  max-width:100%!important;
-  max-height:100%!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  border-radius:0!important;
-  object-fit:fill!important;
-  object-position:center!important;
-  z-index:20!important;
-  display:block!important;
-  pointer-events:none!important;
-  animation:none!important;
-  transform:none!important;
-  filter:none!important;
-}
-
-/* Nunca aplicar efeitos que alterem a geometria da composição. */
-.avatar-frame-shell,
-.avatar-frame-shell > .avatar-base,
-.avatar-frame-shell > .avatar-frame-overlay{
-  box-sizing:border-box!important;
-}
-
-/* Tamanhos de referência: o tamanho externo pode variar por contexto,
-   mas foto e moldura permanecem 1:1 dentro dele. */
-.home-hero .avatar-frame-shell{--avatar-size:128px!important}
-.profile-avatar-stage .avatar-frame-shell{--avatar-size:140px!important}
-.top-avatar .avatar-frame-shell{--avatar-size:44px!important}
-.friend-avatar-stack .avatar-frame-shell{--avatar-size:64px!important}
-.news-author .avatar-frame-shell{--avatar-size:58px!important}
-.notification-avatar .avatar-frame-shell{--avatar-size:58px!important}
-.player-row .avatar-frame-shell{--avatar-size:58px!important}
-.queue-player-card .avatar-frame-shell{--avatar-size:70px!important}
-.match-player .avatar-frame-shell{--avatar-size:104px!important}
-.neon-avatar-wrap .avatar-frame-shell{--avatar-size:58px!important}
-.podium-card .avatar-frame-shell{--avatar-size:76px!important}
-
-/* Perfil: posição central igual à referência. */
-.profile-avatar-stage{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  min-height:154px!important;
-  margin:6px auto 4px!important;
-  overflow:visible!important;
-}
-.profile-avatar-stage .avatar-frame-shell{margin:0 auto!important}
-
-/* Nunca deixe o efeito/badge deslocar a composição avatar+moldura. */
-.profile-avatar-stage .profile-effect-badge{z-index:30!important}
-
-@media(min-width:600px){
-  .profile-avatar-stage .avatar-frame-shell{--avatar-size:150px!important}
-  .queue-player-card .avatar-frame-shell{--avatar-size:82px!important}
-  .match-player .avatar-frame-shell{--avatar-size:148px!important}
-  .neon-avatar-wrap .avatar-frame-shell{--avatar-size:82px!important}
-}
-
-@media(min-width:901px){
-  .profile-avatar-stage .avatar-frame-shell{--avatar-size:176px!important}
-  .queue-player-card .avatar-frame-shell{--avatar-size:92px!important}
-  .match-player .avatar-frame-shell{--avatar-size:178px!important}
-  .neon-avatar-wrap .avatar-frame-shell{--avatar-size:104px!important}
-}
-
-/* ==========================================================
-   v41.9 — acabamento visual final
-   1) Avatar + moldura sem fundo extra em nenhum contexto.
-   2) Foto e moldura ocupam exatamente o mesmo quadro.
-   3) Cabeçalho da rodada reorganizado para mobile.
-   4) Aplicativo respeita a largura/altura real do viewport.
-   ========================================================== */
-html,body,#app{width:100%;min-width:0;max-width:100%;margin:0;overflow-x:hidden}
-body{min-height:100svh}
-.app{width:100%;max-width:560px;min-height:100svh;margin:0 auto;overflow-x:clip;padding-bottom:calc(94px + env(safe-area-inset-bottom))}
-.classic-top{width:100%;max-width:100%;box-sizing:border-box}
-.classic-bottom{width:min(100%,560px)!important;max-width:100%!important}
-
-/* Sem painel, círculo ou retângulo adicional atrás da composição. */
-.avatar-frame-shell,
-.avatar-frame-shell::before,
-.avatar-frame-shell::after{background:transparent!important;border:0!important;box-shadow:none!important}
-.avatar-frame-shell > .avatar-base,
-.avatar-frame-shell > .avatar-base.avatar,
-.avatar-frame-shell > .avatar-base.avatar-img,
-.avatar-frame-shell > .avatar-base.neon-avatar{background:transparent!important;border:0!important;box-shadow:none!important}
-.avatar-frame-shell > .avatar-frame-overlay{background:transparent!important;border:0!important;box-shadow:none!important}
-
-/* Mantém foto e PNG perfeitamente coincidentes. */
-.avatar-frame-shell{position:relative!important;overflow:visible!important;isolation:isolate!important}
-.avatar-frame-shell > .avatar-base,
-.avatar-frame-shell > .avatar-frame-overlay{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;padding:0!important}
-.avatar-frame-shell > .avatar-base{z-index:1!important;object-fit:cover!important;border-radius:50%!important}
-.avatar-frame-shell > .avatar-frame-overlay{z-index:20!important;object-fit:fill!important;border-radius:0!important;pointer-events:none!important}
-
-/* ===================== RODADA ===================== */
-.neon-game{width:100%;max-width:100%;overflow-x:hidden!important}
-.neon-duel-head{
-  grid-template-columns:minmax(0,1fr) 40px minmax(0,1fr)!important;
-  align-items:start!important;
-  gap:7px!important;
-  min-height:124px!important;
-  padding:9px 3px 8px!important;
-  overflow:visible!important;
-}
-.neon-player{
-  position:relative!important;
-  min-width:0!important;
-  min-height:108px!important;
-  display:grid!important;
-  grid-template-columns:74px minmax(0,1fr)!important;
-  align-items:start!important;
-  gap:7px!important;
-  padding:8px 6px!important;
-  background:linear-gradient(145deg,#0b131d,#071019)!important;
-  border:1px solid #263849!important;
-  border-radius:16px!important;
-  overflow:visible!important;
-}
-.neon-player:not(.rival){border-color:#ffd21a55!important}
-.neon-player.rival{grid-template-columns:minmax(0,1fr) 74px!important;text-align:right!important}
-.neon-player .neon-avatar-wrap{
-  grid-column:1!important;grid-row:1!important;
-  width:74px!important;min-width:74px!important;height:auto!important;min-height:96px!important;
-  flex:0 0 74px!important;display:flex!important;flex-direction:column!important;
-  align-items:center!important;justify-content:flex-start!important;position:relative!important;overflow:visible!important;
-}
-.neon-player.rival .neon-avatar-wrap{grid-column:2!important;grid-row:1!important}
-.neon-player .neon-avatar-wrap .avatar-frame-shell{--avatar-size:72px!important;width:72px!important;height:72px!important;flex-basis:72px!important}
-.neon-player .duel-player-copy,.neon-player .neon-player-copy{
-  grid-column:2!important;grid-row:1!important;min-width:0!important;
-  display:flex!important;flex-direction:column!important;align-items:flex-start!important;
-  justify-content:center!important;padding-top:18px!important;line-height:1.08!important;overflow:visible!important;
-}
-.neon-player.rival .duel-player-copy,.neon-player.rival .neon-player-copy{grid-column:1!important;grid-row:1!important;align-items:flex-end!important;text-align:right!important}
-.neon-player .neon-player-copy span{font-size:7px!important;letter-spacing:1px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important}
-.neon-player .neon-player-copy b{font-size:11px!important;margin-top:5px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important}
-.neon-player .game-title-below{width:72px!important;max-width:72px!important;margin:2px auto 0!important;display:block!important;text-align:center!important;line-height:1!important;order:2!important}
-.neon-player .game-title-below img{display:block!important;width:72px!important;max-width:72px!important;max-height:24px!important;height:auto!important;object-fit:contain!important;margin:0 auto!important}
-.neon-player .score-under-avatar{order:3!important;width:100%!important;margin:4px 0 0!important;min-height:20px!important;display:flex!important;align-items:baseline!important;justify-content:center!important;gap:2px!important;font-size:17px!important;line-height:18px!important;position:relative!important;inset:auto!important;transform:none!important;white-space:nowrap!important}
-.neon-player .score-under-avatar small{font-size:7px!important;color:#9ba5b4!important}
-.neon-player .score-under-avatar em{position:absolute!important;right:-5px!important;top:-2px!important;font-size:8px!important}
-.neon-player .avatar-reaction-bubble{top:-2px!important;left:50%!important;z-index:30!important}
-.neon-vs{width:36px!important;height:36px!important;margin-top:18px!important;align-self:start!important;position:relative!important;z-index:5!important}
-.neon-match-tools{position:absolute!important;right:8px!important;top:7px!important;z-index:100!important;height:auto!important;overflow:visible!important}
-.match-forfeit-btn{font-size:9px!important;padding:7px 10px!important;border-radius:999px!important;white-space:nowrap!important}
-
-@media(max-width:430px){
-  .app{padding-left:10px!important;padding-right:10px!important;padding-bottom:calc(88px + env(safe-area-inset-bottom))!important}
-  .neon-duel-head{grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr)!important;gap:4px!important;min-height:116px!important;padding:7px 0!important}
-  .neon-player{grid-template-columns:62px minmax(0,1fr)!important;min-height:102px!important;gap:5px!important;padding:6px 4px!important;border-radius:14px!important}
-  .neon-player.rival{grid-template-columns:minmax(0,1fr) 62px!important}
-  .neon-player .neon-avatar-wrap{width:62px!important;min-width:62px!important;min-height:90px!important;flex-basis:62px!important}
-  .neon-player .neon-avatar-wrap .avatar-frame-shell{--avatar-size:60px!important;width:60px!important;height:60px!important;flex-basis:60px!important}
-  .neon-player .game-title-below{width:60px!important;max-width:60px!important}
-  .neon-player .game-title-below img{width:60px!important;max-width:60px!important;max-height:21px!important}
-  .neon-player .neon-player-copy{padding-top:14px!important}
-  .neon-player .neon-player-copy b{font-size:9px!important}
-  .neon-player .score-under-avatar{font-size:15px!important}
-  .neon-vs{width:32px!important;height:32px!important;font-size:8px!important;margin-top:12px!important}
-  .match-forfeit-btn{font-size:8px!important;padding:6px 8px!important}
-}
-
-/* v41.10 — composição universal AVATAR + MOLDURA
-   Avatar sempre atrás, centralizado e recortado dentro da abertura da moldura.
-   A moldura permanece no tamanho total do componente e sempre acima do avatar. */
-.avatar-frame-shell{
-  --frame-size:100%;
-  --avatar-visible:78%;
-  position:relative!important;
-  display:block!important;
-  width:var(--frame-size)!important;
-  height:var(--frame-size)!important;
-  min-width:0!important;
-  min-height:0!important;
-  flex:0 0 auto!important;
-  padding:0!important;
-  margin:0!important;
-  border:0!important;
-  outline:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  overflow:visible!important;
-  line-height:0!important;
-  isolation:isolate!important;
-  vertical-align:middle!important;
-}
-.avatar-frame-shell.avatar.mini{width:44px!important;height:44px!important}
-.avatar-frame-shell.avatar.big{width:78px!important;height:78px!important}
-.avatar-frame-shell.avatar.huge{width:92px!important;height:92px!important}
-.avatar-frame-shell.avatar.neon-avatar{width:68px!important;height:68px!important}
-.avatar-frame-shell.avatar.home-avatar{width:82px!important;height:82px!important}
-
-/* A imagem do avatar NÃO ocupa a tela inteira da moldura.
-   Ela fica menor, centralizada e presa ao círculo interno. */
-.avatar-frame-shell>.avatar-base{
-  position:absolute!important;
-  top:calc((100% - var(--avatar-visible))/2)!important;
-  left:calc((100% - var(--avatar-visible))/2)!important;
-  width:var(--avatar-visible)!important;
-  height:var(--avatar-visible)!important;
-  min-width:0!important;
-  min-height:0!important;
-  max-width:none!important;
-  max-height:none!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  outline:0!important;
-  border-radius:50%!important;
-  background:transparent!important;
-  box-shadow:none!important;
+  left:17%!important;top:17%!important;
+  width:66%!important;height:66%!important;
+  min-width:66%!important;min-height:66%!important;
+  max-width:66%!important;max-height:66%!important;
+  margin:0!important;padding:0!important;
+  border:0!important;border-radius:50%!important;
+  object-fit:cover!important;object-position:center center!important;
+  display:block!important;z-index:1!important;
+  box-shadow:none!important;transform:none!important;
   overflow:hidden!important;
-  object-fit:cover!important;
-  object-position:center!important;
-  display:block!important;
-  z-index:1!important;
-  transform:none!important;
+  clip-path:circle(50% at 50% 50%)!important;
+  -webkit-clip-path:circle(50% at 50% 50%)!important;
 }
-.avatar-frame-shell>.avatar-base.avatar-img{object-fit:cover!important;object-position:center!important}
 
-/* Moldura ocupa todo o canvas e fica SEMPRE na frente. */
+/* Moldura PNG: mesma referência 256x256, sempre acima da foto. */
 .avatar-frame-shell>.avatar-frame-overlay{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  min-width:0!important;
-  min-height:0!important;
-  max-width:none!important;
-  max-height:none!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  outline:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  object-fit:contain!important;
-  object-position:center!important;
-  display:block!important;
-  z-index:20!important;
-  pointer-events:none!important;
+  position:absolute!important;left:-2%!important;top:-2%!important;
+  width:104%!important;height:104%!important;
+  min-width:104%!important;min-height:104%!important;
+  max-width:104%!important;max-height:104%!important;
+  margin:0!important;padding:0!important;border:0!important;
+  border-radius:0!important;background:transparent!important;
+  object-fit:fill!important;object-position:center center!important;
+  display:block!important;z-index:20!important;
+  pointer-events:none!important;transform:none!important;
+  animation:none!important;filter:none!important;box-shadow:none!important;
 }
 
-/* Escalas únicas para cada tamanho, mantendo a mesma proporção. */
-.avatar-frame-shell.avatar.mini{--avatar-visible:78%}
-.avatar-frame-shell.avatar.big{--avatar-visible:78%}
-.avatar-frame-shell.avatar.huge{--avatar-visible:78%}
-.avatar-frame-shell.avatar.neon-avatar{--avatar-visible:78%}
-.avatar-frame-shell.avatar.home-avatar{--avatar-visible:78%}
-.avatar-frame-shell.avatar.queue-avatar{--avatar-visible:78%}
-
-/* Nunca deixar estilos antigos do componente .avatar criarem um fundo atrás da moldura. */
-.avatar-frame-shell.has-custom-frame,
-.avatar-frame-shell.has-custom-frame.avatar,
-.avatar-frame-shell.has-custom-frame.avatar-img{
-  background:transparent!important;
-  border:0!important;
-  box-shadow:none!important;
-  overflow:visible!important;
-}
-
-/* Em telas pequenas, a regra continua proporcional; só muda o tamanho externo. */
-@media(max-width:520px){
-  .avatar-frame-shell.avatar.neon-avatar{width:64px!important;height:64px!important}
-  .avatar-frame-shell.avatar.huge{width:84px!important;height:84px!important}
-}
-
-/* =========================================================
-   QuizUp — CORREÇÃO DEFINITIVA AVATAR + MOLDURA
-   Última regra: evita conflito com versões anteriores do CSS.
-   - o container sempre recebe tamanho real
-   - avatar fica atrás e é recortado em círculo
-   - moldura PNG fica sempre na frente
-   - mesma proporção em Perfil, Início, Amigos, Notícias, fila e partida
-   ========================================================= */
-.avatar-frame-shell{
-  position:relative!important;
-  display:inline-block!important;
-  width:var(--avatar-size,56px)!important;
-  height:var(--avatar-size,56px)!important;
-  min-width:var(--avatar-size,56px)!important;
-  min-height:var(--avatar-size,56px)!important;
-  max-width:var(--avatar-size,56px)!important;
-  max-height:var(--avatar-size,56px)!important;
-  flex:0 0 var(--avatar-size,56px)!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  outline:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  border-radius:0!important;
-  overflow:visible!important;
-  line-height:0!important;
-  isolation:isolate!important;
-}
-
-/* Tamanho do componente em cada local do aplicativo. */
-.profile-avatar-stage .avatar-frame-shell{--avatar-size:140px!important;width:140px!important;height:140px!important;min-width:140px!important;min-height:140px!important;max-width:140px!important;max-height:140px!important}
-.home-hero .avatar-frame-shell{--avatar-size:128px!important}
+/* Tamanhos: o componente muda de escala, nunca a proporção foto/moldura. */
+.profile-avatar-stage .avatar-frame-shell{--avatar-size:128px!important}
+.home-avatar.avatar-frame-shell{--avatar-size:112px!important}
 .top-avatar .avatar-frame-shell{--avatar-size:44px!important}
-.friend-avatar-stack .avatar-frame-shell{--avatar-size:64px!important}
-.news-author .avatar-frame-shell{--avatar-size:58px!important}
-.notification-avatar .avatar-frame-shell{--avatar-size:58px!important}
 .player-row .avatar-frame-shell{--avatar-size:58px!important}
-.queue-player-card .avatar-frame-shell{--avatar-size:70px!important}
-.match-player .avatar-frame-shell{--avatar-size:104px!important}
-.neon-player .neon-avatar-wrap .avatar-frame-shell{--avatar-size:72px!important}
+.friend-avatar-stack .avatar-frame-shell{--avatar-size:64px!important}
+.news-author .avatar-frame-shell,.notification-avatar .avatar-frame-shell{--avatar-size:58px!important}
+.queue-player-card .avatar-frame-shell{--avatar-size:64px!important}
+.match-player .avatar-frame-shell{--avatar-size:108px!important}
+.neon-avatar-wrap .avatar-frame-shell{--avatar-size:76px!important}
 .podium-card .avatar-frame-shell{--avatar-size:76px!important}
 
-/* Classes usadas diretamente pelo markup de avatares. */
-.avatar-frame-shell.avatar.mini{--avatar-size:44px!important}
-.avatar-frame-shell.avatar.big{--avatar-size:78px!important}
-.avatar-frame-shell.avatar.huge{--avatar-size:92px!important}
-.avatar-frame-shell.avatar.neon-avatar{--avatar-size:68px!important}
-.avatar-frame-shell.avatar.home-avatar{--avatar-size:82px!important}
-.avatar-frame-shell.avatar.queue-avatar{--avatar-size:70px!important}
-.avatar-frame-shell.avatar.profile-avatar{--avatar-size:140px!important}
+/* Durante a rodada: avatar/moldura não empurram nome/pontos e ficam alinhados. */
+.neon-avatar-wrap{position:relative!important;overflow:visible!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;flex-direction:column!important}
+.neon-avatar-wrap .avatar-frame-shell{flex:0 0 var(--avatar-size)!important}
+.duel-player-card{position:relative!important;overflow:visible!important}
 
-/* FOTO: ocupa o quadro, mas só pode aparecer no círculo interno. */
-.avatar-frame-shell > .avatar-base,
-.avatar-frame-shell > .avatar-base.avatar,
-.avatar-frame-shell > .avatar-base.avatar-img,
-.avatar-frame-shell > .avatar-base.neon-avatar{
+/* Reação: exatamente sobre a foto do jogador. */
+.avatar-reaction-bubble{
   position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  min-width:100%!important;
-  min-height:100%!important;
-  max-width:100%!important;
-  max-height:100%!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  outline:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  border-radius:0!important;
-  object-fit:cover!important;
-  object-position:center!important;
-  display:block!important;
-  z-index:1!important;
-  clip-path:circle(34% at 50% 50%)!important;
-  -webkit-clip-path:circle(34% at 50% 50%)!important;
-  transform:none!important;
-}
-
-/* MOLDURA: canvas inteiro, sempre acima do avatar. */
-.avatar-frame-shell > .avatar-frame-overlay{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  min-width:100%!important;
-  min-height:100%!important;
-  max-width:100%!important;
-  max-height:100%!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  outline:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  border-radius:0!important;
-  object-fit:fill!important;
-  object-position:center!important;
-  display:block!important;
-  z-index:20!important;
+  left:50%!important;
+  top:3%!important;
+  transform:translate(-50%,-50%) scale(1)!important;
+  z-index:60!important;
+  display:grid!important;place-items:center!important;
+  width:46px!important;height:46px!important;
+  min-width:46px!important;min-height:46px!important;
+  border-radius:50%!important;
+  background:rgba(5,8,13,.92)!important;
+  border:2px solid #ffd21a!important;
+  box-shadow:0 0 18px rgba(255,210,26,.65),0 8px 22px rgba(0,0,0,.55)!important;
+  font-size:25px!important;line-height:1!important;
   pointer-events:none!important;
-  animation:none!important;
-  transform:none!important;
+  animation:quizupReactionPop .18s ease-out both!important;
+}
+.avatar-reaction-bubble.opponent{border-color:#19d9ff!important;box-shadow:0 0 18px rgba(25,217,255,.55),0 8px 22px rgba(0,0,0,.55)!important}
+.avatar-reaction-bubble .custom-reaction-img{width:30px!important;height:30px!important;object-fit:contain!important}
+@keyframes quizupReactionPop{from{opacity:0;transform:translate(-50%,-50%) scale(.45)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+
+/* Reações continuam acessíveis sem bagunçar a área de respostas. */
+.match-reaction-bar{position:relative!important;z-index:80!important;display:flex!important;justify-content:center!important;align-items:center!important;gap:8px!important;margin-top:10px!important;padding-top:10px!important;border-top:1px solid #1b2a36!important}
+.match-emoji-open{touch-action:manipulation!important;cursor:pointer!important;user-select:none!important}
+.match-emoji-picker{position:relative!important;z-index:90!important;display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:7px!important;margin:8px auto 0!important;max-width:430px!important;padding:10px!important;background:#080f16!important;border:1px solid #334656!important;border-radius:14px!important;box-shadow:0 14px 32px rgba(0,0,0,.55)!important}
+.match-emoji{display:grid!important;place-items:center!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;padding:0!important;border:1px solid #334656!important;border-radius:10px!important;background:#121c27!important;color:#fff!important;font-size:21px!important;cursor:pointer!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important}
+.match-emoji.custom img{width:28px!important;height:28px!important;object-fit:contain!important;pointer-events:none!important}
+.match-emoji:active{transform:scale(.92)!important;border-color:#ffd21a!important}
+
+/* DESISTIR: mantém o botão no topo sem alterar o layout da partida. */
+.neon-match-tools{position:relative!important;z-index:110!important;height:0!important;overflow:visible!important}
+.match-forfeit-btn{position:absolute!important;top:6px!important;right:6px!important;z-index:110!important;border:1px solid #713040!important;background:#170d13!important;color:#ff8292!important;border-radius:999px!important;padding:6px 10px!important;font-size:8px!important;font-weight:950!important;letter-spacing:.3px!important;cursor:pointer!important;touch-action:manipulation!important}
+
+/* CRIAR QUIZ */
+.contribute-page{width:min(100%,1200px)!important;margin:0 auto!important;padding:0 10px 100px!important}
+.contribute-page .contribute-intro{margin-bottom:14px!important}
+.contribute-questions{display:grid!important;gap:12px!important}
+.category-question-card{padding:16px!important;background:linear-gradient(145deg,#101923,#0a1119)!important;border:1px solid #263544!important;border-radius:16px!important;color:#fff!important}
+.category-question-head{display:flex!important;justify-content:space-between!important;align-items:center!important;margin-bottom:10px!important;color:#ffd21a!important}
+.category-question-head span{font-size:11px!important;color:#7f8d9e!important}
+.cq-options-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;margin:8px 0!important}
+.cq-image-wrap{margin-top:8px!important;padding:10px!important;border:1px dashed #334656!important;border-radius:12px!important;background:#080f16!important}
+.cq-image-preview{display:block!important;width:min(220px,100%)!important;max-height:160px!important;object-fit:contain!important;border-radius:10px!important;margin:10px auto 0!important}
+.contribute-submit-bar{display:flex!important;justify-content:space-between!important;gap:10px!important;margin-top:14px!important}
+.contribute-submit-bar button{min-height:46px!important}
+
+@media(max-width:599px){
+  .app{padding-left:10px!important;padding-right:10px!important}
+  .classic-top{margin-left:-10px!important;margin-right:-10px!important;padding-left:10px!important;padding-right:10px!important}
+  .profile-avatar-stage .avatar-frame-shell{--avatar-size:128px!important}
+  .match-player .avatar-frame-shell{--avatar-size:88px!important}
+  .neon-avatar-wrap .avatar-frame-shell{--avatar-size:76px!important}
+  .neon-duel-head{grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr)!important;gap:4px!important;min-height:112px!important;padding:8px 0 6px!important}
+  .duel-player-card{min-height:92px!important;overflow:visible!important}
+  .neon-question-card{min-height:250px!important}
+  .neon-question-card p{font-size:18px!important;line-height:1.2!important}
+  .neon-answer{min-height:55px!important}
+  .avatar-reaction-bubble{width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;font-size:22px!important;top:3%!important}
+  .match-emoji-picker{max-width:calc(100vw - 40px)!important}
+  .cq-options-grid{grid-template-columns:1fr!important}
+  .contribute-submit-bar{flex-direction:column!important}
+  .contribute-submit-bar button{width:100%!important}
 }
 
-/* Nunca criar um painel/fundo atrás da composição. */
-.avatar-frame-shell::before,
-.avatar-frame-shell::after,
-.avatar-frame-shell.has-custom-frame,
-.avatar-frame-shell.has-custom-frame.avatar,
-.avatar-frame-shell.has-custom-frame.avatar-img{
-  background:transparent!important;
-  border:0!important;
-  box-shadow:none!important;
-}
+/* v42 — Loja comercial sem anúncios */
+.coin-shop-card{margin:16px 0;border:1px solid rgba(255,210,26,.25);background:linear-gradient(145deg,#111a25,#080d14);box-shadow:0 12px 32px rgba(0,0,0,.22)}
+.coin-pack-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}
+.coin-pack-card{padding:16px;border:1px solid #263544;border-radius:16px;background:linear-gradient(145deg,#101923,#0a1119);display:flex;flex-direction:column;gap:8px;text-align:center}
+.coin-pack-icon{font-size:28px}.coin-pack-card strong{font-size:18px}.coin-pack-card small{color:#aeb8c7;font-size:15px}.coin-pack-card button{margin-top:4px;width:100%}
+.premium-card .premium-tag{letter-spacing:.04em}.premium-card[data-kind="pass"]{border-color:rgba(255,210,26,.35)}
+@media(max-width:900px){.coin-pack-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.coin-pack-grid{grid-template-columns:1fr}.coin-pack-card{padding:14px}}
 
-/* Perfil: centralização sem cortar a moldura. */
-.profile-avatar-stage{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  min-height:154px!important;
-  overflow:visible!important;
-}
-.profile-avatar-stage .avatar-frame-shell{margin:0 auto!important}
-
-@media(max-width:600px){
-  .profile-avatar-stage .avatar-frame-shell{--avatar-size:140px!important;width:140px!important;height:140px!important;min-width:140px!important;min-height:140px!important;max-width:140px!important;max-height:140px!important}
-}
+/* Q-Rival — compras manuais de QuizCoins */
+.coin-manual-notice{margin:12px 0;padding:12px 14px;border:1px solid rgba(255,210,26,.35);border-radius:14px;background:rgba(255,210,26,.08);font-size:.9rem}
+.manual-coin-backdrop{z-index:1200}
+.manual-coin-modal{width:min(620px,calc(100vw - 24px));max-height:min(760px,calc(100vh - 24px));display:flex;flex-direction:column;overflow:hidden}
+.manual-coin-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.manual-coin-head span{font-size:.78rem;font-weight:800;letter-spacing:.08em;opacity:.72}
+.manual-coin-head h2{margin:4px 0 0;font-size:1.2rem}
+.manual-order-status{display:inline-flex;align-items:center;padding:7px 10px;border-radius:999px;font-size:.68rem;white-space:nowrap;background:rgba(255,255,255,.08)}
+.manual-order-status.payment_submitted{background:rgba(80,180,255,.14)}
+.manual-order-status.approved{background:rgba(50,210,120,.16)}
+.manual-order-status.rejected{background:rgba(255,80,80,.15)}
+.manual-coin-messages{min-height:190px;max-height:360px;overflow:auto;padding:10px;margin:8px 0 12px;border-radius:16px;background:rgba(0,0,0,.14);display:flex;flex-direction:column;gap:8px}
+.manual-coin-msg{max-width:88%;align-self:flex-start;padding:9px 11px;border-radius:13px;background:rgba(255,255,255,.08);font-size:.9rem;line-height:1.35}
+.manual-coin-msg.mine{align-self:flex-end;background:rgba(255,210,26,.14)}
+.manual-coin-msg small{display:block;margin-top:4px;opacity:.6;font-size:.68rem}
+.manual-coin-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+.manual-proof-btn{cursor:pointer;text-align:center}
+.manual-coin-actions small{opacity:.65}
+.manual-success,.manual-error{padding:12px 14px;border-radius:13px;margin-top:10px}
+.manual-success{background:rgba(50,210,120,.12)}
+.manual-error{background:rgba(255,80,80,.12)}
+.manual-orders-admin{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.manual-order-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border-radius:14px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07)}
+.manual-order-row.payment_submitted{border-color:rgba(80,180,255,.35)}
+.manual-order-row.approved{opacity:.65}
+.manual-order-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.manual-payment-link{display:flex;gap:8px;margin-bottom:9px}
+.manual-payment-link input{flex:1;min-width:0}
+.manual-admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.admin-manual-messages{max-height:330px}
+@media(max-width:650px){.manual-order-row{align-items:flex-start;flex-direction:column}.manual-order-actions{width:100%;justify-content:flex-start}.manual-payment-link{flex-direction:column}.manual-coin-head{align-items:flex-start;flex-direction:column}.manual-order-status{align-self:flex-start}}
 
 /* =========================================================
-   v41.12 — AVATAR + MOLDURA: CORREÇÃO FINAL
-   Não depende de classes antigas e não torna o avatar invisível.
+   Q-RIVAL v43 — DASHBOARD NEON / LAYOUT DA REFERÊNCIA
+   Mantém as funções existentes e reorganiza as telas para o
+   visual da referência: painéis escuros, bordas azuis, amarelo
+   neon, avatares com molduras e títulos visíveis.
    ========================================================= */
-.avatar-frame-shell {
-  position: relative !important;
-  display: inline-block !important;
-  width: var(--avatar-size, 56px) !important;
-  height: var(--avatar-size, 56px) !important;
-  min-width: var(--avatar-size, 56px) !important;
-  min-height: var(--avatar-size, 56px) !important;
-  max-width: var(--avatar-size, 56px) !important;
-  max-height: var(--avatar-size, 56px) !important;
-  flex: 0 0 var(--avatar-size, 56px) !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border: 0 !important;
-  outline: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  overflow: visible !important;
-  line-height: 0 !important;
-  isolation: isolate !important;
-}
+:root{--qr-bg:#03070d;--qr-panel:#07111b;--qr-panel2:#091521;--qr-border:#173b5b;--qr-border2:#0b2741;--qr-yellow:#ffd21a;--qr-cyan:#17cfff;--qr-text:#f6f8fb;--qr-muted:#7f91a4;--qr-xp:var(--xp-color,#ffd21a)}
+body{background:radial-gradient(circle at 50% -10%,#0c1b2b 0,#03070d 42%,#02050a 100%)!important}
+.app{max-width:1600px!important;margin:0 auto!important;background:transparent!important}
+.classic-bottom{z-index:3000!important}
 
-/* O avatar ocupa a área interna da moldura e fica atrás. */
-.avatar-frame-shell > .avatar-base {
-  position: absolute !important;
-  left: 11% !important;
-  top: 11% !important;
-  width: 78% !important;
-  height: 78% !important;
-  min-width: 78% !important;
-  min-height: 78% !important;
-  max-width: 78% !important;
-  max-height: 78% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
-  outline: 0 !important;
-  border-radius: 50% !important;
-  overflow: hidden !important;
-  object-fit: cover !important;
-  object-position: center center !important;
-  display: block !important;
-  z-index: 1 !important;
-  clip-path: none !important;
-  -webkit-clip-path: none !important;
-  transform: none !important;
-}
+/* Dashboard */
+.qr-dashboard{width:min(100%,1540px);margin:0 auto;padding:10px 8px 90px;display:grid;grid-template-columns:1.08fr 1fr 1fr 1fr 1fr;grid-template-areas:"profile friends rank news match" "store store store store profile2";gap:8px;align-items:stretch}
+.qr-panel{position:relative;min-width:0;overflow:hidden;border:1px solid var(--qr-border);border-radius:10px;background:linear-gradient(145deg,rgba(7,17,27,.98),rgba(3,9,16,.98));box-shadow:0 10px 28px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.035)}
+.qr-panel:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% -20%,rgba(23,207,255,.08),transparent 38%)}
+.qr-panel-title{height:42px;padding:0 13px;border-bottom:1px solid #12324e;display:flex;align-items:center;justify-content:space-between;color:#fff;font-size:14px;font-weight:900;letter-spacing:.02em}
+.qr-panel-title button{border:0;background:none;color:#dce7f3;font-size:18px;cursor:pointer}.qr-panel-title button:hover{color:var(--qr-yellow)}
+.qr-profile-panel{grid-area:profile}.qr-friends-panel{grid-area:friends}.qr-ranking-panel{grid-area:rank}.qr-news-panel{grid-area:news}.qr-match-panel{grid-area:match}.qr-store-panel{grid-area:store;min-height:310px}.qr-profile-summary-panel{grid-area:profile2}
+.qr-profile-main{text-align:center;padding:15px 10px 10px}.dashboard-avatar.avatar-frame-shell{--avatar-size:122px!important}.qr-profile-main h2{margin:6px 0 2px;font-size:21px}.qr-role,.qr-level{color:var(--qr-yellow);font-weight:800;font-size:12px}.qr-level{color:#b9c5d2;margin-top:3px}.qr-coin-balance{display:inline-flex;gap:7px;align-items:center;margin:10px auto 4px;padding:7px 14px;border:1px solid #6a5613;border-radius:999px;color:var(--qr-yellow);font-weight:900}.qr-coin-balance small{color:#e6edf5;font-weight:700}.qr-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #14324a;border-bottom:1px solid #14324a}.qr-stats span{padding:9px 4px;text-align:center;border-right:1px solid #14324a}.qr-stats span:last-child{border-right:0}.qr-stats b{display:block;font-size:18px}.qr-stats small{font-size:8px;color:#94a2b2;letter-spacing:.06em}.qr-title-chip{margin:10px;border:1px solid #8c2bc2;border-radius:10px;padding:7px;text-align:center;background:rgba(160,40,255,.06);min-height:32px}.qr-title-chip.large{margin:10px 0}.dashboard-title-image{max-height:27px;max-width:100%;object-fit:contain}.qr-yellow-btn{border:1px solid #fff09a!important;background:linear-gradient(145deg,#ffd21a,#efad00)!important;color:#101216!important;border-radius:9px!important;min-height:40px;padding:0 18px;font-weight:1000;letter-spacing:.02em;box-shadow:0 0 18px rgba(255,210,26,.15);cursor:pointer}.qr-profile-panel>.qr-yellow-btn{display:block;width:calc(100% - 20px);margin:0 10px 10px}
+.qr-tabs{display:flex;gap:18px;height:38px;align-items:center;padding:0 12px;border-bottom:1px solid #15344d;font-size:10px;color:#c8d4df}.qr-tabs b{color:var(--qr-yellow);height:100%;display:flex;align-items:center;border-bottom:3px solid var(--qr-yellow)}.qr-tabs.wide{justify-content:flex-start;height:46px;font-size:11px}
+.qr-list{padding:6px}.qr-friend-row{width:100%;display:grid;grid-template-columns:44px minmax(0,1fr) 8px 28px;gap:8px;align-items:center;padding:8px 6px;background:linear-gradient(145deg,#081521,#050d15);border:1px solid #12314c;border-radius:8px;color:#fff;text-align:left;margin-bottom:5px;cursor:pointer}.qr-small-avatar.avatar-frame-shell{--avatar-size:42px!important}.qr-friend-row b{font-size:12px}.qr-friend-row small,.qr-friend-row em{display:block;font-size:9px;color:#8fa0b1;font-style:normal}.qr-friend-row em{color:var(--xp-color,var(--qr-yellow));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.qr-friend-row>strong{color:#91a0ae}.presence-dot{display:inline-block!important;width:7px!important;height:7px!important;border-radius:50%!important;padding:0!important}.presence-dot.online{background:#18e79a!important;box-shadow:0 0 8px #18e79a}.presence-dot.offline{background:#657180!important}.qr-empty{padding:24px;text-align:center;color:#718193;font-size:12px}
+.qr-ranking-list{padding:6px}.qr-rank-row{width:100%;display:grid;grid-template-columns:26px 45px minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 6px;margin-bottom:5px;border:1px solid #12314b;border-radius:8px;background:#07121d;color:#fff;text-align:left}.qr-rank-num{text-align:center;font-weight:1000;color:#dfe7ef}.qr-rank-avatar.avatar-frame-shell{--avatar-size:42px!important}.qr-rank-row div b{display:block;font-size:11px}.qr-rank-row div small,.qr-rank-row div em{display:block;color:#8b9bad;font-size:9px;font-style:normal}.qr-rank-row div em{color:var(--xp-color,var(--qr-yellow));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.qr-rank-row>strong{font-size:11px;color:var(--xp-color,var(--qr-yellow));white-space:nowrap}.qr-rank-row.large{padding:10px}.qr-rank-row.me{box-shadow:0 0 0 1px rgba(255,210,26,.25),0 0 18px rgba(255,210,26,.06)}
+.qr-news-mini{padding:9px;border-bottom:1px solid #12304a}.qr-news-author{display:flex;align-items:center;gap:7px;width:100%;border:0;background:none;color:#fff;text-align:left}.qr-news-avatar.avatar-frame-shell{--avatar-size:38px!important}.qr-news-author>div{flex:1}.qr-news-author b{display:block;font-size:11px}.qr-news-author small{font-size:8px;color:#7e8fa0}.qr-news-author button{border:0;background:none;color:#8393a5}.qr-news-mini img{display:block;width:100%;max-height:90px;object-fit:cover;border-radius:7px;margin:7px 0}.qr-news-mini p{font-size:10px;line-height:1.35;margin:5px 0}.qr-news-mini>div:last-child{font-size:9px;color:#9aa8b8}
+.qr-match-vs{display:grid;grid-template-columns:1fr 38px 1fr;align-items:center;text-align:center;padding:18px 7px 10px}.qr-match-side{display:flex;flex-direction:column;align-items:center;min-width:0}.qr-match-avatar.avatar-frame-shell{--avatar-size:86px!important}.qr-match-side h2{font-size:14px;margin:7px 0 2px}.qr-match-side small{font-size:9px;color:#b8c4d0}.qr-match-side em{margin-top:5px;border:1px solid #922bc5;color:#f0a9ff;border-radius:999px;padding:3px 7px;font-size:7px;font-style:normal;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.qr-match-side strong{font-size:11px;margin-top:5px}.qr-match-vs>strong{font-size:20px;color:#fff}.qr-match-info-grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid #14334e;margin:4px 8px 10px;border-radius:8px;overflow:hidden}.qr-match-info-grid>div{display:flex;gap:7px;padding:9px;border-right:1px solid #14334e;border-bottom:1px solid #14334e;color:#16cfff;font-size:14px}.qr-match-info-grid>div:nth-child(even){border-right:0}.qr-match-info-grid>div:nth-last-child(-n+2){border-bottom:0}.qr-match-info-grid span{display:flex;flex-direction:column;color:#8293a4;font-size:8px}.qr-match-info-grid b{font-size:10px;color:#fff;margin-top:2px}.qr-match-panel>.qr-yellow-btn{display:block;width:calc(100% - 16px);margin:0 8px 10px}
 
-.avatar-frame-shell > img.avatar-base {
-  background: transparent !important;
-}
+/* Store */
+.qr-store-panel{padding-bottom:8px}.qr-coin-top{font-size:12px;color:var(--qr-yellow);border:1px solid #5d4e16;border-radius:999px;padding:6px 10px}.qr-store-body{display:grid;grid-template-columns:160px minmax(0,1fr);min-height:260px}.qr-store-sidebar{border-right:1px solid #14334d;padding:7px 5px;background:rgba(1,7,13,.55)}.qr-store-cat{width:100%;display:flex;align-items:center;gap:9px;padding:8px 8px;border:0;border-radius:7px;background:transparent;color:#dbe4ec;text-align:left;font-size:10px;cursor:pointer}.qr-store-cat span{width:18px;text-align:center;color:#b7c5d3}.qr-store-cat.active{background:linear-gradient(90deg,#ffd21a,#f1b100);color:#101216;font-weight:1000}.qr-store-cat.active span{color:#111}.qr-store-content{padding:12px}.qr-store-content h3{margin:0;font-size:17px}.qr-store-content>p{margin:4px 0 12px;color:#8192a4;font-size:9px}.qr-product-grid,.qr-shop-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}.qr-product-card,.qr-shop-product{min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:10px 8px;border:1px solid #21445f;border-radius:9px;background:linear-gradient(145deg,#091724,#050c14);box-shadow:inset 0 1px rgba(255,255,255,.025)}.qr-product-card:hover,.qr-shop-product:hover{border-color:#3c7195;transform:translateY(-1px)}.qr-coin-art,.qr-shop-art{height:70px;display:grid;place-items:center;font-size:43px}.qr-product-card>b,.qr-shop-product>b{font-size:15px}.qr-product-card small{color:#93a2b2;font-size:8px}.qr-product-card strong{font-size:13px;margin:5px 0;color:#fff}.qr-product-card .qr-yellow-btn{width:100%;min-height:32px;padding:0 6px;font-size:9px}.qr-shop-help{margin-top:12px;border:1px solid #5a1f9d;border-radius:9px;background:linear-gradient(90deg,rgba(109,28,255,.16),rgba(40,10,70,.1));display:flex;align-items:center;gap:10px;padding:9px}.qr-shop-help>div:first-child{font-size:28px;color:#e04fff}.qr-shop-help div:nth-child(2){flex:1}.qr-shop-help b,.qr-shop-help small{display:block}.qr-shop-help small{color:#8d9aac;font-size:9px;margin-top:2px}.qr-store-page{width:min(100%,1200px);margin:0 auto;padding:10px 10px 100px}.qr-store-header{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:18px;border:1px solid #1a4565;border-radius:12px;background:linear-gradient(145deg,#071521,#040a11);box-shadow:0 14px 35px rgba(0,0,0,.3)}.qr-store-header span{color:var(--qr-yellow);font-weight:1000;font-size:11px}.qr-store-header h1{margin:4px 0;font-size:27px}.qr-store-header p{margin:0;color:#8798a9;font-size:11px}.qr-store-balance{min-width:140px;text-align:center;border:1px solid #685416;border-radius:10px;padding:12px;color:var(--qr-yellow);font-weight:1000}.qr-store-balance small{display:block;color:#8e9cac;font-size:8px;margin-top:3px}.qr-store-layout{display:grid;grid-template-columns:190px minmax(0,1fr);margin-top:10px;border:1px solid #1a4565;border-radius:12px;overflow:hidden;background:#040b12}.qr-store-sidebar.big{padding:12px 8px}.qr-store-products{padding:15px}.qr-store-products-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;border-bottom:1px solid #12324b;padding-bottom:10px;margin-bottom:10px}.qr-store-products-head h2{margin:0;font-size:20px}.qr-store-products-head p{margin:3px 0 0;color:#8090a0;font-size:10px}.qr-store-products-head>span{color:#9facc0;font-size:9px;border:1px solid #294258;border-radius:999px;padding:5px 8px}.qr-shop-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.qr-shop-grid .premium-card{min-width:0!important;padding:10px!important;border-radius:9px!important;background:linear-gradient(145deg,#091724,#050c14)!important;border:1px solid #21445f!important;display:flex!important;flex-direction:column!important}.qr-shop-grid .premium-card .premium-art{height:80px!important;display:grid!important;place-items:center!important}.qr-shop-grid .premium-card h3{font-size:13px!important;margin:4px 0!important}.qr-shop-grid .premium-card p{font-size:9px!important;color:#8293a4!important;min-height:25px}.qr-shop-grid .premium-card .premium-item-btn{margin-top:auto!important;width:100%!important;min-height:32px!important;background:linear-gradient(145deg,#ffd21a,#efad00)!important;color:#101216!important;border-radius:7px!important;border:1px solid #fff09a!important;font-weight:1000!important;font-size:9px!important}
 
-/* Fallback de avatar textual continua visível caso não exista imagem. */
-.avatar-frame-shell > div.avatar-base {
-  display: grid !important;
-  place-items: center !important;
-  background: linear-gradient(135deg, #ffbd69, #e85938) !important;
-  border: 2px solid #ffb51b !important;
-  color: #fff !important;
-  font-weight: 950 !important;
-  line-height: 1 !important;
-}
+/* Friends page */
+.qr-friends-page,.qr-ranking-page{width:min(100%,1100px);margin:0 auto;padding:12px 10px 100px}.qr-page-title{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin-bottom:10px}.qr-page-title h1{margin:0;font-size:25px}.qr-page-title p,.qr-page-title>span{margin:4px 0 0;color:#8394a6;font-size:10px}.qr-friend-search{display:flex;gap:8px;margin-bottom:10px}.qr-friend-search input{flex:1}.qr-friend-search button{min-width:130px;border:1px solid #fff09a;background:linear-gradient(145deg,#ffd21a,#efad00);border-radius:8px;font-weight:1000}.qr-friends-list{display:flex;flex-direction:column;gap:6px}.qr-friend-item{display:flex;align-items:center;gap:10px;padding:8px;border:1px solid #183b57;border-radius:9px;background:linear-gradient(145deg,#071521,#040b12)}.qr-friend-profile{display:flex;align-items:center;gap:10px;flex:1;min-width:0;border:0;background:none;color:#fff;text-align:left}.qr-friend-avatar.avatar-frame-shell{--avatar-size:58px!important}.qr-friend-profile b,.qr-friend-profile small,.qr-friend-profile em,.qr-friend-profile span{display:block}.qr-friend-profile b{font-size:13px}.qr-friend-profile small{font-size:9px;color:#a5b3c1;margin-top:2px}.qr-friend-profile em{font-size:9px;color:var(--xp-color,var(--qr-yellow));font-style:normal;margin-top:3px}.qr-friend-profile span{font-size:8px;margin-top:3px}.qr-friend-profile span.online{color:#18e79a}.qr-friend-profile span.offline{color:#748293}.qr-friend-actions{display:flex;gap:5px}.qr-friend-actions button{min-width:38px;padding:0 9px!important}.qr-pending{margin-top:10px;padding-top:10px;border-top:1px solid #17344c}.qr-pending>b{display:block;color:var(--qr-yellow);font-size:10px;margin-bottom:6px}
 
-/* Moldura PNG: sempre na frente, sem redimensionamento diferente do avatar. */
-.avatar-frame-shell > .avatar-frame-overlay,
-.avatar-frame-shell .avatar-frame-overlay {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  min-width: 100% !important;
-  min-height: 100% !important;
-  max-width: 100% !important;
-  max-height: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
-  outline: 0 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  object-fit: fill !important;
-  object-position: center !important;
-  display: block !important;
-  z-index: 100 !important;
-  pointer-events: none !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: none !important;
-  clip-path: none !important;
-  -webkit-clip-path: none !important;
-}
+/* Ranking */
+.qr-ranking-page{width:min(100%,900px)}.qr-ranking-page .qr-page-title{align-items:center}.qr-ranking-page .classic-select{width:180px}.qr-podium{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.qr-podium-card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px;border:1px solid #1b4563;border-radius:10px;background:linear-gradient(145deg,#081724,#040b12);color:#fff}.qr-podium-card.p1{border-color:#8b6c16;box-shadow:0 0 25px rgba(255,210,26,.08)}.qr-podium-card>span{font-size:21px}.qr-podium-avatar.avatar-frame-shell{--avatar-size:84px!important}.qr-podium-card b{font-size:13px}.qr-podium-card small{color:#8798a9;font-size:9px}.qr-podium-card strong{color:var(--xp-color,var(--qr-yellow));font-size:12px}
 
-/* Tamanhos padronizados */
-.profile-avatar-stage .avatar-frame-shell { --avatar-size: 140px !important; }
-.home-hero .avatar-frame-shell { --avatar-size: 128px !important; }
-.top-avatar .avatar-frame-shell { --avatar-size: 44px !important; }
-.friend-avatar-stack .avatar-frame-shell { --avatar-size: 64px !important; }
-.news-author .avatar-frame-shell { --avatar-size: 58px !important; }
-.notification-avatar .avatar-frame-shell { --avatar-size: 58px !important; }
-.player-row .avatar-frame-shell { --avatar-size: 58px !important; }
-.queue-player-card .avatar-frame-shell { --avatar-size: 70px !important; }
-.match-player .avatar-frame-shell { --avatar-size: 104px !important; }
-.neon-player .neon-avatar-wrap .avatar-frame-shell { --avatar-size: 72px !important; }
-.podium-card .avatar-frame-shell { --avatar-size: 76px !important; }
+/* Match / início */
+.qr-match-page{width:min(100%,620px);min-height:calc(100vh - 80px);margin:0 auto;padding:10px 10px 90px}.qr-match-header{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 7px;color:#fff;border-bottom:1px solid #13334d}.qr-match-header b{font-size:16px}.qr-match-stage{display:grid;grid-template-columns:1fr 64px 1fr;align-items:center;gap:8px;padding:28px 8px 20px;text-align:center}.qr-match-stage.searching{padding-top:34px}.qr-match-avatar-xl.avatar-frame-shell{--avatar-size:122px!important}.qr-match-side h2{font-size:20px;margin:8px 0 2px}.qr-match-side small{color:#a4b2c0;font-size:11px}.qr-match-side em{display:block;margin:6px auto 0;width:max-content;max-width:100%;padding:4px 9px;border:1px solid #a232d0;border-radius:999px;color:#efadff;font-size:8px;font-style:normal}.qr-match-side strong{display:block;margin-top:7px;font-size:13px}.qr-vs-big{font-size:24px;font-weight:1000;color:#fff;text-shadow:0 0 18px rgba(255,210,26,.25)}.qr-vs-big>div{font-size:30px;color:var(--qr-yellow);margin-top:10px}.qr-search-orb{width:90px;height:90px;border-radius:50%;display:grid;place-items:center;margin:auto;border:2px solid var(--qr-yellow);color:var(--qr-yellow);font-size:34px;box-shadow:0 0 30px rgba(255,210,26,.18);animation:qrPulse 1.4s infinite}.qr-match-info-grid{max-width:580px;margin:0 auto 12px}.qr-match-count{text-align:center;color:#9aa8b7;font-size:12px;padding:7px}.qr-match-count b{color:var(--qr-yellow);font-size:17px}.qr-queue{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0 14px}.qr-queue-mini{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:70px;color:#fff}.qr-queue-avatar.avatar-frame-shell{--avatar-size:55px!important}.qr-queue-mini b{font-size:9px}.qr-queue-mini small{color:#7f90a2;font-size:8px}.qr-loading{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px}.qr-loading h2{margin:0}.qr-loading>span,.qr-loading>p{color:#8192a3;font-size:11px}.qr-loading .secondary,.qr-loading .qr-yellow-btn{min-width:230px;margin-top:4px}
 
-.avatar-frame-shell.avatar.mini { --avatar-size: 44px !important; }
-.avatar-frame-shell.avatar.big { --avatar-size: 78px !important; }
-.avatar-frame-shell.avatar.huge { --avatar-size: 92px !important; }
-.avatar-frame-shell.avatar.neon-avatar { --avatar-size: 68px !important; }
-.avatar-frame-shell.avatar.home-avatar { --avatar-size: 82px !important; }
-.avatar-frame-shell.avatar.queue-avatar { --avatar-size: 70px !important; }
-.avatar-frame-shell.avatar.profile-avatar { --avatar-size: 140px !important; }
+/* Match game XP color follows equipped emblem */
+.score-under-avatar{color:var(--xp-color,var(--n-yellow))!important;text-shadow:0 0 12px color-mix(in srgb,var(--xp-color,var(--n-yellow)) 30%,transparent)}
 
-.profile-avatar-stage {
-  position: relative !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-height: 150px !important;
-  overflow: visible !important;
-}
+@keyframes qrPulse{0%,100%{transform:scale(.96);box-shadow:0 0 22px rgba(255,210,26,.12)}50%{transform:scale(1.03);box-shadow:0 0 40px rgba(255,210,26,.3)}}
 
-.profile-avatar-stage .avatar-frame-shell {
-  margin: 0 auto !important;
-}
-
-@media (max-width: 600px) {
-  .profile-avatar-stage .avatar-frame-shell {
-    --avatar-size: 140px !important;
-  }
-}
+@media(max-width:1200px){.qr-dashboard{grid-template-columns:1fr 1fr 1fr;grid-template-areas:"profile friends rank" "news match profile2" "store store store"}.qr-product-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:760px){.qr-dashboard{display:flex;flex-direction:column;padding:8px 6px 90px}.qr-panel{width:100%}.qr-store-body{grid-template-columns:132px minmax(0,1fr)}.qr-product-grid,.qr-shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.qr-store-sidebar.big{display:flex;flex-direction:row;overflow-x:auto;gap:4px}.qr-store-sidebar.big .qr-store-cat{min-width:130px;flex-direction:column;justify-content:center;text-align:center}.qr-store-layout{grid-template-columns:1fr}.qr-store-sidebar{border-right:0;border-bottom:1px solid #14334d;display:flex;overflow-x:auto}.qr-store-sidebar .qr-store-cat{min-width:115px;justify-content:center}.qr-match-stage{grid-template-columns:1fr 42px 1fr}.qr-match-avatar-xl.avatar-frame-shell{--avatar-size:88px!important}.qr-match-side h2{font-size:15px}.qr-vs-big{font-size:17px}.qr-page-title{align-items:flex-start;flex-direction:column}.qr-page-title .qr-yellow-btn{align-self:flex-start}.qr-podium{grid-template-columns:1fr}.qr-podium-card{flex-direction:row;justify-content:flex-start}.qr-podium-avatar.avatar-frame-shell{--avatar-size:60px!important}}
+@media(max-width:480px){.qr-dashboard{padding-left:3px;padding-right:3px}.qr-panel-title{font-size:12px}.qr-profile-main h2{font-size:19px}.dashboard-avatar.avatar-frame-shell{--avatar-size:100px!important}.qr-match-info-grid{grid-template-columns:1fr 1fr}.qr-store-body{grid-template-columns:1fr}.qr-store-sidebar{border-right:0;border-bottom:1px solid #14334d}.qr-store-sidebar .qr-store-cat{min-width:104px}.qr-store-content{padding:9px}.qr-product-grid,.qr-shop-grid{grid-template-columns:1fr 1fr}.qr-friend-item{align-items:flex-start}.qr-friend-actions{flex-direction:column}.qr-friend-actions button{min-height:34px}.qr-friend-avatar.avatar-frame-shell{--avatar-size:50px!important}}
