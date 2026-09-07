@@ -2055,3 +2055,110 @@ body{min-height:100svh}
   .neon-vs{width:32px!important;height:32px!important;font-size:8px!important;margin-top:12px!important}
   .match-forfeit-btn{font-size:8px!important;padding:6px 8px!important}
 }
+
+/* v41.10 — composição universal AVATAR + MOLDURA
+   Avatar sempre atrás, centralizado e recortado dentro da abertura da moldura.
+   A moldura permanece no tamanho total do componente e sempre acima do avatar. */
+.avatar-frame-shell{
+  --frame-size:100%;
+  --avatar-visible:78%;
+  position:relative!important;
+  display:block!important;
+  width:var(--frame-size)!important;
+  height:var(--frame-size)!important;
+  min-width:0!important;
+  min-height:0!important;
+  flex:0 0 auto!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+  line-height:0!important;
+  isolation:isolate!important;
+  vertical-align:middle!important;
+}
+.avatar-frame-shell.avatar.mini{width:44px!important;height:44px!important}
+.avatar-frame-shell.avatar.big{width:78px!important;height:78px!important}
+.avatar-frame-shell.avatar.huge{width:92px!important;height:92px!important}
+.avatar-frame-shell.avatar.neon-avatar{width:68px!important;height:68px!important}
+.avatar-frame-shell.avatar.home-avatar{width:82px!important;height:82px!important}
+
+/* A imagem do avatar NÃO ocupa a tela inteira da moldura.
+   Ela fica menor, centralizada e presa ao círculo interno. */
+.avatar-frame-shell>.avatar-base{
+  position:absolute!important;
+  top:calc((100% - var(--avatar-visible))/2)!important;
+  left:calc((100% - var(--avatar-visible))/2)!important;
+  width:var(--avatar-visible)!important;
+  height:var(--avatar-visible)!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  display:block!important;
+  z-index:1!important;
+  transform:none!important;
+}
+.avatar-frame-shell>.avatar-base.avatar-img{object-fit:cover!important;object-position:center!important}
+
+/* Moldura ocupa todo o canvas e fica SEMPRE na frente. */
+.avatar-frame-shell>.avatar-frame-overlay{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  display:block!important;
+  z-index:20!important;
+  pointer-events:none!important;
+}
+
+/* Escalas únicas para cada tamanho, mantendo a mesma proporção. */
+.avatar-frame-shell.avatar.mini{--avatar-visible:78%}
+.avatar-frame-shell.avatar.big{--avatar-visible:78%}
+.avatar-frame-shell.avatar.huge{--avatar-visible:78%}
+.avatar-frame-shell.avatar.neon-avatar{--avatar-visible:78%}
+.avatar-frame-shell.avatar.home-avatar{--avatar-visible:78%}
+.avatar-frame-shell.avatar.queue-avatar{--avatar-visible:78%}
+
+/* Nunca deixar estilos antigos do componente .avatar criarem um fundo atrás da moldura. */
+.avatar-frame-shell.has-custom-frame,
+.avatar-frame-shell.has-custom-frame.avatar,
+.avatar-frame-shell.has-custom-frame.avatar-img{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+
+/* Em telas pequenas, a regra continua proporcional; só muda o tamanho externo. */
+@media(max-width:520px){
+  .avatar-frame-shell.avatar.neon-avatar{width:64px!important;height:64px!important}
+  .avatar-frame-shell.avatar.huge{width:84px!important;height:84px!important}
+}
