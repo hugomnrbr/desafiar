@@ -1827,3 +1827,133 @@ html,body,#app{overflow-x:hidden!important}
   border-radius:0!important;
   z-index:10!important;
 }
+
+/* =========================================================
+   QuizUp v41.8 — AVATAR + MOLDURA: COMPOSIÇÃO ÚNICA E EXATA
+   Regra definitiva: foto e moldura usam o MESMO quadro.
+   Foto fica atrás; PNG da moldura fica sempre na frente.
+   O centro transparente do PNG revela a foto naturalmente.
+   ========================================================= */
+.avatar-frame-shell{
+  position:relative!important;
+  display:inline-block!important;
+  width:var(--avatar-size,56px)!important;
+  height:var(--avatar-size,56px)!important;
+  min-width:var(--avatar-size,56px)!important;
+  min-height:var(--avatar-size,56px)!important;
+  max-width:var(--avatar-size,56px)!important;
+  max-height:var(--avatar-size,56px)!important;
+  flex:0 0 var(--avatar-size,56px)!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+  line-height:0!important;
+  isolation:isolate!important;
+  vertical-align:middle!important;
+}
+
+/* A FOTO ocupa exatamente o mesmo quadro da moldura. */
+.avatar-frame-shell > .avatar-base,
+.avatar-frame-shell > .avatar-base.avatar,
+.avatar-frame-shell > .avatar-base.avatar-img,
+.avatar-frame-shell > .avatar-base.neon-avatar{
+  position:absolute!important;
+  left:0!important;
+  top:0!important;
+  right:auto!important;
+  bottom:auto!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:100%!important;
+  min-height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:50%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  box-shadow:none!important;
+  z-index:1!important;
+  display:block!important;
+  transform:none!important;
+}
+
+/* A MOLDURA PNG ocupa exatamente o mesmo quadro e SEMPRE fica na frente. */
+.avatar-frame-shell > .avatar-frame-overlay{
+  position:absolute!important;
+  left:0!important;
+  top:0!important;
+  right:auto!important;
+  bottom:auto!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:100%!important;
+  min-height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  object-fit:fill!important;
+  object-position:center!important;
+  z-index:20!important;
+  display:block!important;
+  pointer-events:none!important;
+  animation:none!important;
+  transform:none!important;
+  filter:none!important;
+}
+
+/* Nunca aplicar efeitos que alterem a geometria da composição. */
+.avatar-frame-shell,
+.avatar-frame-shell > .avatar-base,
+.avatar-frame-shell > .avatar-frame-overlay{
+  box-sizing:border-box!important;
+}
+
+/* Tamanhos de referência: o tamanho externo pode variar por contexto,
+   mas foto e moldura permanecem 1:1 dentro dele. */
+.home-hero .avatar-frame-shell{--avatar-size:128px!important}
+.profile-avatar-stage .avatar-frame-shell{--avatar-size:140px!important}
+.top-avatar .avatar-frame-shell{--avatar-size:44px!important}
+.friend-avatar-stack .avatar-frame-shell{--avatar-size:64px!important}
+.news-author .avatar-frame-shell{--avatar-size:58px!important}
+.notification-avatar .avatar-frame-shell{--avatar-size:58px!important}
+.player-row .avatar-frame-shell{--avatar-size:58px!important}
+.queue-player-card .avatar-frame-shell{--avatar-size:70px!important}
+.match-player .avatar-frame-shell{--avatar-size:104px!important}
+.neon-avatar-wrap .avatar-frame-shell{--avatar-size:58px!important}
+.podium-card .avatar-frame-shell{--avatar-size:76px!important}
+
+/* Perfil: posição central igual à referência. */
+.profile-avatar-stage{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:154px!important;
+  margin:6px auto 4px!important;
+  overflow:visible!important;
+}
+.profile-avatar-stage .avatar-frame-shell{margin:0 auto!important}
+
+/* Nunca deixe o efeito/badge deslocar a composição avatar+moldura. */
+.profile-avatar-stage .profile-effect-badge{z-index:30!important}
+
+@media(min-width:600px){
+  .profile-avatar-stage .avatar-frame-shell{--avatar-size:150px!important}
+  .queue-player-card .avatar-frame-shell{--avatar-size:82px!important}
+  .match-player .avatar-frame-shell{--avatar-size:148px!important}
+  .neon-avatar-wrap .avatar-frame-shell{--avatar-size:82px!important}
+}
+
+@media(min-width:901px){
+  .profile-avatar-stage .avatar-frame-shell{--avatar-size:176px!important}
+  .queue-player-card .avatar-frame-shell{--avatar-size:92px!important}
+  .match-player .avatar-frame-shell{--avatar-size:178px!important}
+  .neon-avatar-wrap .avatar-frame-shell{--avatar-size:104px!important}
+}
