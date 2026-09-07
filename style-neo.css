@@ -2162,3 +2162,272 @@ body{min-height:100svh}
   .avatar-frame-shell.avatar.neon-avatar{width:64px!important;height:64px!important}
   .avatar-frame-shell.avatar.huge{width:84px!important;height:84px!important}
 }
+
+/* =========================================================
+   QuizUp — CORREÇÃO DEFINITIVA AVATAR + MOLDURA
+   Última regra: evita conflito com versões anteriores do CSS.
+   - o container sempre recebe tamanho real
+   - avatar fica atrás e é recortado em círculo
+   - moldura PNG fica sempre na frente
+   - mesma proporção em Perfil, Início, Amigos, Notícias, fila e partida
+   ========================================================= */
+.avatar-frame-shell{
+  position:relative!important;
+  display:inline-block!important;
+  width:var(--avatar-size,56px)!important;
+  height:var(--avatar-size,56px)!important;
+  min-width:var(--avatar-size,56px)!important;
+  min-height:var(--avatar-size,56px)!important;
+  max-width:var(--avatar-size,56px)!important;
+  max-height:var(--avatar-size,56px)!important;
+  flex:0 0 var(--avatar-size,56px)!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  overflow:visible!important;
+  line-height:0!important;
+  isolation:isolate!important;
+}
+
+/* Tamanho do componente em cada local do aplicativo. */
+.profile-avatar-stage .avatar-frame-shell{--avatar-size:140px!important;width:140px!important;height:140px!important;min-width:140px!important;min-height:140px!important;max-width:140px!important;max-height:140px!important}
+.home-hero .avatar-frame-shell{--avatar-size:128px!important}
+.top-avatar .avatar-frame-shell{--avatar-size:44px!important}
+.friend-avatar-stack .avatar-frame-shell{--avatar-size:64px!important}
+.news-author .avatar-frame-shell{--avatar-size:58px!important}
+.notification-avatar .avatar-frame-shell{--avatar-size:58px!important}
+.player-row .avatar-frame-shell{--avatar-size:58px!important}
+.queue-player-card .avatar-frame-shell{--avatar-size:70px!important}
+.match-player .avatar-frame-shell{--avatar-size:104px!important}
+.neon-player .neon-avatar-wrap .avatar-frame-shell{--avatar-size:72px!important}
+.podium-card .avatar-frame-shell{--avatar-size:76px!important}
+
+/* Classes usadas diretamente pelo markup de avatares. */
+.avatar-frame-shell.avatar.mini{--avatar-size:44px!important}
+.avatar-frame-shell.avatar.big{--avatar-size:78px!important}
+.avatar-frame-shell.avatar.huge{--avatar-size:92px!important}
+.avatar-frame-shell.avatar.neon-avatar{--avatar-size:68px!important}
+.avatar-frame-shell.avatar.home-avatar{--avatar-size:82px!important}
+.avatar-frame-shell.avatar.queue-avatar{--avatar-size:70px!important}
+.avatar-frame-shell.avatar.profile-avatar{--avatar-size:140px!important}
+
+/* FOTO: ocupa o quadro, mas só pode aparecer no círculo interno. */
+.avatar-frame-shell > .avatar-base,
+.avatar-frame-shell > .avatar-base.avatar,
+.avatar-frame-shell > .avatar-base.avatar-img,
+.avatar-frame-shell > .avatar-base.neon-avatar{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:100%!important;
+  min-height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  display:block!important;
+  z-index:1!important;
+  clip-path:circle(34% at 50% 50%)!important;
+  -webkit-clip-path:circle(34% at 50% 50%)!important;
+  transform:none!important;
+}
+
+/* MOLDURA: canvas inteiro, sempre acima do avatar. */
+.avatar-frame-shell > .avatar-frame-overlay{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:100%!important;
+  min-height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  object-fit:fill!important;
+  object-position:center!important;
+  display:block!important;
+  z-index:20!important;
+  pointer-events:none!important;
+  animation:none!important;
+  transform:none!important;
+}
+
+/* Nunca criar um painel/fundo atrás da composição. */
+.avatar-frame-shell::before,
+.avatar-frame-shell::after,
+.avatar-frame-shell.has-custom-frame,
+.avatar-frame-shell.has-custom-frame.avatar,
+.avatar-frame-shell.has-custom-frame.avatar-img{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+/* Perfil: centralização sem cortar a moldura. */
+.profile-avatar-stage{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:154px!important;
+  overflow:visible!important;
+}
+.profile-avatar-stage .avatar-frame-shell{margin:0 auto!important}
+
+@media(max-width:600px){
+  .profile-avatar-stage .avatar-frame-shell{--avatar-size:140px!important;width:140px!important;height:140px!important;min-width:140px!important;min-height:140px!important;max-width:140px!important;max-height:140px!important}
+}
+
+/* =========================================================
+   v41.12 — AVATAR + MOLDURA: CORREÇÃO FINAL
+   Não depende de classes antigas e não torna o avatar invisível.
+   ========================================================= */
+.avatar-frame-shell {
+  position: relative !important;
+  display: inline-block !important;
+  width: var(--avatar-size, 56px) !important;
+  height: var(--avatar-size, 56px) !important;
+  min-width: var(--avatar-size, 56px) !important;
+  min-height: var(--avatar-size, 56px) !important;
+  max-width: var(--avatar-size, 56px) !important;
+  max-height: var(--avatar-size, 56px) !important;
+  flex: 0 0 var(--avatar-size, 56px) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  line-height: 0 !important;
+  isolation: isolate !important;
+}
+
+/* O avatar ocupa a área interna da moldura e fica atrás. */
+.avatar-frame-shell > .avatar-base {
+  position: absolute !important;
+  left: 11% !important;
+  top: 11% !important;
+  width: 78% !important;
+  height: 78% !important;
+  min-width: 78% !important;
+  min-height: 78% !important;
+  max-width: 78% !important;
+  max-height: 78% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+  z-index: 1 !important;
+  clip-path: none !important;
+  -webkit-clip-path: none !important;
+  transform: none !important;
+}
+
+.avatar-frame-shell > img.avatar-base {
+  background: transparent !important;
+}
+
+/* Fallback de avatar textual continua visível caso não exista imagem. */
+.avatar-frame-shell > div.avatar-base {
+  display: grid !important;
+  place-items: center !important;
+  background: linear-gradient(135deg, #ffbd69, #e85938) !important;
+  border: 2px solid #ffb51b !important;
+  color: #fff !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+}
+
+/* Moldura PNG: sempre na frente, sem redimensionamento diferente do avatar. */
+.avatar-frame-shell > .avatar-frame-overlay,
+.avatar-frame-shell .avatar-frame-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  object-fit: fill !important;
+  object-position: center !important;
+  display: block !important;
+  z-index: 100 !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  clip-path: none !important;
+  -webkit-clip-path: none !important;
+}
+
+/* Tamanhos padronizados */
+.profile-avatar-stage .avatar-frame-shell { --avatar-size: 140px !important; }
+.home-hero .avatar-frame-shell { --avatar-size: 128px !important; }
+.top-avatar .avatar-frame-shell { --avatar-size: 44px !important; }
+.friend-avatar-stack .avatar-frame-shell { --avatar-size: 64px !important; }
+.news-author .avatar-frame-shell { --avatar-size: 58px !important; }
+.notification-avatar .avatar-frame-shell { --avatar-size: 58px !important; }
+.player-row .avatar-frame-shell { --avatar-size: 58px !important; }
+.queue-player-card .avatar-frame-shell { --avatar-size: 70px !important; }
+.match-player .avatar-frame-shell { --avatar-size: 104px !important; }
+.neon-player .neon-avatar-wrap .avatar-frame-shell { --avatar-size: 72px !important; }
+.podium-card .avatar-frame-shell { --avatar-size: 76px !important; }
+
+.avatar-frame-shell.avatar.mini { --avatar-size: 44px !important; }
+.avatar-frame-shell.avatar.big { --avatar-size: 78px !important; }
+.avatar-frame-shell.avatar.huge { --avatar-size: 92px !important; }
+.avatar-frame-shell.avatar.neon-avatar { --avatar-size: 68px !important; }
+.avatar-frame-shell.avatar.home-avatar { --avatar-size: 82px !important; }
+.avatar-frame-shell.avatar.queue-avatar { --avatar-size: 70px !important; }
+.avatar-frame-shell.avatar.profile-avatar { --avatar-size: 140px !important; }
+
+.profile-avatar-stage {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 150px !important;
+  overflow: visible !important;
+}
+
+.profile-avatar-stage .avatar-frame-shell {
+  margin: 0 auto !important;
+}
+
+@media (max-width: 600px) {
+  .profile-avatar-stage .avatar-frame-shell {
+    --avatar-size: 140px !important;
+  }
+}
