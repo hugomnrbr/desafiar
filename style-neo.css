@@ -1636,89 +1636,65 @@ img[src*="/frames/"],img[src*="/frames_png/"]{
 }
 
 /* =========================================================
-   CORREÇÃO DEFINITIVA — AVATAR DENTRO DA MOLDURA
-   A moldura é a camada externa (100%) e o avatar fica
-   centralizado dentro da abertura, sem ultrapassar o aro.
+   QuizUp v41.6 — correção visual final mobile + reações + desistir
+   Referência: layout enviado pelo usuário.
    ========================================================= */
-.avatar-frame-shell{
-  position:relative!important;
-  display:inline-block!important;
-  overflow:hidden!important;
-  isolation:isolate!important;
-  width:var(--avatar-size,56px)!important;
-  height:var(--avatar-size,56px)!important;
-  min-width:var(--avatar-size,56px)!important;
-  min-height:var(--avatar-size,56px)!important;
-  flex:0 0 var(--avatar-size,56px)!important;
-  line-height:0!important;
-  vertical-align:middle!important;
+html,body,#app{overflow-x:hidden!important}
+.avatar-frame-shell{box-sizing:border-box!important;overflow:visible!important}
+.avatar-frame-shell .avatar-base{left:17%!important;top:17%!important;width:66%!important;height:66%!important;border-radius:50%!important;object-fit:cover!important;object-position:center!important}
+.avatar-frame-overlay{left:-2%!important;top:-2%!important;width:104%!important;height:104%!important;object-fit:contain!important;border-radius:0!important;pointer-events:none!important}
+/* Não deixa avatares de listas virarem ovais. */
+.friend-avatar-stack .avatar-frame-shell,.news-author .avatar-frame-shell,.notification-avatar .avatar-frame-shell,.player-row .avatar-frame-shell{aspect-ratio:1/1!important}
+/* Busca de partida */
+.classic-loading .queue-player-card .avatar-frame-shell{--avatar-size:76px!important}
+/* Partida: avatar compacto, como na referência, com nome/pontos separados. */
+.neon-duel-head{align-items:start!important;overflow:visible!important}
+.duel-player-card{min-height:92px!important;overflow:visible!important}
+.neon-avatar-wrap{overflow:visible!important}
+.match-reaction-bar{position:relative!important;z-index:100!important;border-top:1px solid #1b2a36!important;padding-top:10px!important}
+.match-emoji-open{position:relative!important;z-index:101!important;cursor:pointer!important;touch-action:manipulation!important;user-select:none!important}
+.match-emoji-picker{position:relative!important;z-index:120!important;display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:7px!important;margin:9px auto 2px!important;max-width:420px!important;padding:10px!important;background:#080f16!important;border:1px solid #334656!important;border-radius:14px!important;box-shadow:0 14px 32px rgba(0,0,0,.55)!important}
+.match-emoji{position:relative!important;z-index:121!important;display:grid!important;place-items:center!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;padding:0!important;border:1px solid #334656!important;border-radius:10px!important;background:#121c27!important;color:#fff!important;font-size:21px!important;cursor:pointer!important;touch-action:manipulation!important;user-select:none!important;-webkit-tap-highlight-color:transparent!important}
+.match-emoji.custom img{width:28px!important;height:28px!important;object-fit:contain!important;pointer-events:none!important}
+.match-emoji:active{transform:scale(.92)!important;border-color:#ffd21a!important}
+.custom-reaction-img{width:27px!important;height:27px!important;object-fit:contain!important;vertical-align:middle!important}
+.match-forfeit-btn{position:absolute!important;top:7px!important;right:8px!important;z-index:110!important;border:1px solid #713040!important;background:#170d13!important;color:#ff8292!important;border-radius:999px!important;padding:6px 10px!important;font-size:8px!important;font-weight:950!important;letter-spacing:.3px!important;cursor:pointer!important;touch-action:manipulation!important}
+.match-forfeit-btn:active{transform:scale(.96)!important;background:#30121b!important}
+.neon-match-tools{position:relative!important;z-index:110!important;height:0!important;overflow:visible!important}
+
+@media(max-width:599px){
+  .app{padding-left:10px!important;padding-right:10px!important}
+  .classic-top{margin-left:-10px!important;margin-right:-10px!important;padding-left:10px!important;padding-right:10px!important}
+  .top-avatar{overflow:visible!important}
+  .home-avatar.avatar-frame-shell{--avatar-size:112px!important}
+  .profile-avatar-stage .avatar-frame-shell{--avatar-size:128px!important}
+  .friend-avatar-stack .avatar-frame-shell{--avatar-size:64px!important}
+  .news-author .avatar-frame-shell{--avatar-size:58px!important}
+  .player-row .avatar-frame-shell{--avatar-size:58px!important}
+  .queue-player-card .avatar-frame-shell{--avatar-size:64px!important}
+  .match-player .avatar-frame-shell{--avatar-size:104px!important}
+  .match-vs{gap:6px!important}
+  .neon-duel-head{grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr)!important;gap:4px!important;min-height:112px!important;padding:8px 0 6px!important}
+  .duel-player-card{grid-template-columns:58px minmax(0,1fr)!important;gap:4px!important;padding:2px 0!important;min-height:92px!important}
+  .duel-player-card.rival{grid-template-columns:minmax(0,1fr) 58px!important}
+  .neon-avatar-wrap{width:58px!important;min-height:88px!important;flex-basis:58px!important;gap:2px!important}
+  .neon-avatar-wrap .avatar-frame-shell{--avatar-size:76px!important}
+  .neon-avatar,.neon-avatar.avatar-img{width:76px!important;height:76px!important;min-width:76px!important;min-height:76px!important;flex-basis:76px!important}
+  .duel-player-copy b{font-size:9px!important}
+  .duel-player-copy span{font-size:6px!important;letter-spacing:.7px!important}
+  .score-under-avatar{font-size:14px!important;line-height:17px!important}
+  .score-under-avatar small{font-size:6px!important}
+  .neon-vs{width:32px!important;height:32px!important;font-size:8px!important;margin-top:13px!important}
+  .neon-progress{margin-top:0!important}
+  .neon-question-card{min-height:250px!important}
+  .neon-question-card p{font-size:18px!important;line-height:1.2!important}
+  .neon-answer{min-height:55px!important}
+  .match-reaction-bar{margin-top:10px!important;padding-top:8px!important}
+  .match-emoji-picker{max-width:calc(100vw - 40px)!important}
+  .match-forfeit-btn{top:4px!important;right:4px!important;font-size:7px!important;padding:5px 8px!important}
 }
 
-/* O avatar ocupa somente a área interna da moldura. */
-.avatar-frame-shell .avatar-base,
-.avatar-frame-shell .avatar-base.avatar-img{
-  position:absolute!important;
-  left:25%!important;
-  top:25%!important;
-  width:50%!important;
-  height:50%!important;
-  inset:auto!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  border-radius:50%!important;
-  object-fit:cover!important;
-  object-position:center!important;
-  overflow:hidden!important;
-  z-index:1!important;
-  box-shadow:none!important;
-}
-
-/* Moldura exatamente sobre o shell, sem aumentar de tamanho. */
-.avatar-frame-overlay{
-  position:absolute!important;
-  left:0!important;
-  top:0!important;
-  right:auto!important;
-  bottom:auto!important;
-  width:100%!important;
-  height:100%!important;
-  max-width:none!important;
-  max-height:none!important;
-  margin:0!important;
-  padding:0!important;
-  object-fit:fill!important;
-  object-position:center!important;
-  border:0!important;
-  border-radius:50%!important;
-  z-index:2!important;
-  pointer-events:none!important;
-}
-
-/* O avatar fica rigorosamente no centro em todos os tamanhos. */
-.profile-avatar-stage .avatar-frame-shell .avatar-base,
-.match-player .avatar-frame-shell .avatar-base,
-.neon-avatar-wrap .avatar-frame-shell .avatar-base,
-.friend-avatar-stack .avatar-frame-shell .avatar-base,
-.queue-player-card .avatar-frame-shell .avatar-base,
-.player-row .avatar-frame-shell .avatar-base,
-.podium-card .avatar-frame-shell .avatar-base{
-  left:25%!important;
-  top:25%!important;
-  width:50%!important;
-  height:50%!important;
-}
-
-.profile-avatar-stage .avatar-frame-overlay,
-.match-player .avatar-frame-overlay,
-.neon-avatar-wrap .avatar-frame-overlay,
-.friend-avatar-stack .avatar-frame-overlay,
-.queue-player-card .avatar-frame-overlay,
-.player-row .avatar-frame-overlay,
-.podium-card .avatar-frame-overlay{
-  left:0!important;
-  top:0!important;
-  width:100%!important;
-  height:100%!important;
-  inset:auto!important;
+@media(min-width:600px){
+  .neon-avatar-wrap .avatar-frame-shell{--avatar-size:104px!important}
+  .match-forfeit-btn{font-size:9px!important;padding:7px 11px!important}
 }
