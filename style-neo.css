@@ -1698,3 +1698,132 @@ html,body,#app{overflow-x:hidden!important}
   .neon-avatar-wrap .avatar-frame-shell{--avatar-size:104px!important}
   .match-forfeit-btn{font-size:9px!important;padding:7px 11px!important}
 }
+
+/* =========================================================
+   QuizUp v41.7 — Avatar + Moldura: composição universal
+   Regra única em todo o aplicativo:
+   - avatar e moldura ocupam EXATAMENTE o mesmo quadrado;
+   - avatar fica atrás;
+   - moldura PNG fica sempre na frente;
+   - o centro transparente da moldura revela o avatar;
+   - ambos ficam centralizados no mesmo ponto, independentemente
+     do local onde o componente aparece.
+   ========================================================= */
+.avatar-frame-shell{
+  position:relative!important;
+  display:inline-block!important;
+  width:var(--avatar-size,64px)!important;
+  height:var(--avatar-size,64px)!important;
+  min-width:var(--avatar-size,64px)!important;
+  min-height:var(--avatar-size,64px)!important;
+  max-width:var(--avatar-size,64px)!important;
+  max-height:var(--avatar-size,64px)!important;
+  flex:0 0 var(--avatar-size,64px)!important;
+  aspect-ratio:1/1!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  overflow:visible!important;
+  vertical-align:middle!important;
+  line-height:0!important;
+  isolation:isolate!important;
+}
+
+/* FOTO: mesmo tamanho/posição da moldura. A própria moldura recorta
+   visualmente a área central através da transparência do PNG. */
+.avatar-frame-shell > .avatar-base,
+.avatar-frame-shell > .avatar-base.avatar-img{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:100%!important;
+  min-height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+  border:0!important;
+  border-radius:50%!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  display:block!important;
+  z-index:1!important;
+  transform:none!important;
+  animation:none!important;
+  filter:none!important;
+  box-shadow:none!important;
+}
+
+/* MOLDURA: exatamente o mesmo quadrado do avatar e sempre na frente. */
+.avatar-frame-shell > .avatar-frame-overlay{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:100%!important;
+  min-height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+  border:0!important;
+  border-radius:0!important;
+  object-fit:fill!important;
+  object-position:center center!important;
+  display:block!important;
+  z-index:10!important;
+  pointer-events:none!important;
+  transform:none!important;
+  animation:none!important;
+  filter:none!important;
+}
+
+/* Quando não houver moldura, o avatar continua ocupando o componente inteiro. */
+.avatar-frame-shell:not(.has-custom-frame) > .avatar-base{
+  z-index:1!important;
+}
+
+/* Mantém o mesmo alinhamento nos principais contextos do app. */
+.top-avatar .avatar-frame-shell,
+.home-hero .avatar-frame-shell,
+.profile-avatar-stage .avatar-frame-shell,
+.player-row .avatar-frame-shell,
+.friend-avatar-stack .avatar-frame-shell,
+.news-author .avatar-frame-shell,
+.notification-avatar .avatar-frame-shell,
+.queue-player-card .avatar-frame-shell,
+.match-player .avatar-frame-shell,
+.neon-avatar-wrap .avatar-frame-shell,
+.podium-card .avatar-frame-shell{
+  position:relative!important;
+  top:auto!important;
+  left:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+}
+
+/* Evita regras antigas do .avatar/.neon-avatar de alterarem a foto interna. */
+.avatar-frame-shell .avatar-base.avatar,
+.avatar-frame-shell .avatar-base.neon-avatar{
+  width:100%!important;
+  height:100%!important;
+  min-width:100%!important;
+  min-height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  border:0!important;
+  box-shadow:none!important;
+  font-size:inherit!important;
+}
+
+/* O PNG da moldura não pode ser afetado por regras de imagem de avatar. */
+.avatar-frame-shell .avatar-frame-overlay[src*="/frames/"],
+.avatar-frame-shell .avatar-frame-overlay[src*="/frames_png/"]{
+  object-fit:fill!important;
+  border-radius:0!important;
+  z-index:10!important;
+}
