@@ -1,4 +1,4 @@
-# Q-Rival v43 — Layout da referência
+# Q-Rival v44 — Janelas separadas no menu
 
 Esta versão mantém a lógica da v42 de compras manuais e aplica o novo layout neon baseado na referência enviada.
 
@@ -14,3 +14,12 @@ Esta versão mantém a lógica da v42 de compras manuais e aplica o novo layout 
 
 ## Banco de dados
 Nenhum SQL adicional é obrigatório apenas para o layout. As alterações de dados existentes continuam usando o SQL da v42.
+
+
+## v44 — navegação corrigida
+- A tela **Início** não exibe mais Perfil, Amigos, Ranking, Notícias, Início da partida ou Loja juntos.
+- Cada área abre somente quando seu respectivo botão do menu é selecionado.
+- O menu agora possui: **Início, Jogar, Ranking, Amigos, Notícias, Loja, Suporte e Perfil**.
+- **Jogar** abre a seleção de categorias/início da partida.
+- **Ranking** abre a tela completa de ranking.
+- O layout desktop usa menu lateral e o celular usa menu horizontal.

@@ -1931,3 +1931,66 @@ body{background:radial-gradient(circle at 50% -10%,#0c1b2b 0,#03070d 42%,#02050a
 @media(max-width:1200px){.qr-dashboard{grid-template-columns:1fr 1fr 1fr;grid-template-areas:"profile friends rank" "news match profile2" "store store store"}.qr-product-grid{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:760px){.qr-dashboard{display:flex;flex-direction:column;padding:8px 6px 90px}.qr-panel{width:100%}.qr-store-body{grid-template-columns:132px minmax(0,1fr)}.qr-product-grid,.qr-shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.qr-store-sidebar.big{display:flex;flex-direction:row;overflow-x:auto;gap:4px}.qr-store-sidebar.big .qr-store-cat{min-width:130px;flex-direction:column;justify-content:center;text-align:center}.qr-store-layout{grid-template-columns:1fr}.qr-store-sidebar{border-right:0;border-bottom:1px solid #14334d;display:flex;overflow-x:auto}.qr-store-sidebar .qr-store-cat{min-width:115px;justify-content:center}.qr-match-stage{grid-template-columns:1fr 42px 1fr}.qr-match-avatar-xl.avatar-frame-shell{--avatar-size:88px!important}.qr-match-side h2{font-size:15px}.qr-vs-big{font-size:17px}.qr-page-title{align-items:flex-start;flex-direction:column}.qr-page-title .qr-yellow-btn{align-self:flex-start}.qr-podium{grid-template-columns:1fr}.qr-podium-card{flex-direction:row;justify-content:flex-start}.qr-podium-avatar.avatar-frame-shell{--avatar-size:60px!important}}
 @media(max-width:480px){.qr-dashboard{padding-left:3px;padding-right:3px}.qr-panel-title{font-size:12px}.qr-profile-main h2{font-size:19px}.dashboard-avatar.avatar-frame-shell{--avatar-size:100px!important}.qr-match-info-grid{grid-template-columns:1fr 1fr}.qr-store-body{grid-template-columns:1fr}.qr-store-sidebar{border-right:0;border-bottom:1px solid #14334d}.qr-store-sidebar .qr-store-cat{min-width:104px}.qr-store-content{padding:9px}.qr-product-grid,.qr-shop-grid{grid-template-columns:1fr 1fr}.qr-friend-item{align-items:flex-start}.qr-friend-actions{flex-direction:column}.qr-friend-actions button{min-height:34px}.qr-friend-avatar.avatar-frame-shell{--avatar-size:50px!important}}
+
+
+/* v44 — áreas separadas no menu: nenhuma janela interna fica aberta na tela inicial */
+.qr-home-standalone{width:min(100%,1100px);margin:0 auto;padding:28px 12px 100px;display:flex;flex-direction:column;gap:14px}
+.qr-home-welcome{min-height:430px;border:1px solid var(--qr-border);border-radius:18px;background:radial-gradient(circle at 50% 0%,rgba(23,207,255,.10),transparent 42%),linear-gradient(145deg,#08131e,#030911);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:35px 22px;box-shadow:0 18px 50px rgba(0,0,0,.35),inset 0 1px rgba(255,255,255,.04)}
+.qr-home-badge{width:76px;height:76px;border-radius:22px;display:grid;place-items:center;border:1px solid #6a5613;background:#11150d;color:var(--qr-yellow);font-size:34px;box-shadow:0 0 28px rgba(255,210,26,.14);margin-bottom:18px}
+.qr-home-welcome h1{margin:0;color:#fff;font-size:32px;letter-spacing:-.5px}.qr-home-welcome p{max-width:650px;margin:12px 0 24px;color:#8f9bab;font-size:14px;line-height:1.6}.qr-home-welcome p b{color:#fff}
+.qr-home-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.qr-home-actions button{min-width:190px;min-height:48px}
+.qr-home-info{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.qr-home-info>div{min-height:100px;border:1px solid var(--qr-border);border-radius:12px;background:linear-gradient(145deg,#0a151f,#050c13);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.qr-home-info span{font-size:20px}.qr-home-info b{color:#fff;font-size:14px}.qr-home-info small{color:var(--qr-muted);font-size:9px}
+@media(min-width:761px){.classic-bottom{grid-template-rows:repeat(8,1fr)!important}.classic-bottom{grid-template-columns:1fr!important}}
+@media(max-width:760px){.classic-bottom{grid-template-columns:repeat(8,minmax(0,1fr))!important;grid-template-rows:1fr!important;overflow-x:auto}.classic-bottom .classic-nav{min-width:77px!important}.qr-home-standalone{padding-left:8px;padding-right:8px}.qr-home-welcome{min-height:390px}.qr-home-welcome h1{font-size:25px}.qr-home-info{grid-template-columns:1fr}.qr-home-actions{width:100%}.qr-home-actions button{width:100%}}
+
+
+/* =========================================================
+   Q-Rival v46 — correções finais solicitadas
+   ========================================================= */
+/* Publicação: modal sempre fica acima do menu inferior e com área segura. */
+.modal-backdrop{z-index:5000!important;padding:12px!important;align-items:flex-end!important}
+.news-composer{max-height:min(760px,calc(100vh - 92px))!important;overflow-y:auto!important;margin-bottom:0!important;padding-bottom:18px!important}
+@media(max-width:760px){
+  .modal-backdrop{padding:10px 10px 76px!important;align-items:flex-end!important}
+  .news-composer{width:min(100%,540px)!important;max-height:calc(100vh - 96px)!important;border-radius:20px!important;padding:18px 14px 22px!important}
+  .news-composer .primary[type="submit"]{position:relative!important;z-index:2!important;width:100%!important;min-height:48px!important;margin-top:10px!important}
+}
+/* Duel: os dois jogadores usam exatamente a mesma estrutura e proporção. */
+.neon-duel-head{grid-template-columns:minmax(0,1fr) 42px minmax(0,1fr)!important;align-items:stretch!important;gap:8px!important;min-height:132px!important;padding:8px 2px 10px!important}
+.duel-player-card,.duel-player-card.rival{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;gap:4px!important;min-height:116px!important;padding:7px 5px!important;text-align:center!important;box-sizing:border-box!important}
+.duel-player-card.rival .neon-avatar-wrap,.duel-player-card.rival .duel-player-copy{grid-column:auto!important;grid-row:auto!important}
+.duel-player-card .neon-avatar-wrap{width:82px!important;min-width:82px!important;flex:0 0 auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important}
+.duel-player-card .neon-avatar-wrap .avatar-frame-shell{--avatar-size:76px!important;width:76px!important;height:76px!important;min-width:76px!important;min-height:76px!important}
+.duel-player-card .duel-player-copy{width:100%!important;min-width:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;text-align:center!important;line-height:1.05!important}
+.duel-player-card .duel-player-copy span{max-width:100%!important;font-size:7px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.duel-player-card .duel-player-copy b{max-width:100%!important;font-size:10px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.duel-player-card .score-under-avatar{font-size:13px!important;line-height:16px!important;margin-top:2px!important}
+.duel-player-card .score-under-avatar em{font-size:9px!important}
+.neon-vs{align-self:flex-start!important;margin-top:20px!important;width:34px!important;height:34px!important;font-size:9px!important}
+@media(max-width:599px){
+  .neon-duel-head{grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr)!important;gap:4px!important;min-height:122px!important;padding:6px 0 8px!important}
+  .duel-player-card,.duel-player-card.rival{min-height:108px!important;padding:5px 2px!important}
+  .duel-player-card .neon-avatar-wrap{width:72px!important;min-width:72px!important}
+  .duel-player-card .neon-avatar-wrap .avatar-frame-shell{--avatar-size:66px!important;width:66px!important;height:66px!important;min-width:66px!important;min-height:66px!important}
+  .duel-player-card .duel-player-copy span{font-size:6px!important}
+  .duel-player-card .duel-player-copy b{font-size:9px!important}
+  .duel-player-card .score-under-avatar{font-size:12px!important}
+  .neon-vs{width:30px!important;height:30px!important;margin-top:16px!important;font-size:8px!important}
+}
+/* Botão flutuante discreto do Quiz — abre Categorias diretamente. */
+.quiz-orb{position:fixed!important;left:50%!important;bottom:72px!important;transform:translateX(-50%)!important;width:58px!important;height:58px!important;border-radius:50%!important;border:2px solid #ffd21a!important;background:radial-gradient(circle at 35% 30%,#243019,#0a1010 58%,#05080c 100%)!important;color:#ffd21a!important;box-shadow:0 0 14px rgba(255,210,26,.22),0 5px 16px rgba(0,0,0,.5)!important;z-index:3500!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;gap:0!important;cursor:pointer!important;touch-action:manipulation!important}
+.quiz-orb:before{content:"";position:absolute;inset:5px;border-radius:50%;border:1px solid rgba(255,210,26,.35)!important;pointer-events:none!important}
+.quiz-orb span{font-size:24px!important;font-weight:1000!important;line-height:20px!important;text-shadow:0 0 8px rgba(255,210,26,.45)!important}
+.quiz-orb small{font-size:6px!important;letter-spacing:1px!important;font-weight:1000!important;color:#fff!important;line-height:9px!important}
+.quiz-orb:active{transform:translateX(-50%) scale(.95)!important}
+@media(min-width:761px){.quiz-orb{left:auto!important;right:26px!important;bottom:24px!important;transform:none!important;width:62px!important;height:62px!important}.quiz-orb:active{transform:scale(.95)!important}}
+@media(max-width:430px){.quiz-orb{bottom:70px!important;width:54px!important;height:54px!important}.quiz-orb span{font-size:22px!important}.quiz-orb small{font-size:5.5px!important}}
+
+
+/* v47 — inventário/avatares/XP/bot */
+.store-avatar-ball{width:120px!important;height:120px!important;border-radius:50%!important;overflow:hidden!important;display:grid!important;place-items:center!important;background:#080f17!important;border:1px solid #314352!important;box-shadow:inset 0 0 0 1px rgba(255,210,26,.08),0 8px 20px rgba(0,0,0,.28)!important}
+.store-avatar-ball img,.premium-art.avatar .store-avatar-ball img{width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:center!important;border-radius:50%!important;display:block!important}
+.premium-art.avatar{overflow:visible!important}
+.match-win-rate{display:block!important;margin-top:2px!important;color:#8997a8!important;font-size:8px!important;white-space:nowrap!important}
+.match-win-rate b{color:#ffd21a!important}
+@media(max-width:760px){.store-avatar-ball{width:110px!important;height:110px!important}.qr-match-side .match-win-rate{font-size:7px!important}}
