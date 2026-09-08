@@ -2003,3 +2003,61 @@ body{background:radial-gradient(circle at 50% -10%,#0c1b2b 0,#03070d 42%,#02050a
 @media(max-width:700px){.qr-engagement-grid{grid-template-columns:1fr}.qr-engagement-card.tournament-card{grid-column:auto}.qr-engagement-card{padding:14px}.qr-engagement-card h3{font-size:17px}}
 /* v49 — cards administrativos */
 .quizup-admin-main .admin-section#admin-engagement .form{max-width:760px}.quizup-admin-main .admin-section#admin-engagement .question-admin{align-items:center}.quizup-admin-main .admin-section#admin-engagement .admin-actions{flex-wrap:wrap}
+
+
+/* Q-Rival v48 visual fixes requested */
+/* Loja: avatar sem a moldura/oval interno; somente a arte circular do avatar. */
+.qr-shop-grid .premium-card .premium-art.avatar,
+.premium-card .premium-art.avatar{
+  min-height:132px!important;height:132px!important;width:100%!important;
+  background:transparent!important;border:0!important;border-radius:0!important;
+  overflow:visible!important;box-shadow:none!important;padding:0!important;
+}
+.qr-shop-grid .premium-card .premium-art.avatar .store-avatar-ball,
+.premium-card .premium-art.avatar .store-avatar-ball{
+  width:116px!important;height:116px!important;background:transparent!important;
+  border:0!important;box-shadow:none!important;border-radius:0!important;
+  overflow:visible!important;display:grid!important;place-items:center!important;
+}
+.qr-shop-grid .premium-card .premium-art.avatar .store-avatar-ball img,
+.premium-card .premium-art.avatar .store-avatar-ball img{
+  width:116px!important;height:116px!important;max-width:116px!important;max-height:116px!important;
+  border-radius:50%!important;object-fit:cover!important;border:0!important;box-shadow:0 0 18px rgba(255,210,26,.10)!important;
+}
+
+/* Perfil: fundo comprado fica atrás de todo o conteúdo e não é escondido. */
+.classic-profile.profile-has-bg:before{z-index:0!important;opacity:.42!important}
+.classic-profile.profile-has-bg:after{z-index:0!important}
+.classic-profile.profile-has-bg .profile-cover{z-index:1!important;background:rgba(3,7,12,.18)!important}
+.profile-background-media{display:block!important}
+.classic-profile.profile-has-bg .profile-background-media{display:none!important}
+
+/* O pequeno diamante/ícone lateral do efeito não faz parte do avatar do perfil. */
+.profile-effect-badge{display:none!important}
+
+/* Inventário com seletor de categoria. */
+.inventory-category-picker{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:9px;margin:10px 0 6px;padding:8px 10px;border:1px solid #263544;border-radius:10px;background:#0b121a}
+.inventory-category-picker label{font-size:9px;font-weight:950;color:#8f9bab;text-transform:uppercase;letter-spacing:.8px}
+.inventory-category-picker select{margin:0!important;padding:9px 11px!important;border-color:#46586a!important;background:#101923!important;color:#ffd21a!important;font-weight:900!important}
+
+/* Partida: cronômetro oficial no centro, entre os dois jogadores. */
+.synced-duel-head{grid-template-columns:minmax(0,1fr) 62px minmax(0,1fr)!important;align-items:start!important}
+.neon-center-clock{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;gap:3px!important;padding-top:3px!important;z-index:10!important}
+.neon-center-clock .neon-timer{width:54px!important;height:54px!important;flex:0 0 54px!important;margin:0!important}
+.neon-center-clock small{font-size:8px!important;font-weight:1000!important;color:#ffd21a!important;letter-spacing:1px!important}
+.synced-duel-head .duel-player-card{min-height:118px!important}
+.synced-duel-head .game-title-below{width:100%!important;max-width:150px!important;margin:3px auto 0!important}
+.synced-duel-head .game-title-below img{max-width:150px!important;max-height:28px!important;object-fit:contain!important}
+@media(max-width:599px){
+  .synced-duel-head{grid-template-columns:minmax(0,1fr) 52px minmax(0,1fr)!important;gap:3px!important}
+  .neon-center-clock .neon-timer{width:46px!important;height:46px!important;flex-basis:46px!important;font-size:17px!important}
+  .neon-center-clock small{font-size:7px!important}
+  .synced-duel-head .game-title-below{max-width:105px!important}
+  .synced-duel-head .game-title-below img{max-width:105px!important;max-height:22px!important}
+}
+/* Q-Rival v51 — Modos especiais */
+.qr-modes-page,.qr-sudden-page,.qr-season-page{max-width:1100px;margin:0 auto;padding:18px 14px 120px}.qr-mode-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.qr-mode-card{appearance:none;border:1px solid rgba(74,146,190,.38);background:linear-gradient(145deg,rgba(9,24,38,.98),rgba(4,10,18,.98));border-radius:20px;padding:20px;text-align:left;color:inherit;min-height:165px;display:flex;flex-direction:column;gap:8px;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.18)}.qr-mode-card:hover{transform:translateY(-2px);border-color:rgba(255,211,25,.65)}.qr-mode-card:disabled{opacity:.45;cursor:not-allowed}.qr-mode-card.featured{border-color:rgba(255,210,25,.65);box-shadow:0 0 28px rgba(255,210,25,.12)}.qr-mode-card.impossible{border-color:rgba(255,82,82,.5)}.qr-mode-card span{font-size:34px}.qr-mode-card b{font-size:17px;letter-spacing:.06em}.qr-mode-card small{color:#91a1b4;line-height:1.35}.qr-mode-card strong{margin-top:auto;color:#ffd21a;font-size:12px;letter-spacing:.08em}.qr-daily-actions{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}.qr-daily-card{border:1px solid rgba(255,210,25,.35);border-radius:18px;background:#09131e;color:#fff;padding:16px;text-align:left;display:flex;gap:10px;align-items:center}.qr-daily-card span{font-size:30px}.qr-daily-card b{display:block}.qr-daily-card small{display:block;color:#91a1b4;margin-top:3px}.qr-mode-strip{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:16px;border:1px solid rgba(74,146,190,.28);border-radius:18px;background:#07111b;margin-top:16px}.qr-mode-strip span{color:#91a1b4}.sudden-room-share{text-align:center;border:1px dashed rgba(255,210,25,.5);border-radius:18px;padding:18px;margin:14px 0}.sudden-room-share strong{display:block;font-size:42px;letter-spacing:.2em;color:#ffd21a}.sudden-players{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}.sudden-player{border:1px solid rgba(74,146,190,.25);border-radius:16px;padding:12px;display:flex;align-items:center;gap:8px;background:#08131d}.sudden-player span{margin-left:auto;font-size:10px;color:#64e6a8}.sudden-battle-head{display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(74,146,190,.35);border-radius:20px;padding:16px;background:#07111b}.sudden-battle-head small{display:block;color:#91a1b4;margin-top:4px}.sudden-battle-head strong{font-size:36px;border:3px solid #26d5ff;border-radius:50%;width:70px;height:70px;display:grid;place-items:center}.sudden-scoreboard{display:flex;gap:8px;overflow:auto;padding:12px 0}.sudden-scoreboard span{white-space:nowrap;padding:8px 12px;border-radius:999px;background:#0b1824;border:1px solid #20394d}.sudden-scoreboard .eliminated{opacity:.35;text-decoration:line-through}.sudden-question{border:1px solid rgba(74,146,190,.35);border-radius:22px;padding:28px;text-align:center;background:#07111b;margin:10px 0 14px}.sudden-question>span{color:#ffcc21;font-size:11px;font-weight:800;letter-spacing:.12em}.sudden-question h2{font-size:28px;line-height:1.2}.sudden-question img{max-width:100%;max-height:260px;border-radius:14px}.sudden-answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}.sudden-answer{border:1px solid #294155;background:#0a1621;color:#fff;border-radius:16px;padding:18px;text-align:left;font-size:17px;font-weight:700}.sudden-answer span{display:inline-grid;place-items:center;width:34px;height:34px;border:1px solid #536779;border-radius:10px;margin-right:10px}.sudden-code-form{display:flex;gap:8px;margin-top:16px}.sudden-code-form input{flex:1}.sudden-result{text-align:center;padding:50px 20px;border:1px solid rgba(255,210,25,.5);border-radius:24px;background:#07111b}.sudden-result>span{font-size:70px}.qr-season-hero{border-radius:24px;padding:28px;background:linear-gradient(145deg,#101a2a,#050b13);border:1px solid rgba(255,210,25,.45)}.season-level{margin-top:20px}.season-level i{display:block;height:12px;background:#142333;border-radius:999px;overflow:hidden;margin:8px 0}.season-level i span{display:block;height:100%;background:#ffd21a}.season-rewards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}.season-reward{border:1px solid #253a4c;border-radius:16px;padding:16px;background:#08131d;display:flex;justify-content:space-between;gap:8px}.season-reward.unlocked{border-color:#ffd21a}.quiz-rating-box{margin:18px 0;padding:18px;border:1px solid rgba(255,210,25,.3);border-radius:18px;background:#08131d}.rating-stars{display:flex;gap:6px;margin:10px 0}.rating-stars button{border:1px solid #34495b;background:#0b1722;color:#ffd21a;border-radius:10px;padding:8px 12px}.rating-stars button.selected{background:#3b3210;border-color:#ffd21a}.admin-check-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px}.admin-mode-nav{color:#ffd21a!important}
+@media(max-width:800px){.qr-mode-grid{grid-template-columns:1fr 1fr}.sudden-players{grid-template-columns:1fr 1fr}.season-rewards{grid-template-columns:1fr}.qr-daily-actions{grid-template-columns:1fr}}
+@media(max-width:520px){.qr-mode-grid{grid-template-columns:1fr}.sudden-answers{grid-template-columns:1fr}.sudden-player{min-width:0}.sudden-question h2{font-size:22px}.admin-check-grid{grid-template-columns:1fr}.sudden-code-form{flex-direction:column}}
+.qr-tournament-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.qr-tournament-card{border:1px solid rgba(255,210,25,.35);border-radius:22px;padding:22px;background:linear-gradient(145deg,#0b1824,#050c14)}.qr-tournament-card>span{font-size:40px}.qr-tournament-card h2{margin:6px 0}.qr-tournament-card p{color:#91a1b4;min-height:40px}.tournament-meta{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.tournament-meta>*{background:#101e2b;border:1px solid #263d50;border-radius:999px;padding:7px 10px;font-size:12px}.qr-rotation-banner{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:14px 0;padding:14px 16px;border:1px solid rgba(255,210,25,.45);border-radius:16px;background:#11160d}.qr-rotation-banner b{color:#ffd21a}.qr-rotation-banner span{font-weight:700}.qr-rotation-banner small{color:#91a1b4}
+@media(max-width:700px){.qr-tournament-grid{grid-template-columns:1fr}}
