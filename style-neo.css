@@ -616,7 +616,7 @@ html,body,#app{background:#03050a!important;color:#f7f9fc!important}
 .quizup-admin-nav button.active:before{content:""!important;position:absolute!important;left:0!important;top:0!important;bottom:0!important;width:4px!important;border-radius:0 5px 5px 0!important;background:#ff6500!important}
 .quizup-admin-main{overflow-x:hidden!important;overflow-y:auto!important}
 .quizup-admin-main .admin-section{display:none!important}
-.quizup-admin-main .admin-section.admin-visible{display:block!important;animation:adminModuleIn .18s ease-out!important}
+.quizup-admin-main .admin-section.admin-visible{display:block!important;animation:none!important}
 .quizup-admin-main #admin-dashboard.admin-visible{display:block!important}
 .admin-mobile-overlay{display:none!important}
 @keyframes adminModuleIn{from{opacity:.2;transform:translateY(5px)}to{opacity:1;transform:none}}
